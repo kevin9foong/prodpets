@@ -1,5 +1,6 @@
 {
   "expo": {
+    "entryPoint": "./src/App.tsx",
     "name": "prodpets",
     "slug": "prodpets",
     "version": "1.0.0",
@@ -10,6 +11,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "scheme": "exp",
     "updates": {
       "fallbackToCacheTimeout": 0
     },
