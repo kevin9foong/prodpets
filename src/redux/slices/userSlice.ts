@@ -1,15 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { RootState } from '../store';
 
 interface UserState { 
-	user: any
-//     userToken: string | null, 
-//     userId?: string | null,
-// 	userName?: string | null,
-// 	userAvatar?: string | null
+	userUid: string | null
 }
 
 const initialState: UserState = {
-	user: null
+	userUid: null
 	// userToken: null,
 	// userId: null,
 	// userName: null,
@@ -37,13 +34,15 @@ const userSlice =  createSlice({
 		// 	state.userAvatar = null;
 		// }
 		LOGIN: (state, action: PayloadAction<UserState>) => {
-			state.user = action.payload.user; 
+			state.userUid = action.payload.userUid; 
 		}, 
 		LOGOUT: (state) => {
-			state.user = null; 
+			state.userUid = null; 
 		}
 	}
 });
+
+export const selectUserUid = (state: RootState) => state.user.userUid;
 
 // actions are auto-generated for us based on the reducers
 export const { LOGIN, LOGOUT } = userSlice.actions; 

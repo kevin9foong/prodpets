@@ -2,8 +2,8 @@ import * as React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
 
+import { selectUserUid } from '../redux/slices/userSlice';
 import AuthScreen from '../screens/AuthScreen';
 import CreateCardModal from '../screens/home/CreateCardModal';
 import HomeTabNavigator from './HomeTab';
@@ -15,12 +15,12 @@ const HomeStack = createStackNavigator<HomeStackParamList>();
 
 const Navigator: React.FC = () => {
 	// check if the user exists in the Redux state.
-	const user = useSelector((state: RootState) => state.user.user);
+	const userUid = useSelector(selectUserUid);
 
 	return (
 		<>
 			<StatusBar /> 
-			{user
+			{userUid
 				? <HomeStackNavigator />
 				: <AuthStackNavigator />
 			}	

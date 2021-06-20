@@ -4,18 +4,26 @@ import {
 	Text,
 	Button
 } from 'react-native';
-import CreateCardModalStyle from '../../styles/components/home/CreateCardForm.style';
-
+import { useSelector } from 'react-redux';
 import { useForm, Controller } from 'react-hook-form';
+
+import CreateCardModalStyle from '../../styles/components/home/CreateCardForm.style';
 import TextArea from '../TextArea';
+import { saveCard } from '../../database/models/cards';
+import { selectUserUid } from '../../redux/slices/userSlice';
 
 type StateProps = {
 	onFormSubmit: () => void
 }
 
 const CreateCardForm: React.FC<StateProps> = ({onFormSubmit}: StateProps) => {
+	// safe to typecast as userUid has to be not-null to access this screen.
+	const userUid = useSelector(selectUserUid) as string;
 	const { control, handleSubmit, formState: { errors }} = useForm(); 
-	const onSubmit = (data: any) => console.log(data); 
+	const onSubmit = (data: {title: string, description: string}) => { 
+		saveCard(userUid, data);  
+		onFormSubmit();
+	}; 
 
 	return (
 		<View
@@ -24,7 +32,7 @@ const CreateCardForm: React.FC<StateProps> = ({onFormSubmit}: StateProps) => {
 			<View 
 				style={CreateCardModalStyle.topContainer}>
 				<Controller 
-					name="Title"
+					name="title"
 					control={control}
 					render={({ field: { onChange, onBlur, value }}) => (
 						<View 
@@ -45,7 +53,7 @@ const CreateCardForm: React.FC<StateProps> = ({onFormSubmit}: StateProps) => {
 					)}
 				/>
 				<Controller 
-					name="Description"
+					name="description"
 					control={control}
 					render={({ field: { onChange, onBlur, value }}) => (
 						<View 
@@ -69,10 +77,9 @@ const CreateCardForm: React.FC<StateProps> = ({onFormSubmit}: StateProps) => {
 			<View
 				style={CreateCardModalStyle.bottomContainer}
 			>
-				<Button title="Submit" onPress={() => {
-					handleSubmit(onSubmit);
-					onFormSubmit();
-				}} />
+				<Button title="Submit" 
+					onPress={handleSubmit(onSubmit)}
+				/>
 			</View>
 		</View> 
 	);
