@@ -1,4 +1,4 @@
-import React from 'react'; 
+import React, { useEffect } from 'react'; 
 import {
 	View,
 	Text,
@@ -9,20 +9,20 @@ import { useForm, Controller } from 'react-hook-form';
 
 import CreateCardModalStyle from '../../styles/components/home/CreateCardForm.style';
 import TextArea from '../TextArea';
-import { saveCard } from '../../database/models/cards';
+import { CardModel } from '../../database/models/cards';
 import { selectUserUid } from '../../redux/slices/userSlice';
 
 type StateProps = {
-	onFormSubmit: () => void
+	defaultValues?: CardModel, 
+	onFormSubmit: (userUid: string, data: CardModel) => void
 }
 
-const CreateCardForm: React.FC<StateProps> = ({onFormSubmit}: StateProps) => {
+const CardForm: React.FC<StateProps> = ({onFormSubmit, defaultValues}: StateProps) => {
 	// safe to typecast as userUid has to be not-null to access this screen.
 	const userUid = useSelector(selectUserUid) as string;
-	const { control, handleSubmit, formState: { errors }} = useForm(); 
-	const onSubmit = (data: {title: string, description: string}) => { 
-		saveCard(userUid, data);  
-		onFormSubmit();
+	const { control, handleSubmit, setValue, formState: { errors }} = useForm(); 
+	const onSubmit = (data: {title: string, description: string}) => {
+		onFormSubmit(userUid, data);
 	}; 
 
 	return (
@@ -32,6 +32,7 @@ const CreateCardForm: React.FC<StateProps> = ({onFormSubmit}: StateProps) => {
 			<View 
 				style={CreateCardModalStyle.topContainer}>
 				<Controller 
+					defaultValue={defaultValues?.title}
 					name="title"
 					control={control}
 					render={({ field: { onChange, onBlur, value }}) => (
@@ -53,6 +54,7 @@ const CreateCardForm: React.FC<StateProps> = ({onFormSubmit}: StateProps) => {
 					)}
 				/>
 				<Controller 
+					defaultValue={defaultValues?.description}
 					name="description"
 					control={control}
 					render={({ field: { onChange, onBlur, value }}) => (
@@ -86,4 +88,4 @@ const CreateCardForm: React.FC<StateProps> = ({onFormSubmit}: StateProps) => {
 
 };
 
-export default CreateCardForm;
+export default CardForm;

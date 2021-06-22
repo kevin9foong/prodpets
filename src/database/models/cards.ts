@@ -6,6 +6,12 @@ export type CardModel = {
     description: string
 }
 
+// make sure we use the local offline store as much as possible 
+// - unless we explicitly request to sync with online.
+const getOptions = {
+	source: 'cache'
+};
+
 export const saveCard = (userUid: string, card: CardModel) => {
 	return db.collection('users').doc(userUid)
 		.collection('todos')
@@ -22,6 +28,6 @@ export const saveCard = (userUid: string, card: CardModel) => {
  * @returns 
  */
 export const fetchCards = (userUid: string) => {
-	return db.collection('users').doc(userUid).collection('todos').get()
-		.then(querySnapshot => querySnapshot.docs.map(doc => doc.data())); 
+	return db.collection('users').doc(userUid).collection('todos').limit(2)
+		.get(getOptions).then(querySnapshot => querySnapshot.docs.map(doc => doc.data())); 
 };

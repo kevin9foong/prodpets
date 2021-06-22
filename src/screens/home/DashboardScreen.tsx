@@ -1,23 +1,37 @@
 import React, { useEffect, useState } from 'react'; 
 import { View, FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 import DashboardCard from '../../components/home/DashboardCard';
 import DashboardScreenStyles from '../../styles/screens/home/Dashboard.style';
 import { selectUserUid } from '../../redux/slices/userSlice';
 import { CardModel, fetchCards } from '../../database/models/cards';
+import { DashboardParamList } from '../../navigation/types';
 
-const DashboardScreen: React.FC = () => {
+type DashboardScreenNavigationProp = StackNavigationProp<
+	DashboardParamList, 'DashboardScreen'>; 
+
+type StateProps = {
+	navigation: DashboardScreenNavigationProp
+}
+
+const DashboardScreen: React.FC<StateProps> = ({navigation}: StateProps) => {
 	const userUid = useSelector(selectUserUid);
-	const [cardData, setCardData] = useState<CardModel[]>([]);
+	const [cardData, setCardData] = useState<CardModel[]>([{ title: 'hello world', description: 'bye world'}]);
+
+	// TODO: solve this issue with fetching cards and updating card list immediately. 
 	useEffect(() => {
 		// safe to typecast as userUid has to exist to access this page.
 		fetchCards(userUid as string).then(
 			cards=> setCardData(cards as CardModel[])
 		);
-	});
+	}, []);
+
+	const onItemPress = (cardInfo: CardModel) => navigation.navigate('UpdateCardModal', cardInfo);
 
 	const renderItem = ({item}) => <DashboardCard
+		onPress={onItemPress}
 		title={item.title}
 		description={item.description} />;
 

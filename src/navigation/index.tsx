@@ -5,7 +5,8 @@ import { useSelector } from 'react-redux';
 
 import { selectUserUid } from '../redux/slices/userSlice';
 import AuthScreen from '../screens/AuthScreen';
-import CreateCardModal from '../screens/home/CreateCardModal';
+import AddCardModal from '../screens/home/AddCardModal';
+import UpdateCardModal from '../screens/home/UpdateCardModal';
 import HomeTabNavigator from './HomeTab';
 import { AuthStackParamList, HomeStackParamList } from './types';
 import NavigatorStyle from '../styles/navigation/Navigator.style';
@@ -55,11 +56,18 @@ const HomeStackNavigator = () => {
 			>
 				<HomeStack.Screen 
 					name="CreateCardModal" 
-					component={CreateCardModal}
+					component={AddCardModal}
 					options={{
 						headerStyle: NavigatorStyle.header,
 						headerTitle: 'Add New Card'
-					}} /> 
+					}} />
+				<HomeStack.Screen 
+					name="UpdateCardModal" 
+					component={UpdateCardModal}
+					options={{
+						headerStyle: NavigatorStyle.header,
+						headerTitle: 'Edit Card'
+					}} />  
 			</HomeStack.Group>
 		</HomeStack.Navigator>
 	);

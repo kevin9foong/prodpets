@@ -4,13 +4,15 @@ import {
 } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 
-import AddCardForm from '../../components/home/CardForm';
+import CardForm from '../../components/home/CardForm';
 import { HomeStackParamList } from '../../navigation/types';
+import { CardModel, saveCard } from '../../database/models/cards';
 
 type ScreenProps = StackScreenProps<HomeStackParamList, 'CreateCardModal'>;
 
-const CreateCardModal: React.FC<ScreenProps> = ({navigation}: ScreenProps) => {
-	const onFormSubmit = () => {
+const CreateCardModal: React.FC<ScreenProps> = ({ navigation }: ScreenProps) => {
+	const onFormSubmit = (userUid:string, data: CardModel) => {
+		saveCard(userUid, data); 
 		navigation.goBack();
 	};
 
@@ -19,7 +21,8 @@ const CreateCardModal: React.FC<ScreenProps> = ({navigation}: ScreenProps) => {
 			style={{
 				flex: 1
 			}}>
-			<AddCardForm onFormSubmit={onFormSubmit}/> 
+			<CardForm 
+				onFormSubmit={onFormSubmit}/> 
 		</View> 
 	);
 

@@ -1,5 +1,6 @@
 import React from 'react'; 
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { CardModel } from '../../database/models/cards';
 import DashboardCardStyle from '../../styles/components/home/DashboardCard.style';
 import themeStyle from '../../styles/theme.style';
 
@@ -9,16 +10,21 @@ import themeStyle from '../../styles/theme.style';
 export type DashboardCardType = {
     title: string, 
     description: string,
-    color?: string
+    color?: string,
+	onPress: (cardInfo: CardModel) => void
 }
 
 const DashboardCard = ({
 	title, 
 	description, 
-	color = themeStyle['color-primary-200']}: DashboardCardType
+	color = themeStyle['color-primary-200'],
+	onPress}: DashboardCardType, 
 ): JSX.Element => {
 	return (
-		<View style={DashboardCardStyle.container} > 
+		<TouchableOpacity 
+			style={DashboardCardStyle.container}
+			onPress={() => onPress({title, description})}
+		> 
 			<View style={DashboardCardStyle.leftContainer} />
 			<View style={DashboardCardStyle.middleContainer}>
 				<Text>{title}</Text>
@@ -26,7 +32,7 @@ const DashboardCard = ({
 			</View>
 			<View style={DashboardCardStyle.rightContainer}>
 			</View>
-		</View>
+		</TouchableOpacity>
 	);
 };
 

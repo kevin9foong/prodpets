@@ -10,6 +10,7 @@ export type AuthStackParamList = {
 export type HomeStackParamList = {
     Home: undefined; 
     CreateCardModal: undefined; 
+    UpdateCardModal: undefined;
   };
   
 export type HomeTabParamList = {
