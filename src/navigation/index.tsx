@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 
 import { selectUserUid } from '../redux/slices/userSlice';
 import AuthScreen from '../screens/AuthScreen';
-import AddCardModal from '../screens/home/AddCardModal';
+import AddCardModal from '../screens/home/CreateCardModal';
 import UpdateCardModal from '../screens/home/UpdateCardModal';
 import HomeTabNavigator from './HomeTab';
 import { AuthStackParamList, HomeStackParamList } from './types';

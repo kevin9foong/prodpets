@@ -4,35 +4,38 @@ import theme from '../../theme.style';
 
 export default StyleSheet.create({
 	container: {
-		...common.homeContainer
+		...common.homeContainer,
 	}, 
 	topContainer: {
-		flex: 1,
 		backgroundColor: theme['color-primary-300'],
 		display: 'flex',
-		justifyContent: 'center'
-	},
-	bottomContainer: {
-		flex: 2
+		justifyContent: 'flex-start',
+		borderBottomLeftRadius: 20,
+		borderBottomRightRadius: 20
 	},
 	titleContainer: { 
+		marginTop: 20,
+		minHeight: 60, 
 		...common.inputContainer
 	}, 
 	titleInput: {
-		...common.input, 
 		minHeight: 40, 
-
+		...common.input, 
 	},
 	descriptionContainer: {
+		marginBottom: 20,
+		minHeight: 80,
 		...common.inputContainer
 	},
 	descriptionInput: {
-		...common.input, 
-		minHeight: 60,
+		minHeight: 60, 
+		...common.input
 	}, 
 	inputLabel: {
 		width: '100%',
 		textAlign:'left',
 		color: theme['color-light-contrast']
+	}, 
+	bottomContainer: {
 	}
 });

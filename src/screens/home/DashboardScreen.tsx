@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'; 
-import { View, FlatList } from 'react-native';
+import { View, FlatList, RefreshControl } from 'react-native';
 import { useSelector } from 'react-redux';
 import { StackNavigationProp } from '@react-navigation/stack';
 
@@ -8,6 +8,7 @@ import DashboardScreenStyles from '../../styles/screens/home/Dashboard.style';
 import { selectUserUid } from '../../redux/slices/userSlice';
 import { CardModel, CardModelWithUid, fetchCards } from '../../database/models/cards';
 import { DashboardParamList } from '../../navigation/types';
+import { useCallback } from 'react';
 
 type DashboardScreenNavigationProp = StackNavigationProp<
 	DashboardParamList, 'DashboardScreen'>; 
@@ -19,6 +20,7 @@ type StateProps = {
 const DashboardScreen: React.FC<StateProps> = ({navigation}: StateProps) => {
 	const userUid = useSelector(selectUserUid);
 	const [cardData, setCardData] = useState<CardModel[]>([]);
+	const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
 	// TODO: solve this issue with fetching cards and updating card list immediately. 
 	useEffect(() => {
@@ -26,8 +28,10 @@ const DashboardScreen: React.FC<StateProps> = ({navigation}: StateProps) => {
 		fetchCards(userUid as string).then(
 			cards=> setCardData(cards as CardModelWithUid[])
 		);
+	// only fetch the first time!
 	}, []);
 
+	// Card functions
 	const onItemPress = (cardInfo: CardModelWithUid) => navigation.navigate('UpdateCardModal', cardInfo);
 
 	const renderItem = ({item}) => <DashboardCard
@@ -35,6 +39,14 @@ const DashboardScreen: React.FC<StateProps> = ({navigation}: StateProps) => {
 		uid={item.uid}
 		title={item.title}
 		description={item.description} />;
+
+	// FlatList (Scrollable) functions
+	const onRefresh = useCallback(() => {
+		setIsRefreshing(true); 
+		fetchCards(userUid as string).then(
+			cards=> setCardData(cards as CardModelWithUid[])
+		).then(() => setIsRefreshing(false));
+	}, []);
 
 	return (
 		<View
@@ -45,6 +57,12 @@ const DashboardScreen: React.FC<StateProps> = ({navigation}: StateProps) => {
 				renderItem={renderItem}
 				keyExtractor={({title}, index) => `${title}${index}`}
 				// bounces={false}
+				refreshControl={ 
+					<RefreshControl
+						refreshing={isRefreshing}
+						onRefresh={onRefresh}
+					/> 
+				}
 			/>
 		</View>
 	);

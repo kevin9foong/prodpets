@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'; 
+import React from 'react'; 
 import {
 	View,
 	Text,
@@ -7,7 +7,7 @@ import {
 import { useSelector } from 'react-redux';
 import { useForm, Controller } from 'react-hook-form';
 
-import CreateCardModalStyle from '../../styles/components/home/CreateCardForm.style';
+import CreateCardModalStyle from '../../styles/components/home/CardForm.style';
 import TextArea from '../TextArea';
 import { CardModel } from '../../database/models/cards';
 import { selectUserUid } from '../../redux/slices/userSlice';
@@ -20,7 +20,7 @@ type StateProps = {
 const CardForm: React.FC<StateProps> = ({onFormSubmit, defaultValues}: StateProps) => {
 	// safe to typecast as userUid has to be not-null to access this screen.
 	const userUid = useSelector(selectUserUid) as string;
-	const { control, handleSubmit, setValue, formState: { errors }} = useForm(); 
+	const { control, handleSubmit, formState: { errors }} = useForm(); 
 	const onSubmit = (data: {title: string, description: string}) => {
 		onFormSubmit(userUid, data);
 	}; 

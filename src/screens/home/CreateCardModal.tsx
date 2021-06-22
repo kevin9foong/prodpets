@@ -1,12 +1,9 @@
 import React from 'react'; 
-import {
-	View
-} from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 
-import CardForm from '../../components/home/CardForm';
 import { HomeStackParamList } from '../../navigation/types';
 import { CardModel, saveCard } from '../../database/models/cards';
+import CardModal from '../../components/home/CardModal';
 
 type ScreenProps = StackScreenProps<HomeStackParamList, 'CreateCardModal'>;
 
@@ -17,13 +14,7 @@ const CreateCardModal: React.FC<ScreenProps> = ({ navigation }: ScreenProps) => 
 	};
 
 	return (
-		<View
-			style={{
-				flex: 1
-			}}>
-			<CardForm 
-				onFormSubmit={onFormSubmit}/> 
-		</View> 
+		<CardModal onFormSubmit={onFormSubmit} />
 	);
 
 };
