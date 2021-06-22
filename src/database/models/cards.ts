@@ -1,7 +1,11 @@
 import db from '../index';
 import 'firebase/firestore';
 
-export type CardModel = { 
+export interface CardModelWithUid extends CardModel {
+	uid: string
+}
+
+export interface CardModel { 
     title: string, 
     description: string
 }
@@ -28,6 +32,14 @@ export const saveCard = (userUid: string, card: CardModel) => {
  * @returns 
  */
 export const fetchCards = (userUid: string) => {
-	return db.collection('users').doc(userUid).collection('todos').limit(2)
-		.get(getOptions).then(querySnapshot => querySnapshot.docs.map(doc => doc.data())); 
+	console.log('FETCHING TRIGGERED');
+	return db.collection('users').doc(userUid).collection('todos').limit(5)
+		.get().then(querySnapshot => querySnapshot.docs.map(doc => {return {uid: doc.id, ...doc.data()};})); 
+};
+
+export const updateCard = (userUid: string, cardUid: string, card: CardModel) => {
+	return db.collection('users').doc(userUid).collection('todos')
+		.doc(cardUid).update({
+			...card
+		});
 };

@@ -1,6 +1,6 @@
 import React from 'react'; 
 import { View, Text, TouchableOpacity } from 'react-native';
-import { CardModel } from '../../database/models/cards';
+import { CardModelWithUid } from '../../database/models/cards';
 import DashboardCardStyle from '../../styles/components/home/DashboardCard.style';
 import themeStyle from '../../styles/theme.style';
 
@@ -8,13 +8,15 @@ import themeStyle from '../../styles/theme.style';
 // other fields eg. color etc
 
 export type DashboardCardType = {
+	uid: string, 
     title: string, 
     description: string,
     color?: string,
-	onPress: (cardInfo: CardModel) => void
+	onPress: (cardInfo: CardModelWithUid) => void
 }
 
 const DashboardCard = ({
+	uid, 
 	title, 
 	description, 
 	color = themeStyle['color-primary-200'],
@@ -23,7 +25,7 @@ const DashboardCard = ({
 	return (
 		<TouchableOpacity 
 			style={DashboardCardStyle.container}
-			onPress={() => onPress({title, description})}
+			onPress={() => onPress({title, description, uid})}
 		> 
 			<View style={DashboardCardStyle.leftContainer} />
 			<View style={DashboardCardStyle.middleContainer}>
