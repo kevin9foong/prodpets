@@ -9,11 +9,11 @@ import { useForm, Controller } from 'react-hook-form';
 
 import CreateCardModalStyle from '../../styles/components/home/CardForm.style';
 import TextArea from '../TextArea';
-import { CardModel } from '../../database/models/cards';
+import { CardModel, CardModelWithUid } from '../../database/models/cards';
 import { selectUserUid } from '../../redux/slices/userSlice';
 
 type StateProps = {
-	defaultValues?: CardModel, 
+	defaultValues?: CardModelWithUid, 
 	onFormSubmit: (userUid: string, data: CardModel) => void
 }
 
@@ -42,7 +42,8 @@ const CardForm: React.FC<StateProps> = ({onFormSubmit, defaultValues}: StateProp
 							<Text
 								style={CreateCardModalStyle.inputLabel}
 							>
-									Title</Text>
+									Title
+							</Text>
 							<TextArea 
 								style={CreateCardModalStyle.titleInput}
 								onBlur={onBlur}
@@ -78,14 +79,35 @@ const CardForm: React.FC<StateProps> = ({onFormSubmit, defaultValues}: StateProp
 			</View>
 			<View
 				style={CreateCardModalStyle.bottomContainer}
-			>
+			>	
+				{/* <Controller 
+					defaultValue={defaultValues?.description}
+					name="description"
+					control={control}
+					render={({ field: { onChange, onBlur, value }}) => (
+						<View 
+							style={CreateCardModalStyle.descriptionContainer}
+						>
+							<Text
+								style={CreateCardModalStyle.inputLabel}>
+							Description
+							</Text>
+							<TextArea 
+								style={CreateCardModalStyle.descriptionInput}
+								onBlur={onBlur}
+								onChangeText={value => onChange(value)}
+								value={value}
+								placeholder='Effort'
+							/>
+						</View>
+					)}
+				/> */}
 				<Button title="Submit" 
 					onPress={handleSubmit(onSubmit)}
 				/>
 			</View>
 		</View> 
 	);
-
 };
 
 export default CardForm;

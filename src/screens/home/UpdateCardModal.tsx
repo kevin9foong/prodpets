@@ -19,7 +19,7 @@ const CreateCardModal: React.FC<ScreenProps> = ({ route, navigation }: ScreenPro
 	};
 
 	return (
-		<CardModal onFormSubmit={onFormSubmit} />
+		<CardModal cardInfo={cardInfo} onFormSubmit={onFormSubmit} />
 	);
 
 };
