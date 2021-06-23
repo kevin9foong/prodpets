@@ -36,6 +36,18 @@ export default StyleSheet.create({
 		textAlign:'left',
 		color: theme['color-light-contrast']
 	}, 
+	inputLabelDark: {
+		width: '100%', 
+		textAlign: 'left',
+		color: '#000'
+	},
 	bottomContainer: {
+	}, 
+	fieldContainer: {
+		...common.inputContainer,
+		margin: 10
+	}, 
+	dateTimeInput: {
+		width: '100%'
 	}
 });

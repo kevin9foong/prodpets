@@ -7,7 +7,9 @@ export interface CardModelWithUid extends CardModel {
 
 export interface CardModel { 
     title: string, 
-    description: string
+    description: string,
+	startdate: Date,
+	duedate: Date
 }
 
 // make sure we use the local offline store as much as possible 
@@ -20,8 +22,7 @@ export const saveCard = (userUid: string, card: CardModel) => {
 	return db.collection('users').doc(userUid)
 		.collection('todos')
 		.add({
-			title: card.title,
-			description: card.description
+			...card
 		});
 };
 
