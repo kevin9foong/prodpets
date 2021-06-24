@@ -5,7 +5,7 @@ import { CardModel, CardModelWithUid } from '../../database/models/cards';
 import CardModalStyle from '../../styles/components/home/CardModal.style';
 
 type StateProps = { 
-    onFormSubmit: (userUid:string, data: CardModel) => void,
+    onFormSubmit: (data: CardModel) => void,
 	cardInfo?: CardModelWithUid 
 }
 

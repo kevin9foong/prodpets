@@ -5,7 +5,7 @@ import firebase from '../firebase';
 import 'firebase/auth';
 
 import { useAppDispatch } from '../redux/hooks';
-import { LOGIN, LOGOUT } from '../redux/slices/userSlice';
+import { login, logout } from '../redux/actions/user';
 import AuthContext from '../context/AuthContext';
 import { googleAuthRequestClientIds } from '../config/secrets';
 import { saveUser, UserModel } from '../database/models/user';
@@ -25,9 +25,9 @@ const AuthContainer = ({children}: StateProps): JSX.Element => {
 	useEffect(() => firebase.auth().onAuthStateChanged(user => {
 		if (user) { 
 			saveUser(user as UserModel);
-			dispatch(LOGIN({userUid: user.uid})); 
+			dispatch(login(user.uid)); 
 		} else {
-			dispatch(LOGOUT());
+			dispatch(logout());
 		}
 	}));
 
