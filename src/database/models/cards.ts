@@ -1,13 +1,16 @@
 import db from '../index';
+import firebase from 'firebase/app';
 import 'firebase/firestore';
 
-export interface CardModelWithUid extends CardModel {
+export interface CardModelWithUid<DateType = Date> extends CardModel<DateType> {
 	uid: string
 }
 
-export interface CardModel { 
+export interface CardModel<DateType = Date> { 
     title: string, 
-    description: string
+    description: string,
+	startdate: DateType,
+	duedate: DateType
 }
 
 // make sure we use the local offline store as much as possible 
@@ -18,10 +21,9 @@ const getOptions = {
 
 export const saveCard = (userUid: string, card: CardModel) => {
 	return db.collection('users').doc(userUid)
-		.collection('todos')
+		.collection('cards')
 		.add({
-			title: card.title,
-			description: card.description
+			...card
 		});
 };
 
@@ -31,14 +33,35 @@ export const saveCard = (userUid: string, card: CardModel) => {
  * @param userUid unique user id
  * @returns 
  */
-export const fetchCards = (userUid: string) => {
+export const fetchCards = async (userUid: string): Promise<CardModelWithUid[]> => {
 	console.log('FETCHING TRIGGERED');
-	return db.collection('users').doc(userUid).collection('todos').limit(5)
-		.get().then(querySnapshot => querySnapshot.docs.map(doc => {return {uid: doc.id, ...doc.data()};})); 
+	const cardsQuerySnapShot = await db.collection('users').doc(userUid)
+		.collection('cards').limit(5).get();
+	const cardsQuerySnapShotDocs = cardsQuerySnapShot.docs; 
+
+	const cardsDataPromises = cardsQuerySnapShotDocs.map(async doc => {
+		const uid = doc.id; 
+		const docData = await doc.data(); 
+		return {
+			uid, 
+			...docData
+		};
+	});
+
+	// need to store into Redux store. 
+	return Promise.all(cardsDataPromises).then(
+		cardsData => {
+			return cardsData.map(card => {
+				return ({
+					...card,
+					startdate: card.startdate.toDate(),
+					duedate: card.duedate.toDate()
+				} as CardModelWithUid);});});
 };
 
+
 export const updateCard = (userUid: string, cardUid: string, card: CardModel) => {
-	return db.collection('users').doc(userUid).collection('todos')
+	return db.collection('users').doc(userUid).collection('cards')
 		.doc(cardUid).update({
 			...card
 		});

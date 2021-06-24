@@ -3,6 +3,8 @@
  * https://reactnavigation.org/docs/typescript/
  */
 
+import { CardModelWithUid } from '../database/models/cards';
+
 export type AuthStackParamList = {
     Auth: undefined; 
 }
@@ -10,7 +12,7 @@ export type AuthStackParamList = {
 export type HomeStackParamList = {
     Home: undefined; 
     CreateCardModal: undefined; 
-    UpdateCardModal: undefined;
+    UpdateCardModal: CardModelWithUid;
   };
   
 export type HomeTabParamList = {
@@ -20,6 +22,7 @@ export type HomeTabParamList = {
   
 export type DashboardParamList = {
     DashboardScreen: undefined;
+    UpdateCardModal: CardModelWithUid;
   };
   
 export type CalendarParamList = {

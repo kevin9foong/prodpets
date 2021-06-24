@@ -18,21 +18,6 @@ const userSlice =  createSlice({
 	name: 'user',
 	initialState,
 	reducers: {
-		// RETRIEVE_TOKEN: (state, action: PayloadAction<UserState>) => {
-		// 	state.userToken = action.payload.userToken;
-		// }, 
-		// LOGIN: (state, action: PayloadAction<UserState>) => {
-		// 	state.userToken = action.payload.userToken,
-		// 	state.userId = action.payload.userId,
-		// 	state.userName = action.payload.userName,
-		// 	state.userAvatar = action.payload.userAvatar;
-		// }, 
-		// LOGOUT: state => {
-		// 	state.userToken = null,
-		// 	state.userId = null,
-		// 	state.userName = null,
-		// 	state.userAvatar = null;
-		// }
 		LOGIN: (state, action: PayloadAction<UserState>) => {
 			state.userUid = action.payload.userUid; 
 		}, 

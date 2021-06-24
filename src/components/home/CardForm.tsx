@@ -1,19 +1,22 @@
-import React from 'react'; 
+import React, { useState } from 'react'; 
 import {
 	View,
 	Text,
-	Button
+	Button, 
+	Platform
 } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useForm, Controller } from 'react-hook-form';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
+import AndroidDateTimePicker from '../AndroidDateTimePicker';
 import CreateCardModalStyle from '../../styles/components/home/CardForm.style';
 import TextArea from '../TextArea';
-import { CardModel } from '../../database/models/cards';
+import { CardModel, CardModelWithUid } from '../../database/models/cards';
 import { selectUserUid } from '../../redux/slices/userSlice';
 
 type StateProps = {
-	defaultValues?: CardModel, 
+	defaultValues?: CardModelWithUid, 
 	onFormSubmit: (userUid: string, data: CardModel) => void
 }
 
@@ -21,7 +24,7 @@ const CardForm: React.FC<StateProps> = ({onFormSubmit, defaultValues}: StateProp
 	// safe to typecast as userUid has to be not-null to access this screen.
 	const userUid = useSelector(selectUserUid) as string;
 	const { control, handleSubmit, formState: { errors }} = useForm(); 
-	const onSubmit = (data: {title: string, description: string}) => {
+	const onSubmit = (data: CardModel) => {
 		onFormSubmit(userUid, data);
 	}; 
 
@@ -42,7 +45,8 @@ const CardForm: React.FC<StateProps> = ({onFormSubmit, defaultValues}: StateProp
 							<Text
 								style={CreateCardModalStyle.inputLabel}
 							>
-									Title</Text>
+									Title
+							</Text>
 							<TextArea 
 								style={CreateCardModalStyle.titleInput}
 								onBlur={onBlur}
@@ -78,14 +82,69 @@ const CardForm: React.FC<StateProps> = ({onFormSubmit, defaultValues}: StateProp
 			</View>
 			<View
 				style={CreateCardModalStyle.bottomContainer}
-			>
+			>	
+				<Controller 
+					name="startdate"
+					defaultValue={defaultValues?.startdate ?? new Date()}
+					control={control}
+					render={({ field: { onChange, value }}) => (
+						<View 
+							style={CreateCardModalStyle.fieldContainer}
+						>
+							<Text
+								style={CreateCardModalStyle.inputLabelDark}>
+							Start Date
+							</Text>
+							{
+								Platform.OS === 'ios'
+									? <DateTimePicker 
+										style={CreateCardModalStyle.dateTimeInput}
+										value={value}
+										mode={'datetime'}
+										display='default'
+										onChange={(event, date) => onChange(date)}
+									/>
+									: <AndroidDateTimePicker 
+										value={value} 
+										onChange={onChange}
+									/>
+							}
+						</View>)}
+				/>
+				<Controller 
+					name="duedate"
+					defaultValue={defaultValues?.duedate ?? new Date()}
+					control={control}
+					render={({ field: { onChange, value }}) => (
+						<View 
+							style={CreateCardModalStyle.fieldContainer}
+						>
+							<Text
+								style={CreateCardModalStyle.inputLabelDark}>
+							Due Date
+							</Text>
+							{
+								Platform.OS === 'ios'
+									? <DateTimePicker 
+										style={CreateCardModalStyle.dateTimeInput}
+										value={value}
+										mode={'datetime'}
+										display='default'
+										onChange={(event, date) => onChange(date)}
+									/>
+									: <AndroidDateTimePicker 
+										value={value} 
+										onChange={onChange}
+									/>
+							}
+						</View>)}
+				/>
 				<Button title="Submit" 
 					onPress={handleSubmit(onSubmit)}
 				/>
 			</View>
 		</View> 
 	);
-
 };
 
 export default CardForm;

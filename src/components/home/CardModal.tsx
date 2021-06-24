@@ -1,21 +1,22 @@
 import React from 'react'; 
-import { ScrollView, View } from 'react-native';
+import { ScrollView } from 'react-native';
 import CardForm from '../../components/home/CardForm';
-import { CardModel } from '../../database/models/cards';
+import { CardModel, CardModelWithUid } from '../../database/models/cards';
 import CardModalStyle from '../../styles/components/home/CardModal.style';
-import themeStyle from '../../styles/theme.style';
 
 type StateProps = { 
-    onFormSubmit: (userUid:string, data: CardModel) => void
+    onFormSubmit: (userUid:string, data: CardModel) => void,
+	cardInfo?: CardModelWithUid 
 }
 
-const CardModal = ({ onFormSubmit }: StateProps): JSX.Element => {
+const CardModal = ({ onFormSubmit, cardInfo }: StateProps): JSX.Element => {
 	return (
 		<ScrollView	
 			bounces={false}
 			contentContainerStyle={CardModalStyle.scrollableContainer}	
 		>	
 			<CardForm 
+				defaultValues={cardInfo}
 				onFormSubmit={onFormSubmit}/> 
 		</ScrollView>
 	);
