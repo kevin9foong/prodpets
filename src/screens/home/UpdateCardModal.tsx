@@ -9,7 +9,7 @@ import { updateCard } from '../../database/models/cards';
 type ScreenProps = StackScreenProps<HomeStackParamList, 'UpdateCardModal'>;
 
 const UpdateCardModal: React.FC<ScreenProps> = ({ route, navigation }: ScreenProps) => {
-	const cardInfo: CardModelWithUid = route.params; 
+	const cardInfo: CardModelWithUid | undefined = route.params; 
 
 	const onFormSubmit = (userUid: string, data: CardModel) => {
 		if (cardInfo && (cardInfo as CardModelWithUid).uid) {
