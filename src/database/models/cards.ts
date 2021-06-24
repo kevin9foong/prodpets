@@ -33,7 +33,7 @@ export const saveCard = (userUid: string, card: CardModel) => {
  * @param userUid unique user id
  * @returns 
  */
-export const fetchCards = async (userUid: string) => {
+export const fetchCards = async (userUid: string): Promise<CardModelWithUid[]> => {
 	console.log('FETCHING TRIGGERED');
 	const cardsQuerySnapShot = await db.collection('users').doc(userUid)
 		.collection('cards').limit(5).get();
@@ -48,16 +48,15 @@ export const fetchCards = async (userUid: string) => {
 		};
 	});
 
+	// need to store into Redux store. 
 	return Promise.all(cardsDataPromises).then(
 		cardsData => {
-			// console.log(cardsData);
 			return cardsData.map(card => {
-				console.log(card);
 				return ({
 					...card,
 					startdate: card.startdate.toDate(),
 					duedate: card.duedate.toDate()
-				});});});
+				} as CardModelWithUid);});});
 };
 
 
