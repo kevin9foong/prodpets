@@ -25,8 +25,11 @@ const CardForm: React.FC<StateProps> = ({onFormSubmit, defaultValues}: StateProp
 	const userUid = useSelector(selectUserUid) as string;
 	const { control, handleSubmit, formState: { errors }} = useForm(); 
 	const onSubmit = (data: CardModel) => {
+		console.log('Saved form values', data);
 		onFormSubmit(userUid, data);
 	}; 
+
+	console.log('Edit form values', defaultValues);
 
 	return (
 		<View
@@ -85,7 +88,7 @@ const CardForm: React.FC<StateProps> = ({onFormSubmit, defaultValues}: StateProp
 			>	
 				<Controller 
 					name="startdate"
-					defaultValue={new Date()}
+					defaultValue={defaultValues?.startdate ?? new Date()}
 					control={control}
 					render={({ field: { onChange, value }}) => (
 						<View 
@@ -113,7 +116,7 @@ const CardForm: React.FC<StateProps> = ({onFormSubmit, defaultValues}: StateProp
 				/>
 				<Controller 
 					name="duedate"
-					defaultValue={new Date()}
+					defaultValue={defaultValues?.duedate ?? new Date()}
 					control={control}
 					render={({ field: { onChange, value }}) => (
 						<View 

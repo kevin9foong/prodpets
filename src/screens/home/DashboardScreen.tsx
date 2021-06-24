@@ -26,19 +26,17 @@ const DashboardScreen: React.FC<StateProps> = ({navigation}: StateProps) => {
 	useEffect(() => {
 		// safe to typecast as userUid has to exist to access this page.
 		fetchCards(userUid as string).then(
-			cards=> setCardData(cards as CardModelWithUid[])
+			cards => setCardData(cards as CardModelWithUid[])
 		);
 	// only fetch the first time!
 	}, []);
 
 	// Card functions
-	const onItemPress = (cardInfo: CardModelWithUid) => navigation.navigate('UpdateCardModal', cardInfo);
+	const onItemPress = (cardInfo: CardModelWithUid) => {console.log('Navigator', cardInfo); navigation.navigate('UpdateCardModal', cardInfo);};
 
-	const renderItem = ({item}) => <DashboardCard
+	const renderItem = ({item}: {item: CardModelWithUid}) => <DashboardCard
 		onPress={onItemPress}
-		uid={item.uid}
-		title={item.title}
-		description={item.description} />;
+		cardInfo={item} />;
 
 	// FlatList (Scrollable) functions
 	const onRefresh = useCallback(() => {

@@ -8,7 +8,7 @@ import { updateCard } from '../../database/models/cards';
 
 type ScreenProps = StackScreenProps<HomeStackParamList, 'UpdateCardModal'>;
 
-const CreateCardModal: React.FC<ScreenProps> = ({ route, navigation }: ScreenProps) => {
+const UpdateCardModal: React.FC<ScreenProps> = ({ route, navigation }: ScreenProps) => {
 	const cardInfo: CardModelWithUid | undefined = route.params; 
 
 	const onFormSubmit = (userUid: string, data: CardModel) => {
@@ -24,4 +24,4 @@ const CreateCardModal: React.FC<ScreenProps> = ({ route, navigation }: ScreenPro
 
 };
 
-export default CreateCardModal;
+export default UpdateCardModal;

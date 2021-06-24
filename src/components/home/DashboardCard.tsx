@@ -8,24 +8,21 @@ import themeStyle from '../../styles/theme.style';
 // other fields eg. color etc
 
 export type DashboardCardType = {
-	uid: string, 
-    title: string, 
-    description: string,
+	cardInfo: CardModelWithUid,
     color?: string,
 	onPress: (cardInfo: CardModelWithUid) => void
 }
 
 const DashboardCard = ({
-	uid, 
-	title, 
-	description, 
+	cardInfo,  
 	color = themeStyle['color-primary-200'],
 	onPress}: DashboardCardType, 
 ): JSX.Element => {
+	const { title, description } = cardInfo;
 	return (
 		<TouchableOpacity 
 			style={DashboardCardStyle.container}
-			onPress={() => onPress({title, description, uid})}
+			onPress={() => onPress(cardInfo)}
 		> 
 			<View style={DashboardCardStyle.leftContainer} />
 			<View style={DashboardCardStyle.middleContainer}>
