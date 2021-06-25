@@ -1,11 +1,10 @@
-import React, { useState } from 'react'; 
+import React from 'react'; 
 import {
 	View,
 	Text,
 	Button, 
 	Platform
 } from 'react-native';
-import { useSelector } from 'react-redux';
 import { useForm, Controller } from 'react-hook-form';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
@@ -13,19 +12,17 @@ import AndroidDateTimePicker from '../AndroidDateTimePicker';
 import CreateCardModalStyle from '../../styles/components/home/CardForm.style';
 import TextArea from '../TextArea';
 import { CardModel, CardModelWithUid } from '../../database/models/cards';
-import { selectUserUid } from '../../redux/slices/userSlice';
 
 type StateProps = {
 	defaultValues?: CardModelWithUid, 
-	onFormSubmit: (userUid: string, data: CardModel) => void
+	onFormSubmit: (data: CardModel) => void
 }
 
 const CardForm: React.FC<StateProps> = ({onFormSubmit, defaultValues}: StateProps) => {
 	// safe to typecast as userUid has to be not-null to access this screen.
-	const userUid = useSelector(selectUserUid) as string;
 	const { control, handleSubmit, formState: { errors }} = useForm(); 
 	const onSubmit = (data: CardModel) => {
-		onFormSubmit(userUid, data);
+		onFormSubmit(data);
 	}; 
 
 	return (
@@ -85,7 +82,7 @@ const CardForm: React.FC<StateProps> = ({onFormSubmit, defaultValues}: StateProp
 			>	
 				<Controller 
 					name="startdate"
-					defaultValue={defaultValues?.startdate ?? new Date()}
+					defaultValue={defaultValues?.startdate ? new Date(defaultValues.startdate) : new Date()}
 					control={control}
 					render={({ field: { onChange, value }}) => (
 						<View 
@@ -113,7 +110,7 @@ const CardForm: React.FC<StateProps> = ({onFormSubmit, defaultValues}: StateProp
 				/>
 				<Controller 
 					name="duedate"
-					defaultValue={defaultValues?.duedate ?? new Date()}
+					defaultValue={defaultValues?.duedate ? new Date(defaultValues.duedate) : new Date()}
 					control={control}
 					render={({ field: { onChange, value }}) => (
 						<View 

@@ -1,16 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
-
 interface UserState { 
 	userUid: string | null
 }
 
 const initialState: UserState = {
 	userUid: null
-	// userToken: null,
-	// userId: null,
-	// userName: null,
-	// userAvatar: null
 };
 
 // 'slices' of our global redux state

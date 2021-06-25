@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'; 
 import { View, FlatList, RefreshControl } from 'react-native';
-import { useSelector } from 'react-redux';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { useDispatch, useSelector } from 'react-redux';
 
 import DashboardCard from '../../components/home/DashboardCard';
 import DashboardScreenStyles from '../../styles/screens/home/Dashboard.style';
-import { selectUserUid } from '../../redux/slices/userSlice';
-import { CardModelWithUid, fetchCards } from '../../database/models/cards';
+import { CardModelWithUid } from '../../database/models/cards';
+import { fetchCards } from '../../redux/actions/cards';
+import { selectCards } from '../../redux/selectors/cards';
 import { DashboardParamList } from '../../navigation/types';
 import { useCallback } from 'react';
 
@@ -18,17 +19,18 @@ type StateProps = {
 }
 
 const DashboardScreen: React.FC<StateProps> = ({navigation}: StateProps) => {
-	const userUid = useSelector(selectUserUid);
-	const [cardData, setCardData] = useState<CardModelWithUid[]>([]);
+	// const [cardData, setCardData] = useState<CardModelWithUid[]>([]);
+	const cards = useSelector(selectCards); 
 	const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
+	const dispatch = useDispatch();
+
 	// TODO: solve this issue with fetching cards and updating card list immediately. 
+	// TODO: fix offline and online integration - currently disabled.
 	useEffect(() => {
 		// safe to typecast as userUid has to exist to access this page.
-		fetchCards(userUid as string).then(
-			cards => setCardData(cards as CardModelWithUid[])
-		);
-	// only fetch the first time!
+		// only fetch the first time!
+		// dispatch(fetchCards); 
 	}, []);
 
 	// Card functions
@@ -41,9 +43,9 @@ const DashboardScreen: React.FC<StateProps> = ({navigation}: StateProps) => {
 	// FlatList (Scrollable) functions
 	const onRefresh = useCallback(() => {
 		setIsRefreshing(true); 
-		fetchCards(userUid as string).then(
-			cards=> setCardData(cards as CardModelWithUid[])
-		).then(() => setIsRefreshing(false));
+		// executed synchronously? 
+		dispatch(fetchCards);
+		setIsRefreshing(false);
 	}, []);
 
 	return (
@@ -51,10 +53,9 @@ const DashboardScreen: React.FC<StateProps> = ({navigation}: StateProps) => {
 			style={DashboardScreenStyles.container}>
 			<FlatList
 				style={DashboardScreenStyles.list}
-				data={cardData}
+				data={cards}
 				renderItem={renderItem}
 				keyExtractor={({title}, index) => `${title}${index}`}
-				// bounces={false}
 				refreshControl={ 
 					<RefreshControl
 						refreshing={isRefreshing}
