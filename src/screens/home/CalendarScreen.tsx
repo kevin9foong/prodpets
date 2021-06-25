@@ -1,13 +1,22 @@
 import React from 'react'; 
+import { useSelector } from 'react-redux';
+import { selectCards } from '../../redux/selectors/cards';
 import { View, Text, FlatList } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 // import { DashboardCard } from '../../components/home/DashboardCard';
 import CalendarCard from '../../components/home/CalendarCard';
+import { CardModelWithUid } from '../../database/models/cards';
 
 const CalendarScreen: React.FC = ({navigation}: any) => {
 
 	const [date, setDate] = React.useState(new Date());
 
+	const cards = useSelector(selectCards);
+
+	const filterByToday = (card: CardModelWithUid): Boolean => {
+		return card.startdate.toDateString() === date.toDateString() && card.duedate.toDateString() === date.toDateString();
+	}
+	
 	const getDayText = (num: Number): String => {
 		switch (num) {
 			case 1:
@@ -22,7 +31,7 @@ const CalendarScreen: React.FC = ({navigation}: any) => {
 				return 'Fri';
 			case 6:
 				return 'Sat';
-			case 7:
+			case 0:
 				return 'Sun';
 			default:
 				return "";
@@ -58,9 +67,9 @@ const CalendarScreen: React.FC = ({navigation}: any) => {
 					<Text style={{fontSize: 20}}>{getDayText(date.getDay())}</Text>
 				</View>
 				<FlatList
-					data={calendarData}
+					data={cards.filter(filterByToday)}
 					renderItem={renderItem}
-					keyExtractor={({title, time}, index) => `${title}${index}`} 
+					keyExtractor={({title}, index) => `${title}${index}`} 
 				/>
 			</View>
 		</View>
