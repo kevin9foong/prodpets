@@ -1,5 +1,5 @@
 import React from 'react'; 
-import { View, Text } from 'react-native';
+import { View, Text, FlatList } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 // import { DashboardCard } from '../../components/home/DashboardCard';
 import CalendarCard from '../../components/home/CalendarCard';
@@ -10,35 +10,58 @@ const CalendarScreen: React.FC = ({navigation}: any) => {
 
 	const getDayText = (num: Number): String => {
 		switch (num) {
-			case 0:
+			case 1:
 				return 'Mon';
-			case 1: 
+			case 2: 
 				return 'Tue';
-			case 2:
-				return 'Wed';
 			case 3:
-				return 'Thu';
+				return 'Wed';
 			case 4:
-				return 'Fri';
+				return 'Thu';
 			case 5:
-				return 'Sat';
+				return 'Fri';
 			case 6:
+				return 'Sat';
+			case 7:
 				return 'Sun';
 			default:
 				return "";
 		}
 	}
 
+	const renderItem = (item: any) => <CalendarCard info={item}/>
+
+	const calendarData = [
+		{
+			title: 'Gym',
+			time: '4pm - 6pm',
+		},
+		{
+			title: 'Work',
+			time: '6pm - 8pm',
+		}
+	];
+
 	return (
 		<View>
 			{/* on long press, open the create card modal with date fields filled in */}
-			<Calendar style={{marginBottom: 30}} enableSwipeMonths={true} minDate={new Date()} onDayPress={day => setDate(new Date(day.dateString))} onDayLongPress={() => navigation.navigate('CreateCardModal')} />
+			<Calendar 
+				style={{marginBottom: 30}} 
+				enableSwipeMonths={true} 
+				minDate={new Date()} 
+				onDayPress={day => setDate(new Date(day.dateString))} 
+				onDayLongPress={() => navigation.navigate('CreateCardModal')} 
+			/>
 			<View style={{marginLeft: 15, display: 'flex', flexDirection: 'row', width: '100%'}}>
 				<View style={{marginRight: 15}}>
 					<Text style={{fontSize: 20}}>{date.getDate()}</Text>
 					<Text style={{fontSize: 20}}>{getDayText(date.getDay())}</Text>
 				</View>
-				<CalendarCard title={"Gym"} time={'4pm - 6pm'} />
+				<FlatList
+					data={calendarData}
+					renderItem={renderItem}
+					keyExtractor={({title, time}, index) => `${title}${index}`} 
+				/>
 			</View>
 		</View>
 	);
