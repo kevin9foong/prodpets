@@ -1,4 +1,4 @@
-import * as React from 'react'; 
+import React from 'react'; 
 import { StatusBar } from 'expo-status-bar';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useSelector } from 'react-redux';
@@ -12,7 +12,7 @@ import NavigatorStyle from '../styles/navigation/Navigator.style';
 import { selectUser } from '../redux/selectors/user';
 
 const AuthStack = createStackNavigator<AuthStackParamList>(); 
-const HomeStack = createStackNavigator<HomeStackParamList>(); 
+const HomeStack = createStackNavigator<HomeStackParamList>();
 
 const Navigator: React.FC = () => {
 	// check if the user exists in the Redux state.
@@ -57,17 +57,17 @@ const HomeStackNavigator = () => {
 				<HomeStack.Screen 
 					name="CreateCardModal" 
 					component={AddCardModal}
-					options={{
+					options={() => ({
 						headerStyle: NavigatorStyle.header,
 						headerTitle: 'Add New Card'
-					}} />
+					})} />
 				<HomeStack.Screen 
 					name="UpdateCardModal" 
 					component={UpdateCardModal}
-					options={{
+					options={() => ({
 						headerStyle: NavigatorStyle.header,
 						headerTitle: 'Edit Card'
-					}} />  
+					})} />  
 			</HomeStack.Group>
 		</HomeStack.Navigator>
 	);

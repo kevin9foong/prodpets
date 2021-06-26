@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import CardModal from '../../components/home/CardModal';
 import { HomeStackParamList } from '../../navigation/types';
 import { CardModel, CardModelWithUid } from '../../database/models/cards';
-import { updateCard } from '../../redux/actions/cards';
+import { updateCard, deleteCard } from '../../redux/actions/cards';
 
 type ScreenProps = StackScreenProps<HomeStackParamList, 'UpdateCardModal'>;
 
@@ -13,7 +13,14 @@ const UpdateCardModal: React.FC<ScreenProps> = ({ route, navigation }: ScreenPro
 	const dispatch = useDispatch();
 	const cardInfo: CardModelWithUid | undefined = route.params; 
 
-	const onFormSubmit = (data: CardModel) => {
+	const onDeleteSubmit = () => {
+		if (cardInfo?.uid) {
+			dispatch(deleteCard(cardInfo.uid)); 
+		}
+		navigation.goBack();
+	};
+
+	const onSaveSubmit = (data: CardModel) => {
 		if (cardInfo.uid) {
 			dispatch(updateCard({uid: cardInfo.uid, ...data}));
 		}
@@ -21,7 +28,12 @@ const UpdateCardModal: React.FC<ScreenProps> = ({ route, navigation }: ScreenPro
 	};
 
 	return (
-		<CardModal cardInfo={cardInfo} onFormSubmit={onFormSubmit} />
+		<CardModal 
+			formType='edit' 
+			cardInfo={cardInfo} 
+			navigation={navigation} 
+			onDeleteSubmit={onDeleteSubmit}
+			onSaveSubmit={onSaveSubmit} />
 	);
 
 };

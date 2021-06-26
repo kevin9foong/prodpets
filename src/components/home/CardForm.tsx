@@ -6,24 +6,85 @@ import {
 	Platform
 } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
-import DateTimePicker from '@react-native-community/datetimepicker';
 
+import DateTimePicker from '@react-native-community/datetimepicker';
 import AndroidDateTimePicker from '../AndroidDateTimePicker';
 import CreateCardModalStyle from '../../styles/components/home/CardForm.style';
 import TextArea from '../TextArea';
 import { CardModel, CardModelWithUid } from '../../database/models/cards';
 
+export type formType = 'edit' | 'create'
+
 type StateProps = {
 	defaultValues?: CardModelWithUid, 
-	onFormSubmit: (data: CardModel) => void
+	onSaveSubmit: (data: CardModel) => void,
+	onDeleteSubmit?: () => void, 
+	navigation: any,  
+	formType: formType
 }
 
-const CardForm: React.FC<StateProps> = ({onFormSubmit, defaultValues}: StateProps) => {
+type UpdateCardModalRightHeaderProps = {
+	onSaveSubmit: () => void,
+	onDeleteSubmit: () => void, 
+}
+
+type CreateCardModalRightHeaderProps = {
+	onSaveSubmit: () => void
+}
+
+const UpdateCardModalRightHeader = ({onDeleteSubmit, onSaveSubmit}: UpdateCardModalRightHeaderProps) => {
+	return <View style={{
+		display: 'flex', 
+		flexDirection: 'row', 
+		paddingHorizontal: 20
+	}}>
+		<View style={{
+			marginRight: 3
+		}}>
+			<Button 
+				title='Delete' 
+				onPress={onDeleteSubmit}/> 
+		</View>
+		<View style={{
+			marginLeft: 3
+		}}>
+			<Button 
+				title='Save' 
+				onPress={onSaveSubmit}/> 
+		</View> 
+	</View>;
+};
+
+const CreateCardModalRightHeader = ({onSaveSubmit}: CreateCardModalRightHeaderProps) => {	
+	return <View
+		style={{ 
+			paddingHorizontal: 20
+		}}>
+		<Button 
+			title='Create' 
+			onPress={onSaveSubmit}/>
+	</View>; 
+};
+
+const CardForm: React.FC<StateProps> = ({onSaveSubmit, onDeleteSubmit, defaultValues, navigation, formType}: StateProps) => {
 	// safe to typecast as userUid has to be not-null to access this screen.
 	const { control, handleSubmit, formState: { errors }} = useForm(); 
-	const onSubmit = (data: CardModel) => {
-		onFormSubmit(data);
+	const onPrimaryButtonPress = (data: CardModel) => {
+		onSaveSubmit(data);
 	}; 
+
+	React.useLayoutEffect(() => {
+		navigation.setOptions({
+			// eslint-disable-next-line react/display-name
+			headerRight: () => formType === 'edit' 
+				? <UpdateCardModalRightHeader 
+					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+					onDeleteSubmit={onDeleteSubmit!} 
+					onSaveSubmit={handleSubmit(onPrimaryButtonPress)} />
+				: <CreateCardModalRightHeader 
+					onSaveSubmit={handleSubmit(onPrimaryButtonPress)} />
+		});
+	});
 
 	return (
 		<View
@@ -135,9 +196,6 @@ const CardForm: React.FC<StateProps> = ({onFormSubmit, defaultValues}: StateProp
 									/>
 							}
 						</View>)}
-				/>
-				<Button title="Submit" 
-					onPress={handleSubmit(onSubmit)}
 				/>
 			</View>
 		</View> 
