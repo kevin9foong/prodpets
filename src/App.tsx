@@ -2,6 +2,7 @@ import { registerRootComponent } from 'expo';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { NavigationContainer } from '@react-navigation/native';
+import { OverflowMenuProvider } from 'react-navigation-header-buttons';
 
 import store from './redux/store';
 import Navigator from './navigation';
@@ -13,7 +14,9 @@ const App = () => {
 		<Provider store={store}> 
 			<AuthContainer>
 				<NavigationContainer>
-					<Navigator /> 
+					<OverflowMenuProvider>
+						<Navigator /> 
+					</OverflowMenuProvider>
 				</NavigationContainer>
 			</AuthContainer>
 		</Provider>

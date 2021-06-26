@@ -1,10 +1,12 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
 import * as React from 'react';
+import { View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { FontAwesome5 } from '@expo/vector-icons'; 
 import { TouchableOpacity } from 'react-native';
+import { Item } from 'react-navigation-header-buttons';
 
 import DashboardScreen from '../screens/home/DashboardScreen';
 import CalendarScreen from '../screens/home/CalendarScreen';
@@ -14,8 +16,30 @@ import { DashboardParamList, CalendarParamList } from './types';
 
 import HomeTabStyle from '../styles/navigation/Navigator.style';
 import themeStyle from '../styles/theme.style';
+import { FontAwesome5HeaderButtons } from '../components/IconHeaderButtons';
 
 const BottomTab = createBottomTabNavigator(); 
+
+const HomeTabRightHeader = () => {
+	return <View style={{
+		paddingHorizontal: 20
+	}}>
+		<FontAwesome5HeaderButtons>
+			<TouchableOpacity>
+				<Item 
+					title='Sort' 
+					iconName='sort' 
+					onPress={() => {}} />
+			</TouchableOpacity>
+			<TouchableOpacity>
+				<Item 
+					title='Profile' 
+					iconName='user-circle' 
+					onPress={() => {}} />
+			</TouchableOpacity>
+		</FontAwesome5HeaderButtons>
+	</View>;
+};
 
 const HomeTab: React.FC = () => {
 	return ( 
@@ -25,7 +49,8 @@ const HomeTab: React.FC = () => {
 				screenOptions={{
 					headerStyle: HomeTabStyle.header, 
 					tabBarActiveTintColor: themeStyle['color-primary-300'], 
-					tabBarButton: props => <TouchableOpacity {...props} />
+					tabBarButton: props => <TouchableOpacity {...props} />,
+					headerRight: () => (<HomeTabRightHeader />)
 				}}
 			>
 				<BottomTab.Screen 
