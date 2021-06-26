@@ -11,11 +11,11 @@ import theme from '../../styles/theme.style';
 const CalendarScreen: React.FC = ({navigation}: any) => {
 
 	// formats date for calendar because calendar requires certain format
-	const getDateString = (date: Date): String => {
+	const getDateString = (date: Date): string => {
 		const month = date.getMonth() + 1;
 
-		return `${date.getFullYear()}-${month < 10 ? '0' + month : month}-${date.getDate()}`
-	}
+		return `${date.getFullYear()}-${month < 10 ? '0' + month : month}-${date.getDate()}`;
+	};
 
 		
 	const [date, setDate] = React.useState(new Date());
@@ -24,20 +24,20 @@ const CalendarScreen: React.FC = ({navigation}: any) => {
 	//selected date represents the date selected by the user
 	const [selectedDate, setSelectedDate] = React.useState({
 		[getDateString(date)]: { selected: true, selectedColor: theme['color-primary-200']}
-	})
+	});
 	
 	// returns a collection of the selected date as well as the marked dates
 	// which are dates with events. 
 	const getMarkedDates = () => {
-		let md: Object = {};
+		const md: Record<string, unknown> = {};
 		cards.forEach(card => {
 			if (typeof card.startdate === 'string') {
 				card.startdate = new Date(card.startdate);
 			}
 			md[getDateString(card.startdate)] = { marked: true };
-		})
+		});
 		return {...md, ...selectedDate};
-	}
+	};
 
 	// marked dates represent dates with events
 	const [markedDates, setMarkedDates] = React.useState(getMarkedDates());
@@ -49,44 +49,44 @@ const CalendarScreen: React.FC = ({navigation}: any) => {
 		setSelectedDate({
 			[dateString]: {selected: true, selectedColor: theme['color-primary-200']}, 
 		}, );
-	}
+	};
 
 	useEffect(() => {
 		setMarkedDates(getMarkedDates());
 	}, [selectedDate]);
 	
-	const filterByToday = (card: CardModelWithUid): Boolean => {
+	const filterByToday = (card: CardModelWithUid): boolean => {
 		if (typeof card.startdate === 'string' || typeof card.duedate === 'string') {
 			card.startdate = new Date(card.startdate);
 			card.duedate = new Date(card.duedate);
 		}
 		return card.startdate.toDateString() === date.toDateString() && card.duedate.toDateString() === date.toDateString();
-	}
+	};
 	
-	const getDayText = (num: Number): String => {
+	const getDayText = (num: number): string => {
 		switch (num) {
-			case 1:
-				return 'Mon';
-			case 2:
-				return 'Tue';
-			case 3:
-				return 'Wed';
-			case 4:
-				return 'Thu';
-			case 5:
-				return 'Fri';
-			case 6:
-				return 'Sat';
-			case 0:
-				return 'Sun';
-			default:
-				return "";
+		case 1:
+			return 'Mon';
+		case 2:
+			return 'Tue';
+		case 3:
+			return 'Wed';
+		case 4:
+			return 'Thu';
+		case 5:
+			return 'Fri';
+		case 6:
+			return 'Sat';
+		case 0:
+			return 'Sun';
+		default:
+			return '';
 		}
-	}
+	};
 
 	const clickHandler = (card: CardModelWithUid) => navigation.navigate('UpdateCardModal', card);
 
-	const renderItem = (item: any) => <CalendarCard info={item} clickHandler={clickHandler}/>
+	const renderItem = (item: any) => <CalendarCard info={item} clickHandler={clickHandler}/>;
 
 	return (
 		<View>
