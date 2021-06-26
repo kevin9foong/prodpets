@@ -13,14 +13,13 @@ type ScreenProps = StackScreenProps<HomeStackParamList, 'CreateCardModal'>;
 const CreateCardModal: React.FC<ScreenProps> = ({ navigation }: ScreenProps) => {
 	const dispatch = useDispatch(); 
 
-	const onFormSubmit = (data: CardModel) => {
+	const onSaveSubmit = (data: CardModel) => {
 		dispatch(addCard(generateUuid(), data)); 
-		// saveCard(userUid, data); 
 		navigation.goBack();
 	};
 
 	return (
-		<CardModal onFormSubmit={onFormSubmit} />
+		<CardModal formType='create' navigation={navigation} onSaveSubmit={onSaveSubmit} />
 	);
 
 };
