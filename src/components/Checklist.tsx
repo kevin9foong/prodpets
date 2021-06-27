@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Text } from 'react-native';
+import { View, TextInput, Text, Button } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import ChecklistStyles from '../styles/components/commons/Checklist';
@@ -20,8 +20,11 @@ const Checklist = ({data = [{content: 'hi', isComplete: true}, {content: 'bye', 
 		<ChecklistItem key={index} data={item} />);
 
 	return (
-		<View>
+		<View style={{display: 'flex'}}>
 			{renderChecklistItems}
+			<ChecklistAdderItem 
+				onPress={(content: string) => 
+				{ if (content && content !== '' ) {setItems([...items, {content, isComplete: false}]);}}} /> 
 		</View>
 	);
 };
@@ -33,10 +36,12 @@ type ChecklistItemProps = {
 const ChecklistItem = ({ data }: ChecklistItemProps) => {
 	return (
 		<View 
-			style={ChecklistStyles.checklistContainer}
+			style={ChecklistStyles.checklistItemContainer}
 			onTouchStart={() => console.log('ive been touched')}>
 			<TextInput 
-				style={ChecklistStyles.textInput}>
+				style={ChecklistStyles.textInput}
+				multiline={true}
+			>
 				{data.content}
 			</TextInput>
 			<View 
@@ -45,6 +50,29 @@ const ChecklistItem = ({ data }: ChecklistItemProps) => {
 					<Text>Toggle</Text>
 				</TouchableOpacity>
 			</View>
+		</View>);
+};
+
+// Controlled Component
+const ChecklistAdderItem = ({onPress}) => {
+	const [content, setContent] = useState<string>(''); 
+
+	return (
+		<View 
+			style={ChecklistStyles.checklistItemContainer}
+		> 
+			<TextInput 
+				multiline={true}
+				placeholder='New checklist entry'
+				style={ChecklistStyles.textInput}
+				value={content}
+				onChangeText={text => setContent(text)}
+			/>
+			<Button 
+				title={'Create'} 
+				onPress={() => { 
+					onPress(content); 
+					setContent('');}} />
 		</View>);
 };
 

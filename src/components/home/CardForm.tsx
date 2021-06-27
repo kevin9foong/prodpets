@@ -92,7 +92,8 @@ const CardForm: React.FC<StateProps> = ({onSaveSubmit, onDeleteSubmit, defaultVa
 			style={CreateCardModalStyle.container}
 		>
 			<View 
-				style={CreateCardModalStyle.topContainer}>
+				style={CreateCardModalStyle.topContainer}
+			>
 				<Controller 
 					defaultValue={defaultValues?.title}
 					name="title"
@@ -142,6 +143,14 @@ const CardForm: React.FC<StateProps> = ({onSaveSubmit, onDeleteSubmit, defaultVa
 			<View
 				style={CreateCardModalStyle.bottomContainer}
 			>	
+				{/* TODO: Wrap in controller component */}
+				<View style={CreateCardModalStyle.fieldContainer}> 
+					<Text
+						style={CreateCardModalStyle.inputLabelDark}>
+							Checklist
+					</Text>
+					<Checklist />
+				</View>
 				<Controller 
 					name="startdate"
 					defaultValue={defaultValues?.startdate ? new Date(defaultValues.startdate) : new Date()}
@@ -198,7 +207,6 @@ const CardForm: React.FC<StateProps> = ({onSaveSubmit, onDeleteSubmit, defaultVa
 							}
 						</View>)}
 				/>
-				<Checklist />
 			</View>
 		</View> 
 	);
