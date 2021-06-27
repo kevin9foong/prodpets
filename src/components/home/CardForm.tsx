@@ -12,6 +12,7 @@ import AndroidDateTimePicker from '../AndroidDateTimePicker';
 import CreateCardModalStyle from '../../styles/components/home/CardForm.style';
 import TextArea from '../TextArea';
 import { CardModel, CardModelWithUid } from '../../database/models/cards';
+import Checklist from '../../components/Checklist';
 
 export type formType = 'edit' | 'create'
 
@@ -197,6 +198,7 @@ const CardForm: React.FC<StateProps> = ({onSaveSubmit, onDeleteSubmit, defaultVa
 							}
 						</View>)}
 				/>
+				<Checklist />
 			</View>
 		</View> 
 	);
