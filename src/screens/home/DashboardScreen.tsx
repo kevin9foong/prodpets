@@ -19,7 +19,6 @@ type StateProps = {
 }
 
 const DashboardScreen: React.FC<StateProps> = ({navigation}: StateProps) => {
-	// const [cardData, setCardData] = useState<CardModelWithUid[]>([]);
 	const cards = useSelector(selectCards); 
 	const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
@@ -34,7 +33,12 @@ const DashboardScreen: React.FC<StateProps> = ({navigation}: StateProps) => {
 	}, []);
 
 	// Card functions
-	const onItemPress = (cardInfo: CardModelWithUid) => navigation.navigate('UpdateCardModal', cardInfo);
+	const onItemPress = (cardInfo: CardModelWithUid) => 
+		navigation.navigate('UpdateCardModal', {
+			...cardInfo, 
+			startdate: cardInfo.startdate.toString(), 
+			duedate: cardInfo.duedate.toString()
+		});
 
 	const renderItem = ({item}: {item: CardModelWithUid}) => <DashboardCard
 		onPress={onItemPress}
