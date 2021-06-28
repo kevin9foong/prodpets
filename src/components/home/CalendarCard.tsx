@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { CardModelWithUid } from '../../database/models/cards';
 import CalendarCardStyles from '../../styles/components/home/CalendarCard.style';
+import { getTimeRange } from '../../util/dateFormat';
 
 type CalendarCardProps = {
   info: {
@@ -10,19 +11,9 @@ type CalendarCardProps = {
   clickHandler: (a: CardModelWithUid) => void,
 }
 
-const CalendarCard = ({info, clickHandler}: CalendarCardProps) => {
+const CalendarCard = ({info, clickHandler}: CalendarCardProps): React.ReactElement => {
 
 	const item = info.item;
-
-	const formatMinutes = (mins: number): string => {
-		return mins === 0 ? '00' : mins.toString();
-	};
-  
-	const getTimeRange = (card: CardModelWithUid): string => {
-		const start = card.startdate.getHours() + ':' + formatMinutes(card.startdate.getMinutes());
-		const end = card.duedate.getHours() + ':' + formatMinutes(card.duedate.getMinutes());
-		return `${start} - ${end}`;
-	};  
 
 	return (
 		<TouchableOpacity
