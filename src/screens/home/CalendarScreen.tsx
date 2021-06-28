@@ -23,18 +23,28 @@ const CalendarScreen: React.FC = ({navigation}: any) => {
 
 	//selected date represents the date selected by the user
 	const [selectedDate, setSelectedDate] = React.useState({
-		[getDateString(date)]: { selected: true, selectedColor: theme['color-primary-200']}
+		[getDateString(date)]: { color: theme['color-primary-300'], textColor: 'white', startingDay: true, endingDay: true}
 	});
 	
 	// returns a collection of the selected date as well as the marked dates
 	// which are dates with events. 
 	const getMarkedDates = () => {
-		const md: Record<string, unknown> = {};
+		const md: Record<string, Object> = {};
 		cards.forEach(card => {
 			if (typeof card.startdate === 'string') {
 				card.startdate = new Date(card.startdate);
+				card.duedate = new Date(card.duedate);
 			}
-			md[getDateString(card.startdate)] = { marked: true };
+			if (card.startdate.toDateString() === card.duedate.toDateString()) {
+				md[getDateString(card.startdate)] = { marked: true, ...md[getDateString(card.startdate)] };
+			} else {
+				let date = new Date(card.startdate.toString());
+				md[getDateString(date)] = { color: theme['color-primary-100'], startingDay: true, ...md[getDateString(date)] };
+				for (date.setDate(date.getDate() + 1); date < card.duedate; date.setDate(date.getDate() + 1)) {
+					md[getDateString(date)] = { color: theme['color-primary-100'], ...md[getDateString(date)] };
+				}
+				md[getDateString(date)] = { color: theme['color-primary-100'], endingDay: true, ...md[getDateString(date)] };
+			}
 		});
 		return {...md, ...selectedDate};
 	};
@@ -47,7 +57,7 @@ const CalendarScreen: React.FC = ({navigation}: any) => {
 		const dateString = day.dateString;
 		setDate(newDate);
 		setSelectedDate({
-			[dateString]: {selected: true, selectedColor: theme['color-primary-200']}, 
+			[dateString]: { color: theme['color-primary-300'], textColor: 'white', startingDay: true, endingDay: true}, 
 		}, );
 	};
 
@@ -60,7 +70,9 @@ const CalendarScreen: React.FC = ({navigation}: any) => {
 			card.startdate = new Date(card.startdate);
 			card.duedate = new Date(card.duedate);
 		}
-		return card.startdate.toDateString() === date.toDateString() && card.duedate.toDateString() === date.toDateString();
+		return (card.startdate.toDateString() === date.toDateString() &&
+			card.duedate.toDateString() === date.toDateString()) ||
+			(card.startdate < date && card.duedate > date);
 	};
 	
 	const clickHandler = (card: CardModelWithUid) => navigation.navigate('UpdateCardModal', card);
@@ -74,6 +86,7 @@ const CalendarScreen: React.FC = ({navigation}: any) => {
 				enableSwipeMonths={true} 
 				minDate={new Date()} 
 				onDayPress={day => handleDateChange(day)} 
+				markingType={'period'}
 				markedDates={markedDates}
 				// onDayLongPress={() => navigation.navigate('CreateCardModal')} 
 			/>

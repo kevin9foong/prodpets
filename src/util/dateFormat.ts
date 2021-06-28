@@ -26,7 +26,14 @@ export const formatMinutes = (mins: number): string => {
 };
 
 export const getTimeRange = (card: CardModelWithUid): string => {
-	const start = card.startdate.getHours() + ':' + formatMinutes(card.startdate.getMinutes());
-	const end = card.duedate.getHours() + ':' + formatMinutes(card.duedate.getMinutes());
+	let start;
+	let end;
+	if (card.startdate.toDateString() === card.duedate.toDateString()) {
+		start = card.startdate.getHours() + ':' + formatMinutes(card.startdate.getMinutes());
+		end = card.duedate.getHours() + ':' + formatMinutes(card.duedate.getMinutes());
+	} else {
+		start = card.startdate.getDate() + "/" + card.startdate.getMonth();
+		end = card.duedate.getDate() + "/" + card.duedate.getMonth();
+	}
 	return `${start} - ${end}`;
 };  
