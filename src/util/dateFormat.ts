@@ -32,8 +32,8 @@ export const getTimeRange = (card: CardModelWithUid): string => {
 		start = card.startdate.getHours() + ':' + formatMinutes(card.startdate.getMinutes());
 		end = card.duedate.getHours() + ':' + formatMinutes(card.duedate.getMinutes());
 	} else {
-		start = card.startdate.getDate() + "/" + card.startdate.getMonth();
-		end = card.duedate.getDate() + "/" + card.duedate.getMonth();
+		start = card.startdate.getDate() + "/" + (card.startdate.getMonth() + 1);
+		end = card.duedate.getDate() + "/" + (card.duedate.getMonth() + 1);
 	}
 	return `${start} - ${end}`;
 };  

@@ -13,8 +13,8 @@ const CalendarScreen: React.FC = ({navigation}: any) => {
 	// formats date for calendar because calendar requires certain format
 	const getDateString = (date: Date): string => {
 		const month = date.getMonth() + 1;
-
-		return `${date.getFullYear()}-${month < 10 ? '0' + month : month}-${date.getDate()}`;
+		const dateNum = date.getDate()
+		return `${date.getFullYear()}-${month < 10 ? '0' + month : month}-${dateNum < 10 ? '0' + dateNum : dateNum}`;
 	};
 
 		
@@ -125,7 +125,7 @@ const CalendarScreen: React.FC = ({navigation}: any) => {
 			card.startdate = new Date(card.startdate);
 			card.duedate = new Date(card.duedate);
 		}
-		return (card.startdate.toDateString() === date.toDateString() &&
+		return (card.startdate.toDateString() === date.toDateString() ||
 			card.duedate.toDateString() === date.toDateString()) ||
 			(card.startdate < date && card.duedate > date);
 	};
