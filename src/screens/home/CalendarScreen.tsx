@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { selectCards } from '../../redux/selectors/cards';
 import { View, Text, FlatList } from 'react-native';
-import { Calendar } from 'react-native-calendars';
+import { Calendar, Agenda } from 'react-native-calendars';
 import CalendarCard from '../../components/home/CalendarCard';
 import { CardModelWithUid } from '../../database/models/cards';
 import theme from '../../styles/theme.style';
@@ -23,7 +23,7 @@ const CalendarScreen: React.FC = ({navigation}: any) => {
 
 	//selected date represents the date selected by the user
 	const [selectedDate, setSelectedDate] = React.useState({
-		[getDateString(date)]: { periods: [{color: theme['color-primary-300'], textColor: 'white', startingDay: true, endingDay: true}]}
+		[getDateString(date)]: { selected: true, selectedColor: theme['color-primary-400']}
 	});
 	
 	const singleEvent = {startingDay: true, endingDay: true, color: theme['color-warning-200']};
@@ -112,7 +112,7 @@ const CalendarScreen: React.FC = ({navigation}: any) => {
 		const dateString = day.dateString;
 		setDate(newDate);
 		setSelectedDate({
-			[dateString]: { periods: [{color: theme['color-primary-300'], textColor: 'white', startingDay: true, endingDay: true}]}, 
+			[dateString]: { selected: true, selectedColor: theme['color-primary-400'], ...markedDates[dateString]}, 
 		}, );
 	};
 
@@ -139,7 +139,6 @@ const CalendarScreen: React.FC = ({navigation}: any) => {
 			<Calendar 
 				style={{marginBottom: 30}} 
 				enableSwipeMonths={true} 
-				minDate={new Date()} 
 				onDayPress={day => handleDateChange(day)} 
 				markingType='multi-period'
 				markedDates={markedDates}
