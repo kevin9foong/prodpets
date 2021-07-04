@@ -1,0 +1,157 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Calendar Card multi day event display 1`] = `
+<View
+  accessible={true}
+  focusable={true}
+  onClick={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    Object {
+      "opacity": 1,
+    }
+  }
+>
+  <View
+    style={
+      Object {
+        "backgroundColor": "#84A9FF",
+        "borderRadius": 20,
+        "flex": 1,
+        "marginBottom": 5,
+        "marginRight": 30,
+        "padding": 10,
+      }
+    }
+  >
+    <Text
+      style={
+        Object {
+          "color": "white",
+          "paddingBottom": 5,
+        }
+      }
+    >
+      dummy Event
+    </Text>
+    <Text
+      style={
+        Object {
+          "color": "white",
+        }
+      }
+    >
+      4/7 - 7/7
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`Calendar Card single day event 1`] = `
+<View
+  accessible={true}
+  focusable={true}
+  onClick={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    Object {
+      "opacity": 1,
+    }
+  }
+>
+  <View
+    style={
+      Object {
+        "backgroundColor": "#84A9FF",
+        "borderRadius": 20,
+        "flex": 1,
+        "marginBottom": 5,
+        "marginRight": 30,
+        "padding": 10,
+      }
+    }
+  >
+    <Text
+      style={
+        Object {
+          "color": "white",
+          "paddingBottom": 5,
+        }
+      }
+    >
+      dummy Event
+    </Text>
+    <Text
+      style={
+        Object {
+          "color": "white",
+        }
+      }
+    >
+      15:24 - 16:00
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`Check Calendar Card click functionality 1`] = `
+<View
+  accessible={true}
+  focusable={true}
+  onClick={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    Object {
+      "opacity": 1,
+    }
+  }
+>
+  <View
+    style={
+      Object {
+        "backgroundColor": "#84A9FF",
+        "borderRadius": 20,
+        "flex": 1,
+        "marginBottom": 5,
+        "marginRight": 30,
+        "padding": 10,
+      }
+    }
+  >
+    <Text
+      style={
+        Object {
+          "color": "white",
+          "paddingBottom": 5,
+        }
+      }
+    >
+      dummy Event
+    </Text>
+    <Text
+      style={
+        Object {
+          "color": "white",
+        }
+      }
+    >
+      15:24 - 16:00
+    </Text>
+  </View>
+</View>
+`;
