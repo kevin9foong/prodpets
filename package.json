@@ -9,11 +9,14 @@
     "format": "eslint --ext .tsx --ext .ts src/ --fix",
     "test": "jest --verbose --coverage",
     "test:update": "jest --verbose --coverage --updateSnapshot",
-    "test:watch": "jest --verbose --watch",
+    "test:watch": "jest --verbose --watchAll",
     "coverage": "jest --verbose --coverage && open ./coverage/lcov-report/index.html"
   },
   "jest": {
-    "preset": "react-native"
+    "preset": "jest-expo",
+    "transformIgnorePatterns": [
+      "node_modules/(?!(jest-)?react-native|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|@sentry/.*)"
+    ]
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.13.0",
@@ -50,6 +53,7 @@
     "react-native-web": "~0.13.12",
     "react-navigation-header-buttons": "^7.0.1",
     "react-redux": "^7.2.4",
+    "react-test-renderer": "16.14.0",
     "redux": "^4.1.0",
     "redux-thunk": "^2.3.0",
     "uuid": "^8.3.2"
@@ -65,7 +69,7 @@
     "@typescript-eslint/parser": "^4.27.0",
     "eslint": "^7.28.0",
     "eslint-plugin-react": "^7.24.0",
-    "jest": "^27.0.6",
+    "jest-expo": "^42.0.0",
     "typescript": "~4.0.0"
   },
   "private": true

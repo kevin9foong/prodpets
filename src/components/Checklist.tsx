@@ -9,15 +9,15 @@ export interface ChecklistItem {
     content: string
 } 
 
-type StateProps = {
+export type StateProps = {
     data: ChecklistItem[]
 };
 
-const Checklist = ({data = [{content: 'hi', isComplete: true}, {content: 'bye', isComplete: true}]}: StateProps): JSX.Element => {
+const Checklist = ({data = []}: StateProps): JSX.Element => {
 	const [items, setItems] = useState(data);
 
 	const renderChecklistItems = items.map((item, index) => 
-		<ChecklistItem key={index} data={item} />);
+		<ChecklistItem onDelete={() => setItems([...items.slice(0, index), ...items.slice(index + 1)])} key={index} data={item} />);
 
 	return (
 		<View style={{display: 'flex'}}>
@@ -30,24 +30,27 @@ const Checklist = ({data = [{content: 'hi', isComplete: true}, {content: 'bye', 
 };
 
 type ChecklistItemProps = { 
-    data: ChecklistItem
+    data: ChecklistItem, 
+	onDelete: () => void
 }
 
-const ChecklistItem = ({ data }: ChecklistItemProps) => {
+export const ChecklistItem = ({ data, onDelete }: ChecklistItemProps): JSX.Element => {
 	return (
 		<View 
 			style={ChecklistStyles.checklistItemContainer}
 			onTouchStart={() => console.log('ive been touched')}>
 			<TextInput 
+				value={data.content}
 				style={ChecklistStyles.textInput}
 				multiline={true}
 			>
-				{data.content}
 			</TextInput>
 			<View 
 				style={ChecklistStyles.statusToggleButton}>
-				<TouchableOpacity>
-					<Text>Toggle</Text>
+				<TouchableOpacity
+					onPress={onDelete}
+				>
+					<Text>Delete</Text>
 				</TouchableOpacity>
 			</View>
 		</View>);
