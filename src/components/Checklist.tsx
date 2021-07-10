@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, TextInput, Text, Button } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { View, TextInput, Button } from 'react-native';
+// TODO: implement in future update
+// import DraggableFlatList from 'react-native-draggable-flatlist';
 
 import ChecklistStyles from '../styles/components/commons/Checklist';
 
@@ -10,72 +11,95 @@ export interface ChecklistItem {
 } 
 
 export type StateProps = {
-    data: ChecklistItem[]
+    data: ChecklistItem[], 
+	onChange: (checklistItems: ChecklistItem[]) => void
 };
 
-const Checklist = ({data = []}: StateProps): JSX.Element => {
-	const [items, setItems] = useState(data);
+const Checklist = ({data = [], onChange}: StateProps): JSX.Element => {
+	const onChangeText = (index: number) =>	(changedText: string) => {
+		const changedItems = [...data]; 
+		changedItems[index] = { ...changedItems[index], content:changedText };
+		onChange(changedItems);
+	}; 
 
-	const renderChecklistItems = items.map((item, index) => 
-		<ChecklistItem onDelete={() => setItems([...items.slice(0, index), ...items.slice(index + 1)])} key={index} data={item} />);
+	const renderChecklistItems = data.map((item, index) => 
+		<ChecklistItem 
+			onChangeText={onChangeText(index)}
+			onDelete={() => onChange([...data.slice(0, index), ...data.slice(index + 1)])} key={index} data={item} />);
 
 	return (
-		<View style={{display: 'flex'}}>
+		<View style={{display: 'flex', width: '100%'}}>
 			{renderChecklistItems}
 			<ChecklistAdderItem 
 				onPress={(content: string) => 
-				{ if (content && content !== '' ) {setItems([...items, {content, isComplete: false}]);}}} /> 
+				{ if (content && content !== '' ) {onChange([...data, {content, isComplete: false}]);}}} /> 
 		</View>
 	);
 };
 
 type ChecklistItemProps = { 
     data: ChecklistItem, 
-	onDelete: () => void
+	onDelete: () => void,
+	onChangeText: (changedText: string) => void
 }
 
-export const ChecklistItem = ({ data, onDelete }: ChecklistItemProps): JSX.Element => {
+export const ChecklistItem = ({ data, onDelete, onChangeText }: ChecklistItemProps): JSX.Element => {
 	return (
 		<View 
-			style={ChecklistStyles.checklistItemContainer}
-			onTouchStart={() => console.log('ive been touched')}>
-			<TextInput 
-				value={data.content}
-				style={ChecklistStyles.textInput}
-				multiline={true}
-			>
-			</TextInput>
-			<View 
-				style={ChecklistStyles.statusToggleButton}>
-				<TouchableOpacity
-					onPress={onDelete}
+			style={data.isComplete 
+				? ChecklistStyles.checklistItemCompletedContainer 
+				: ChecklistStyles.checklistItemContainer} 
+		> 
+			<View
+				style={ChecklistStyles.textInputContainer}>
+				<TextInput 
+					value={data.content}
+					onChangeText={onChangeText}
+					style={ChecklistStyles.textInput}
+					multiline={true}
 				>
-					<Text>Delete</Text>
-				</TouchableOpacity>
+				</TextInput>
+			</View> 
+			<View
+				style={ChecklistStyles.actionButton}>
+				<Button 
+					title={'Delete'} 
+					onPress={onDelete}
+				/>
 			</View>
 		</View>);
 };
 
+type ChecklistAdderItemProps = { 
+	onPress: (checklistContent: string) => void
+}
+
 // Controlled Component
-const ChecklistAdderItem = ({onPress}) => {
+const ChecklistAdderItem = ({onPress}: ChecklistAdderItemProps) => {
 	const [content, setContent] = useState<string>(''); 
 
 	return (
 		<View 
 			style={ChecklistStyles.checklistItemContainer}
 		> 
-			<TextInput 
-				multiline={true}
-				placeholder='New checklist entry'
-				style={ChecklistStyles.textInput}
-				value={content}
-				onChangeText={text => setContent(text)}
-			/>
-			<Button 
-				title={'Create'} 
-				onPress={() => { 
-					onPress(content); 
-					setContent('');}} />
+			<View
+				style={ChecklistStyles.textInputContainer}>
+				<TextInput 
+					multiline={true}
+					placeholder='New checklist entry'
+					style={ChecklistStyles.textInput}
+					value={content}
+					onChangeText={text => setContent(text)}
+				/>
+			</View>
+			<View
+				style={ChecklistStyles.actionButton}>
+				<Button 
+					title={'Create'} 
+					onPress={() => { 
+						onPress(content); 
+						setContent('');}} />
+			</View>
 		</View>);
 };
 

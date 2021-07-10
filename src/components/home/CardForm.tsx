@@ -12,7 +12,7 @@ import AndroidDateTimePicker from '../AndroidDateTimePicker';
 import CreateCardModalStyle from '../../styles/components/home/CardForm.style';
 import TextArea from '../TextArea';
 import { CardModel, CardModelWithUid } from '../../database/models/cards';
-import Checklist from '../../components/Checklist';
+import Checklist, { ChecklistItem } from '../../components/Checklist';
 
 export type formType = 'edit' | 'create'
 
@@ -143,14 +143,24 @@ const CardForm: React.FC<StateProps> = ({onSaveSubmit, onDeleteSubmit, defaultVa
 			<View
 				style={CreateCardModalStyle.bottomContainer}
 			>	
-				{/* TODO: Wrap in controller component */}
-				<View style={CreateCardModalStyle.fieldContainer}> 
-					<Text
-						style={CreateCardModalStyle.inputLabelDark}>
+				<Controller
+					defaultValue={defaultValues?.checklistItems}
+					name="checklistItems"
+					control={control}
+					render={({ field: { onChange, value }}) =>  
+						<View style={CreateCardModalStyle.fieldContainer}> 
+							<Text
+								style={CreateCardModalStyle.inputLabelDark}>
 							Checklist
-					</Text>
-					<Checklist />
-				</View>
+							</Text>
+							<Checklist 
+								onChange={(checklistItems: ChecklistItem[]) => {
+									onChange(checklistItems);
+								}}
+								data={value} />
+						</View>
+					}
+				/>
 				<Controller 
 					name="startdate"
 					defaultValue={defaultValues?.startdate ? new Date(defaultValues.startdate) : new Date()}

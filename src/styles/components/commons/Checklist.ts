@@ -3,30 +3,48 @@ import common from '../../common.style';
 import theme from '../../theme.style';
 
 export default StyleSheet.create({
+	checklistContainer: { 
+		display: 'flex', 
+		width: '100%'
+	}, 
 	checklistItemContainer: {
 		display: 'flex', 
-		flexDirection: 'row', 
+		flexDirection: 'row',
+		justifyContent: 'space-between', 
 		alignItems: 'center', 
 		marginVertical: 5,
 		backgroundColor: theme['color-primary-200'], 
 		borderRadius: 8, 
 		minHeight: 40, 
-		maxHeight: 60
+		maxHeight: 80
+	}, 
+	checklistItemCompletedContainer: {
+		display: 'flex', 
+		flexDirection: 'row',
+		justifyContent: 'space-between', 
+		alignItems: 'center', 
+		marginVertical: 5,
+		backgroundColor: theme['color-success-400'], 
+		borderRadius: 8, 
+		minHeight: 40, 
+		maxHeight: 80
+	}, 
+	textInputContainer: {
+		padding: 8, 
+		flexBasis: 1, 
+		flexGrow: 1, 
+		flexShrink: 0
 	}, 
 	textInput: {
-		height: '100%', 
-		padding: 5, 
-		textAlign: 'center', 
-		marginRight: 60, 
-		textAlignVertical: 'center'
+		flexGrow: 1, 
+		textAlign: 'left',
+		textAlignVertical: 'center', 
+		overflow: 'visible'
 	}, 
-	statusToggleButton: {
-		position: 'absolute', 
-		top: 0, 
-		right: 0,
-		width: 60,
-		height: '100%',
-		// backgroundColor: theme['color-danger-400'],
+	actionButton: { 
+		width: 100, 
+		flexBasis: 'auto', 
+		flexShrink: 0,  
 		borderRadius: 8,
 		justifyContent: 'center', 
 		alignItems: 'center'

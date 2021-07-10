@@ -15,7 +15,6 @@ export type DashboardCardType = {
 
 const DashboardCard = ({
 	cardInfo,  
-	color = themeStyle['color-primary-200'],
 	onPress}: DashboardCardType, 
 ): JSX.Element => {
 	const { title, description } = cardInfo;
@@ -24,15 +23,16 @@ const DashboardCard = ({
 			style={DashboardCardStyle.container}
 			onPress={() => onPress(cardInfo)}
 		> 
-			<View style={DashboardCardStyle.leftContainer} />
-			<View style={DashboardCardStyle.middleContainer}>
-				<Text>{title}</Text>
-				<Text>{description}</Text>
-			</View>
-			<View style={DashboardCardStyle.rightContainer}>
+			<View style={DashboardCardStyle.textContainer}>
+				<Text style={DashboardCardStyle.titleText}>
+					{title}
+				</Text>
+				<Text style={DashboardCardStyle.descriptionText}>
+					{description}
+				</Text>
 			</View>
 		</TouchableOpacity>
-	);
+	); 
 };
 
 export default DashboardCard;

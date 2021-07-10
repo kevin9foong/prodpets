@@ -1,6 +1,7 @@
 import db from '../index';
-import firebase from 'firebase/app';
+// import firebase from 'firebase/app';
 import 'firebase/firestore';
+import { ChecklistItem } from '../../components/Checklist';
 
 export interface CardModelWithUid<DateType = Date> extends CardModel<DateType> {
 	uid: string
@@ -10,7 +11,8 @@ export interface CardModel<DateType = Date> {
     title: string, 
     description: string,
 	startdate: DateType,
-	duedate: DateType
+	duedate: DateType, 
+	checklistItems: ChecklistItem[]
 }
 
 // make sure we use the local offline store as much as possible 
@@ -50,7 +52,7 @@ export const fetchCards = async (userUid: string): Promise<CardModelWithUid[]> =
 
 	// need to store into Redux store. 
 	return Promise.all(cardsDataPromises).then(
-		cardsData => {
+		(cardsData) => {
 			return cardsData.map(card => {
 				return ({
 					...card,
