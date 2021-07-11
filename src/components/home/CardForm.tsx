@@ -12,6 +12,7 @@ import AndroidDateTimePicker from '../AndroidDateTimePicker';
 import CreateCardModalStyle from '../../styles/components/home/CardForm.style';
 import TextArea from '../TextArea';
 import { CardModel, CardModelWithUid } from '../../database/models/cards';
+import Checklist, { ChecklistItem } from '../../components/Checklist';
 
 export type formType = 'edit' | 'create'
 
@@ -42,6 +43,7 @@ const UpdateCardModalRightHeader = ({onDeleteSubmit, onSaveSubmit}: UpdateCardMo
 			marginRight: 3
 		}}>
 			<Button 
+				accessibilityLabel='Delete Card'
 				title='Delete' 
 				onPress={onDeleteSubmit}/> 
 		</View>
@@ -49,6 +51,7 @@ const UpdateCardModalRightHeader = ({onDeleteSubmit, onSaveSubmit}: UpdateCardMo
 			marginLeft: 3
 		}}>
 			<Button 
+				accessibilityLabel='Save Card'
 				title='Save' 
 				onPress={onSaveSubmit}/> 
 		</View> 
@@ -61,6 +64,7 @@ const CreateCardModalRightHeader = ({onSaveSubmit}: CreateCardModalRightHeaderPr
 			paddingHorizontal: 20
 		}}>
 		<Button 
+			accessibilityLabel='Create Card'
 			title='Create' 
 			onPress={onSaveSubmit}/>
 	</View>; 
@@ -91,7 +95,8 @@ const CardForm: React.FC<StateProps> = ({onSaveSubmit, onDeleteSubmit, defaultVa
 			style={CreateCardModalStyle.container}
 		>
 			<View 
-				style={CreateCardModalStyle.topContainer}>
+				style={CreateCardModalStyle.topContainer}
+			>
 				<Controller 
 					defaultValue={defaultValues?.title}
 					name="title"
@@ -141,6 +146,24 @@ const CardForm: React.FC<StateProps> = ({onSaveSubmit, onDeleteSubmit, defaultVa
 			<View
 				style={CreateCardModalStyle.bottomContainer}
 			>	
+				<Controller
+					defaultValue={defaultValues?.checklistItems}
+					name="checklistItems"
+					control={control}
+					render={({ field: { onChange, value }}) =>  
+						<View style={CreateCardModalStyle.fieldContainer}> 
+							<Text
+								style={CreateCardModalStyle.inputLabelDark}>
+							Checklist
+							</Text>
+							<Checklist 
+								onChange={(checklistItems: ChecklistItem[]) => {
+									onChange(checklistItems);
+								}}
+								data={value} />
+						</View>
+					}
+				/>
 				<Controller 
 					name="startdate"
 					defaultValue={defaultValues?.startdate ? new Date(defaultValues.startdate) : new Date()}

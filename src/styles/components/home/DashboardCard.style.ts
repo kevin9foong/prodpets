@@ -12,19 +12,14 @@ export default StyleSheet.create({
 		borderRadius: 15,
 		backgroundColor: theme['color-primary-200']
 	}, 
-	leftContainer: {
-		flex: 1,
-		borderRadius: 15,
-		backgroundColor: theme['color-primary-300']
-	},
-	middleContainer: {
+	textContainer: {
 		alignItems: 'center',
 		justifyContent: 'center',
 		flex: 10
-	},
-	rightContainer: {
-		flex: 3,
-		borderRadius: 15, 
-		backgroundColor: theme['color-primary-400']
-	}
+	}, 
+	titleText: {
+		...theme.mediumButtonText,
+		marginBottom: 5
+	}, 
+	descriptionText: {}
 });

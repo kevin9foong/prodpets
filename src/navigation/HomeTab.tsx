@@ -72,12 +72,18 @@ const HomeTab: React.FC = () => {
 				{/* TODO: fix this styling/find a better position for this. */}
 				<BottomTab.Screen 
 					name="Create"
-					// change to some placeholder.
 					component={CalendarScreenNavigator}
 					options={{
 						tabBarLabel: () => null,
 						tabBarIcon: () => 
-							<TabBarIcon name="plus-circle" size={38} color={themeStyle['color-primary-300']} />
+							<View 
+								accessible={true}
+								accessibilityLabel='Add Card'>
+								<TabBarIcon 
+									name="plus-circle" 
+									size={38} 
+									color={themeStyle['color-primary-300']} />
+							</View>
 					}}
 					listeners={({navigation}) => ({
 						tabPress: e => {
