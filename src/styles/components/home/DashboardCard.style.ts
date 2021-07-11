@@ -9,17 +9,25 @@ export default StyleSheet.create({
 		minHeight: 100, 
 		marginHorizontal: 10,
 		marginVertical: 5, 
-		borderRadius: 15,
+		// borderRadius: 15,
 		backgroundColor: theme['color-primary-200']
 	}, 
+	coloredIndicator: {
+		width: 20
+	}, 
 	textContainer: {
-		alignItems: 'center',
-		justifyContent: 'center',
+		marginHorizontal: 20, 
+		marginVertical: 10, 
+		alignItems: 'flex-start', 
+		justifyContent: 'space-between',
 		flex: 10
 	}, 
 	titleText: {
-		...theme.mediumButtonText,
-		marginBottom: 5
+		fontSize: 16, 
+		fontWeight: '500'
 	}, 
-	descriptionText: {}
+	descriptionText: {}, 
+	timingText: {
+		color: theme['ios-system-blue-light']
+	}
 });
