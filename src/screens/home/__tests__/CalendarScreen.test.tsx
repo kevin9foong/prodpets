@@ -25,6 +25,5 @@ test('Renders calendar card correctly according to data', () => {
   </Provider>
 	);
 
-
   expect(getByText('Task Number 1')).toBeTruthy();
 })

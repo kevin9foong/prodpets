@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { selectCards } from '../../redux/selectors/cards';
 import { View, Text, FlatList } from 'react-native';
-import { Calendar, Agenda } from 'react-native-calendars';
+import { Calendar } from 'react-native-calendars';
 import CalendarCard from '../../components/home/CalendarCard';
 import { CardModelWithUid } from '../../database/models/cards';
 import theme from '../../styles/theme.style';
