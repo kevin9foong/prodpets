@@ -19,7 +19,7 @@ test('Renders calendar card correctly according to data', () => {
 
   const store = createStore(rootReducer, { cards: cards });
 
-  const { getByText, debug } = render(
+  const { getByText } = render(
   <Provider store={store}>
     <CalendarScreen />
   </Provider>
