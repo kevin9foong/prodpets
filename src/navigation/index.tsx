@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import AuthScreen from '../screens/AuthScreen';
 import AddCardModal from '../screens/home/CreateCardModal';
 import UpdateCardModal from '../screens/home/UpdateCardModal';
+import ViewCardModal from '../screens/home/ViewCardModal';
 import HomeTabNavigator from './HomeTab';
 import { AuthStackParamList, HomeStackParamList } from './types';
 import NavigatorStyle from '../styles/navigation/Navigator.style';
@@ -61,6 +62,14 @@ export const HomeStackNavigator = () => {
 						headerStyle: NavigatorStyle.header,
 						headerTitle: 'Add New Card'
 					})} />
+				<HomeStack.Screen 
+					name="ViewCardModal"
+					component={ViewCardModal}
+					options={() => ({
+						headerStyle: NavigatorStyle.header, 
+						headerTitle: 'View Card'
+					})}
+				/>
 				<HomeStack.Screen 
 					name="UpdateCardModal" 
 					component={UpdateCardModal}

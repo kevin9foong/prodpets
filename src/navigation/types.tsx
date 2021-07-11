@@ -19,6 +19,7 @@ export type AuthStackParamList = {
 export type HomeStackParamList = {
     Home: undefined; 
     CreateCardModal: undefined; 
+    ViewCardModal: CardModelWithUid; 
     UpdateCardModal: CardModelWithUid;
   };
   
@@ -29,7 +30,8 @@ export type HomeTabParamList = {
   
 export type DashboardParamList = {
     DashboardScreen: undefined;
-    UpdateCardModal: CardModelWithUidSerializable
+    UpdateCardModal: CardModelWithUidSerializable;
+    ViewCardModal: CardModelWithUidSerializable;
   };
   
 export type CalendarParamList = {

@@ -14,7 +14,7 @@ import TextArea from '../TextArea';
 import { CardModel, CardModelWithUid } from '../../database/models/cards';
 import Checklist, { ChecklistItem } from '../../components/Checklist';
 
-export type formType = 'edit' | 'create'
+export type formType = 'edit' | 'create' | 'view'
 
 type StateProps = {
 	defaultValues?: CardModelWithUid, 
