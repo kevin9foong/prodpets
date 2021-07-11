@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { CardModelWithUid } from '../../database/models/cards';
 import DashboardCardStyle from '../../styles/components/home/DashboardCard.style';
-import themeStyle from '../../styles/theme.style';
 
 // use different type since Card may include 
 // other fields eg. color etc

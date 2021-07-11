@@ -15,7 +15,9 @@ const offlineEnhancer = offline(offlineConfig);
 // dispatching action & when the action reaches the reducer. 
 // use middleware to deal with types of actions and perform side effects eg. async functionality  
 // see: https://redux.js.org/tutorials/fundamentals/part-4-store for details on writing custom middleware.
-const store = createStore(rootReducer, undefined, 
+const store = createStore(
+	rootReducer, 
+	{}, // initial state
 	compose(
 		applyMiddleware(thunkMiddleware), 
 		offlineEnhancer));

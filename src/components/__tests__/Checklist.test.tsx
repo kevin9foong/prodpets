@@ -55,8 +55,6 @@ it('deletes checklist item when delete button is clicked', () => {
 	const deleteButtons = getAllByText('Delete'); 
 	fireEvent.press(deleteButtons[0]);
 
-	console.log('ChecklistItems', checklistProps.data);
-
 	rerender(<Checklist 
 		onChange={checklistProps.onChange}
 		data={checklistProps.data} />);

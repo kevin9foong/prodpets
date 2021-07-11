@@ -43,6 +43,7 @@ const UpdateCardModalRightHeader = ({onDeleteSubmit, onSaveSubmit}: UpdateCardMo
 			marginRight: 3
 		}}>
 			<Button 
+				accessibilityLabel='Delete Card'
 				title='Delete' 
 				onPress={onDeleteSubmit}/> 
 		</View>
@@ -50,6 +51,7 @@ const UpdateCardModalRightHeader = ({onDeleteSubmit, onSaveSubmit}: UpdateCardMo
 			marginLeft: 3
 		}}>
 			<Button 
+				accessibilityLabel='Save Card'
 				title='Save' 
 				onPress={onSaveSubmit}/> 
 		</View> 
@@ -62,6 +64,7 @@ const CreateCardModalRightHeader = ({onSaveSubmit}: CreateCardModalRightHeaderPr
 			paddingHorizontal: 20
 		}}>
 		<Button 
+			accessibilityLabel='Create Card'
 			title='Create' 
 			onPress={onSaveSubmit}/>
 	</View>; 

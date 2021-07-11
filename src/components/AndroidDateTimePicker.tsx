@@ -19,7 +19,7 @@ const AndroidDateTimePicker = ({value, onChange}: StateProps): JSX.Element => {
 		setMode(currentMode);
 	};
     
-	const onChangeDateTime = (event: any, selectedValue: Date | undefined) => {
+	const onChangeDateTime = (_event: unknown, selectedValue: Date | undefined) => {
 		const currentDate = selectedValue || value;
 		setShow(false);
 		onChange(currentDate);
