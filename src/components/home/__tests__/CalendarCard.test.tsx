@@ -14,8 +14,8 @@ test('Calendar Card single day event', () => {
     }
   };
   const clickHandler = (card: CardModelWithUid) => {};
-  const { toJSON } = render(<CalendarCard info={info} clickHandler={clickHandler}/>)
-  expect(toJSON()).toMatchSnapshot();
+  const { getByText } = render(<CalendarCard info={info} clickHandler={clickHandler}/>)
+  expect(getByText('15:24 - 16:00')).toBeTruthy();
 })
 
 test('Calendar Card multi day event display', () => {
@@ -29,6 +29,6 @@ test('Calendar Card multi day event display', () => {
     }
   };
   const clickHandler = (card: CardModelWithUid) => {};
-  const { toJSON } = render(<CalendarCard info={info} clickHandler={clickHandler}/>)
-  expect(toJSON()).toMatchSnapshot();
+  const { getByText } = render(<CalendarCard info={info} clickHandler={clickHandler}/>)
+  expect(getByText('4/7 - 7/7')).toBeTruthy();
 })
