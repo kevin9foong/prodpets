@@ -85,10 +85,7 @@ const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: S
 		if (defaultValues?.uid) {
 			const updatedCardData = {uid: defaultValues.uid, ...data};
 			dispatch(updateCard(updatedCardData));
-			navigation.navigate('ViewCardModal', {uid: defaultValues.uid, 
-				...data,
-				startdate: data.startdate.toString(), 
-				duedate: data.duedate.toString()});
+			navigation.navigate('ViewCardModal', {uid: defaultValues.uid});
 		} else {
 			navigation.goBack();
 		}
@@ -186,6 +183,7 @@ const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: S
 							Checklist
 							</Text>
 							<Checklist 
+								isEditMode={true}
 								onChange={(checklistItems: ChecklistItem[]) => {
 									onChange(checklistItems);
 								}}

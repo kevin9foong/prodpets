@@ -14,10 +14,11 @@ const CardModal = ({ cardInfo, navigation, formType }: StateProps): JSX.Element 
 	return (
 		<KeyboardAwareScrollView
 			style={{flex: 1}}>
-			{formType === 'view' 
+			{formType === 'view'
 				? <ViewCard 
 					navigation={navigation} 
-					cardInfo={cardInfo} />
+					// precondition: cardInfo must exist if formType === 'view' 
+					cardInfo={cardInfo!} />
 			// for create and edit
 				: <CardForm 
 					formType={formType}

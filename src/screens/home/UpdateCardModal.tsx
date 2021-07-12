@@ -1,39 +1,23 @@
 import React from 'react'; 
 import { StackScreenProps } from '@react-navigation/stack';
-import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import CardModal from '../../components/home/CardModal';
-import { HomeStackParamList } from '../../navigation/types';
-import { CardModel, CardModelWithUid } from '../../database/models/cards';
-import { updateCard, deleteCard } from '../../redux/actions/cards';
+import { CardUid, HomeStackParamList } from '../../navigation/types';
+import { selectCardByUID } from '../../redux/selectors/cards';
 
 type ScreenProps = StackScreenProps<HomeStackParamList, 'UpdateCardModal'>;
 
 const UpdateCardModal: React.FC<ScreenProps> = ({ route, navigation }: ScreenProps) => {
-	const dispatch = useDispatch();
-	const cardInfo: CardModelWithUid | undefined = route.params; 
+	const cardUid: CardUid = route.params; 
 
-	const onDeleteSubmit = () => {
-		if (cardInfo?.uid) {
-			dispatch(deleteCard(cardInfo.uid)); 
-		}
-		navigation.goBack();
-	};
-
-	const onSaveSubmit = (data: CardModel) => {
-		if (cardInfo.uid) {
-			dispatch(updateCard({uid: cardInfo.uid, ...data}));
-		}
-		navigation.goBack();
-	};
+	const cardInfo = useSelector(selectCardByUID(cardUid.uid));
 
 	return (
 		<CardModal 
 			formType='edit' 
 			cardInfo={cardInfo} 
-			navigation={navigation} 
-			onDeleteSubmit={onDeleteSubmit}
-			onSaveSubmit={onSaveSubmit} />
+			navigation={navigation} />
 	);
 
 };

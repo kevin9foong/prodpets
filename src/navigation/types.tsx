@@ -5,6 +5,10 @@
 
 import { CardModelWithUid } from '../database/models/cards';
 
+export type CardUid = {
+  uid: string
+}
+
 export type CardModelWithUidSerializable = 
   Omit<CardModelWithUid, 'startdate' | 'duedate'> 
   & {
@@ -19,8 +23,8 @@ export type AuthStackParamList = {
 export type HomeStackParamList = {
     Home: undefined; 
     CreateCardModal: undefined; 
-    ViewCardModal: CardModelWithUid; 
-    UpdateCardModal: CardModelWithUid;
+    ViewCardModal: CardUid; 
+    UpdateCardModal: CardUid;
   };
   
 export type HomeTabParamList = {
@@ -30,8 +34,8 @@ export type HomeTabParamList = {
   
 export type DashboardParamList = {
     DashboardScreen: undefined;
-    UpdateCardModal: CardModelWithUidSerializable;
-    ViewCardModal: CardModelWithUidSerializable;
+    UpdateCardModal: CardUid;
+    ViewCardModal: CardUid;
   };
   
 export type CalendarParamList = {

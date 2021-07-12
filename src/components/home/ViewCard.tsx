@@ -2,45 +2,32 @@ import React from 'react';
 import { Platform } from 'react-native';
 import { View, Button, Text } from 'react-native'; 
 import { MarkdownView } from 'react-native-markdown-view';
+import { useForm, Controller } from 'react-hook-form';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import Checklist from '../Checklist';
-import { ChecklistItem } from '../Checklist';
+import Checklist, { ChecklistItem } from '../Checklist';
 import AndroidDateTimePicker from '../AndroidDateTimePicker';
 import { useDispatch } from 'react-redux';
 
 import { CardModelWithUid } from '../../database/models/cards';
-import { deleteCard } from '../../redux/actions/cards';
+import { updateCard } from '../../redux/actions/cards';
 
 import CreateCardModalStyle from '../../styles/components/home/CardForm.style';
+import { useEffect } from 'react';
 
-type UpdateCardModalRightHeaderProps = {
+type ViewCardModalRightHeaderProps = {
 	onEditSubmit: () => void,
-	onDeleteSubmit: () => void, 
 }
 
-const ViewCardModalRightHeader = ({onDeleteSubmit, onEditSubmit}: UpdateCardModalRightHeaderProps) => {
-	return <View style={{
-		display: 'flex', 
-		flexDirection: 'row', 
-		paddingHorizontal: 20
-	}}>
-		<View style={{
-			marginRight: 3
+const ViewCardModalRightHeader = ({ onEditSubmit }: ViewCardModalRightHeaderProps) => {
+	return <View
+		style={{ 
+			paddingHorizontal: 20
 		}}>
-			<Button 
-				accessibilityLabel='Delete Card'
-				title='Delete' 
-				onPress={onDeleteSubmit}/> 
-		</View>
-		<View style={{
-			marginLeft: 3
-		}}>
-			<Button 
-				accessibilityLabel='Edit Card'
-				title='Edit' 
-				onPress={onEditSubmit}/> 
-		</View> 
-	</View>;
+		<Button 
+			accessibilityLabel='Edit Card'
+			title='Edit' 
+			onPress={onEditSubmit}/>
+	</View>; 
 };
 
 type StateProps = { 
@@ -50,26 +37,24 @@ type StateProps = {
 
 const ViewCard = ({ navigation, cardInfo }: StateProps): JSX.Element => {
 	const dispatch = useDispatch(); 
+	const { control, setValue } = useForm(); 
 
-	const onDeleteSubmit = () => {
-		if (cardInfo?.uid) {
-			dispatch(deleteCard(cardInfo.uid)); 
-		}
-		navigation.goBack();
-	};
+	useEffect(() => {
+		setValue('checklistItems', cardInfo.checklistItems);
+	}, [cardInfo]);
 
 	const onEditSubmit = () => {
-		navigation.navigate('UpdateCardModal', {
-			...cardInfo
-		});
+		navigation.navigate('UpdateCardModal', {uid: cardInfo.uid});
 	};
 
+	const dispatchUpdateCardAction = (checklistItems: ChecklistItem[]) => {
+		dispatch(updateCard({ ...cardInfo, checklistItems })); 
+	};
+ 
 	React.useLayoutEffect(() => {
 		navigation.setOptions({
 			// eslint-disable-next-line react/display-name
 			headerRight: () => <ViewCardModalRightHeader 
-				// TODO: fix this assertion 
-				onDeleteSubmit={onDeleteSubmit} 
 				onEditSubmit={onEditSubmit} />
 		});
 	});
@@ -110,16 +95,25 @@ const ViewCard = ({ navigation, cardInfo }: StateProps): JSX.Element => {
 			style={CreateCardModalStyle.bottomContainer}
 		>	
 			<View style={CreateCardModalStyle.fieldContainer}> 
-				<Text
-					style={CreateCardModalStyle.inputLabelDark}>
+				{(cardInfo.checklistItems && cardInfo.checklistItems.length > 0) 
+					? <><Text
+						style={CreateCardModalStyle.inputLabelDark}>
 						Checklist
-				</Text>
-				{/* TODO: replace with view mode checklist */}
-				<Checklist 
-					onChange={(checklistItems: ChecklistItem[]) => {
-						{}
-					}}
-					data={cardInfo.checklistItems} />
+					</Text>
+					<Controller
+						name="checklistItems"
+						control={control}
+						render={({ field: { onChange, value }}) => 
+							<Checklist 
+								isEditMode={false}
+								onChange={(checklistItems: ChecklistItem[]) => {
+									onChange(checklistItems);
+									dispatchUpdateCardAction(checklistItems);
+								}}
+								data={value} />
+						}/></>
+					: null
+				}
 			</View>
 			<View 
 				style={CreateCardModalStyle.fieldContainer}
