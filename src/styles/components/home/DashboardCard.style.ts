@@ -9,22 +9,25 @@ export default StyleSheet.create({
 		minHeight: 100, 
 		marginHorizontal: 10,
 		marginVertical: 5, 
-		borderRadius: 15,
+		// borderRadius: 15,
 		backgroundColor: theme['color-primary-200']
 	}, 
-	leftContainer: {
-		flex: 1,
-		borderRadius: 15,
-		backgroundColor: theme['color-primary-300']
-	},
-	middleContainer: {
-		alignItems: 'center',
-		justifyContent: 'center',
+	coloredIndicator: {
+		width: 20
+	}, 
+	textContainer: {
+		marginHorizontal: 20, 
+		marginVertical: 10, 
+		alignItems: 'flex-start', 
+		justifyContent: 'space-between',
 		flex: 10
-	},
-	rightContainer: {
-		flex: 3,
-		borderRadius: 15, 
-		backgroundColor: theme['color-primary-400']
+	}, 
+	titleText: {
+		fontSize: 16, 
+		fontWeight: '500'
+	}, 
+	descriptionText: {}, 
+	timingText: {
+		color: theme['ios-system-blue-light']
 	}
 });

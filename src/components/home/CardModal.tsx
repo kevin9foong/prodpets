@@ -1,8 +1,7 @@
 import React from 'react'; 
-import { ScrollView } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import CardForm, { formType } from '../../components/home/CardForm';
 import { CardModel, CardModelWithUid } from '../../database/models/cards';
-import CardModalStyle from '../../styles/components/home/CardModal.style';
 
 type StateProps = { 
     onSaveSubmit: (data: CardModel) => void, 
@@ -14,17 +13,15 @@ type StateProps = {
 
 const CardModal = ({ onSaveSubmit, onDeleteSubmit, cardInfo, navigation, formType }: StateProps): JSX.Element => {
 	return (
-		<ScrollView	
-			bounces={false}
-			contentContainerStyle={CardModalStyle.scrollableContainer}	
-		>	
+		<KeyboardAwareScrollView
+			style={{flex: 1}}>
 			<CardForm 
 				formType={formType}
 				navigation={navigation}
 				defaultValues={cardInfo}
 				onDeleteSubmit={onDeleteSubmit}
 				onSaveSubmit={onSaveSubmit}/> 
-		</ScrollView>
+		</KeyboardAwareScrollView>
 	);
 };
 
