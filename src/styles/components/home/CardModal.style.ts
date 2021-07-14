@@ -4,7 +4,6 @@ import theme from '../../theme.style';
 
 export default StyleSheet.create({
 	scrollableContainer: { 
-		flex: 1, 
 		display: 'flex'
 	}
 });

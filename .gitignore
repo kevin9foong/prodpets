@@ -14,3 +14,6 @@ src/config/secrets.*
 
 # macOS
 .DS_Store
+
+# testing coverage
+coverage/

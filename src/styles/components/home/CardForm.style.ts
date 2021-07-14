@@ -4,7 +4,9 @@ import theme from '../../theme.style';
 
 export default StyleSheet.create({
 	container: {
-		...common.homeContainer,
+		display: 'flex',
+		// to give leeway for ScrollView 
+		marginBottom: '25%'
 	}, 
 	topContainer: {
 		backgroundColor: theme['color-primary-300'],
@@ -42,6 +44,7 @@ export default StyleSheet.create({
 		color: '#000'
 	},
 	bottomContainer: {
+		display: 'flex'
 	}, 
 	fieldContainer: {
 		...common.inputContainer,

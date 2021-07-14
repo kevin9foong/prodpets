@@ -40,7 +40,7 @@ const AuthStackNavigator = () => {
 	);
 };
 
-const HomeStackNavigator = () => {
+export const HomeStackNavigator = () => {
 	return (
 		<HomeStack.Navigator>
 			<HomeStack.Group
