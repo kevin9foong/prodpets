@@ -3,15 +3,18 @@ import db from '../index';
 import 'firebase/firestore';
 import { ChecklistItem } from '../../components/Checklist';
 
+export type cardStatus = 'completed' | 'in progress' | 'incomplete';
 export interface CardModelWithUid<DateType = Date> extends CardModel<DateType> {
 	uid: string
 }
-
 export interface CardModel<DateType = Date> { 
     title: string, 
     description: string,
 	startdate: DateType,
 	duedate: DateType, 
+	effortHours: number, 
+	tags: string[],
+	status: cardStatus, 
 	checklistItems: ChecklistItem[]
 }
 

@@ -5,7 +5,7 @@ it('generates the correct time range string for same date', () => {
 	const endDate = new Date(2021, 6, 12, 11, 40); 
 
 	const formattedString = getTimeRange(startDate, endDate); 
-	expect(formattedString).toBe('12 Jul, 10:30 - 11:40');
+	expect(formattedString).toBe('12 Jul 21, 10:30 - 11:40');
 });
 
 it('generates the correct time range string for different date', () => {
@@ -14,5 +14,5 @@ it('generates the correct time range string for different date', () => {
 
 	const formattedString = getTimeRange(startDate, endDate); 
 	console.log(formattedString);
-	expect(formattedString).toBe('13 Jun, 9:12 - 12 Jul, 11:40');
+	expect(formattedString).toBe('13 Jun 21, 9:12 - 12 Jul 21, 11:40');
 });

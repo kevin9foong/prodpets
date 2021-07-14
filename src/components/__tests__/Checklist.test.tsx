@@ -68,3 +68,19 @@ it('deletes checklist item when delete button is clicked', () => {
 	const notFoundChecklistItem = queryByDisplayValue('hello'); 
 	expect(notFoundChecklistItem).toBeNull();
 });
+
+it('pressing checklist item in view mode updates its isCompleted value', () => {
+	checklistProps.data = 
+	[{content: 'hello', isComplete: true}, {content: 'world', isComplete: true}]; 
+
+	const { getByText } = render(
+		<Checklist 
+			isEditMode={false}
+			onChange={checklistProps.onChange}
+			data={checklistProps.data} />);
+
+	const checklistItem = getByText('hello'); 
+	fireEvent.press(checklistItem);
+	
+	expect(checklistProps.data[0].isComplete).toBe(false); 
+});
