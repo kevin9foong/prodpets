@@ -78,7 +78,7 @@ const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: S
 		if (defaultValues?.uid) {
 			dispatch(deleteCard(defaultValues.uid)); 
 		}
-		navigation.goBack();
+		navigation.navigate('Home');
 	};
 	
 	const onUpdateSubmit = (data: CardModel) => {
