@@ -6,14 +6,14 @@ import { Calendar } from 'react-native-calendars';
 import CalendarCard from '../../components/home/CalendarCard';
 import { CardModelWithUid } from '../../database/models/cards';
 import theme from '../../styles/theme.style';
-import { getDayText } from '../../util/dateFormat';
+import { getDayText } from '../../util/timeformatter';
 
 const CalendarScreen: React.FC = ({navigation}: any) => {
 
 	// formats date for calendar because calendar requires certain format
 	const getDateString = (date: Date): string => {
 		const month = date.getMonth() + 1;
-		const dateNum = date.getDate()
+		const dateNum = date.getDate();
 		return `${date.getFullYear()}-${month < 10 ? '0' + month : month}-${dateNum < 10 ? '0' + dateNum : dateNum}`;
 	};
 
@@ -29,79 +29,79 @@ const CalendarScreen: React.FC = ({navigation}: any) => {
 	const singleEvent = {startingDay: true, endingDay: true, color: theme['color-warning-200']};
 	const colors = [theme['color-danger-200'], theme['color-info-200'], theme['color-success-200']];
 
-	const getEventColor = (start: Date, end: Date, md: Record<string, Object>): String => {
+	const getEventColor = (start: Date, end: Date, markedDate: Record<string, Object>): string => {
 		let count = 0;
 		for (let date = new Date(start.toString()); date <= end; date.setDate(date.getDate() + 1)) {
-			if (md.hasOwnProperty(getDateString(date))) {
-				if (md[getDateString(date)].hasOwnProperty('periods')) {
-					count = Math.max(count, md[getDateString(date)].periods.length);
+			if (markedDate.hasOwnProperty(getDateString(date))) {
+				if (markedDate[getDateString(date)].hasOwnProperty('periods')) {
+					count = Math.max(count, markedDate[getDateString(date)].periods.length);
 				}
 			}
 		}
 		return colors[count];
-	}
+	};
 
 	// returns a collection of the selected date as well as the marked dates
 	// which are dates with events. 
 	const getMarkedDates = () => {
-		const md: Record<string, Object> = {};
+		const markedDate: Record<string, Object> = {};
 		cards.forEach(card => {
 			if (typeof card.startdate === 'string') {
 				card.startdate = new Date(card.startdate);
 				card.duedate = new Date(card.duedate);
 			}
 			if (card.startdate.toDateString() === card.duedate.toDateString()) {
-				if (md.hasOwnProperty(getDateString(card.startdate))) {
-					if (md[getDateString(card.startdate)].hasOwnProperty('period')) {
-						if (!md[getDateString(card.startdate)].periods.includes(singleEvent)) {
-							md[getDateString(card.startdate)].periods.push(singleEvent);
+				if (markedDate.hasOwnProperty(getDateString(card.startdate))) {
+					if (markedDate[getDateString(card.startdate)].hasOwnProperty('period')) {
+						if (!markedDate[getDateString(card.startdate)].periods.includes(singleEvent)) {
+							markedDate[getDateString(card.startdate)].periods.push(singleEvent);
 						}
 					}
 				} else {
-					md[getDateString(card.startdate)] = { periods: [singleEvent], ...md[getDateString(card.startdate)] };
+					markedDate[getDateString(card.startdate)] = { periods: [singleEvent], ...markedDate[getDateString(card.startdate)] };
 				}
 			} else {
-				let date = new Date(card.startdate.toString());
-				let eventColor = getEventColor(card.startdate, card.duedate, md);
-				if (md.hasOwnProperty(getDateString(date))) {
-					if (md[getDateString(date)].hasOwnProperty('periods')) {
-						const len = md[getDateString(date)].periods.length;
+				const date = new Date(card.startdate.toString());
+				const eventColor = getEventColor(card.startdate, card.duedate, markedDate);
+				if (markedDate.hasOwnProperty(getDateString(date))) {
+					if (markedDate[getDateString(date)].hasOwnProperty('periods')) {
+						const len = markedDate[getDateString(date)].periods.length;
 						if (len > 3) {
 							return;
 						}
-						md[getDateString(date)].periods.push({startingDay: true, endingDay: false, color: eventColor});
+						markedDate[getDateString(date)].periods.push({startingDay: true, endingDay: false, color: eventColor});
 					} else {
-						md[getDateString(date)].periods = [{startingDay:true, endingDay: false, color: eventColor}];
+						markedDate[getDateString(date)].periods = [{startingDay:true, endingDay: false, color: eventColor}];
 					}
 				} else {
-					md[getDateString(date)] = {};
-					md[getDateString(date)].periods = [{startingDay:true, endingDay: false, color: eventColor}];
+					markedDate[getDateString(date)] = {};
+					markedDate[getDateString(date)].periods = [{startingDay:true, endingDay: false, color: eventColor}];
 				}
 				for (date.setDate(date.getDate() + 1); date < card.duedate; date.setDate(date.getDate() + 1)) {
-					if (md.hasOwnProperty(getDateString(date))) {
-						if (md[getDateString(date)].hasOwnProperty('periods')) {
-							md[getDateString(date)].periods.push({startingDay: false, endingDay: false, color: eventColor});
+					if (markedDate.hasOwnProperty(getDateString(date))) {
+						if (markedDate[getDateString(date)].hasOwnProperty('periods')) {
+							markedDate[getDateString(date)].periods.push({startingDay: false, endingDay: false, color: eventColor});
 						} else {
-							md[getDateString(date)].periods = [{startingDay:false, endingDay: false, color: eventColor}];
+							markedDate[getDateString(date)].periods = [{startingDay:false, endingDay: false, color: eventColor}];
 						}
 					} else {
-							md[getDateString(date)] = {};
-							md[getDateString(date)].periods = [{startingDay:false, endingDay: false, color: eventColor}];
+						markedDate[getDateString(date)] = {};
+						markedDate[getDateString(date)].periods = [{startingDay:false, endingDay: false, color: eventColor}];
 					}
 				}
-				if (md.hasOwnProperty(getDateString(date))) {
-					if (md[getDateString(date)].hasOwnProperty('periods')) {
-							md[getDateString(date)].periods.push({startingDay: false, endingDay: true, color: eventColor});
+				if (markedDate.hasOwnProperty(getDateString(date))) {
+					if (markedDate[getDateString(date)].hasOwnProperty('periods')) {
+						markedDate[getDateString(date)].periods.push({startingDay: false, endingDay: true, color: eventColor});
 					} else {
-						md[getDateString(date)].periods = [{startingDay:false, endingDay: true, color: eventColor }];
+						markedDate[getDateString(date)].periods = [{startingDay:false, endingDay: true, color: eventColor }];
 					}
 				} else {
-					md[getDateString(date)] = {};
-					md[getDateString(date)].periods = [{startingDay:false, endingDay: true, color: eventColor}];
+					markedDate[getDateString(date)] = {};
+					markedDate[getDateString(date)].periods = [{startingDay:false, endingDay: true, color: eventColor}];
 				}
 			}
 		});
-		return {...md, ...selectedDate};
+		return {...markedDate, ...selectedDate};
 	};
 
 	// marked dates represent dates with events

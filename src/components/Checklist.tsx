@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button } from 'react-native';
+import { View, Text, TextInput, Button } from 'react-native';
 // TODO: implement in future update
 // import DraggableFlatList from 'react-native-draggable-flatlist';
 
@@ -11,11 +11,12 @@ export interface ChecklistItem {
 } 
 
 export type StateProps = {
+	isEditMode: boolean, 
     data: ChecklistItem[], 
 	onChange: (checklistItems: ChecklistItem[]) => void
 };
 
-const Checklist = ({data = [], onChange}: StateProps): JSX.Element => {
+const Checklist = ({ isEditMode, data = [], onChange }: StateProps): JSX.Element => {
 	const onChangeText = (index: number) =>	(changedText: string) => {
 		const changedItems = [...data]; 
 		changedItems[index] = { ...changedItems[index], content:changedText };
@@ -23,27 +24,65 @@ const Checklist = ({data = [], onChange}: StateProps): JSX.Element => {
 	}; 
 
 	const renderChecklistItems = data.map((item, index) => 
-		<ChecklistItem 
-			onChangeText={onChangeText(index)}
-			onDelete={() => onChange([...data.slice(0, index), ...data.slice(index + 1)])} key={index} data={item} />);
+		isEditMode 
+			? <EditableChecklistItem 
+				key={index} 
+				data={item}
+				onChangeText={onChangeText(index)}
+				onDelete={() => onChange([...data.slice(0, index), ...data.slice(index + 1)])} 
+			/>
+			: <ViewChecklistItem
+				key={index}
+				data={item}
+				onPress={() => { 
+					const changedItems = [...data]; 
+					changedItems[index] = { ...changedItems[index], isComplete: !changedItems[index].isComplete };
+					onChange(changedItems); 
+				}} 
+			/>);
 
 	return (
 		<View style={{display: 'flex', width: '100%'}}>
 			{renderChecklistItems}
-			<ChecklistAdderItem 
-				onPress={(content: string) => 
-				{ if (content && content !== '' ) {onChange([...data, {content, isComplete: false}]);}}} /> 
+			{isEditMode 
+				? <ChecklistAdderItem 
+					onPress={(content: string) => 
+					{ if (content && content !== '' ) {onChange([...data, {content, isComplete: false}]);}}} /> 
+				: null }
 		</View>
 	);
 };
 
-type ChecklistItemProps = { 
-    data: ChecklistItem, 
-	onDelete: () => void,
-	onChangeText: (changedText: string) => void
+type ViewChecklistItemProps = {
+	data: ChecklistItem, 
+	onPress: () => void
 }
 
-export const ChecklistItem = ({ data, onDelete, onChangeText }: ChecklistItemProps): JSX.Element => {
+export const ViewChecklistItem = ({ data, onPress }: ViewChecklistItemProps): JSX.Element => {
+	return (
+		<View 
+			onTouchEnd={onPress}
+			style={data.isComplete 
+				? ChecklistStyles.checklistItemCompletedContainer 
+				: ChecklistStyles.checklistItemContainer} 
+		>
+			<View
+				style={ChecklistStyles.textInputContainer}>
+				<Text>
+					{data.content}
+				</Text>
+			</View>
+		</View> );
+};
+
+
+type EditableChecklistItemProps = { 
+    data: ChecklistItem, 
+	onDelete: () => void,
+	onChangeText: (changedText: string) => void,
+}
+
+export const EditableChecklistItem = ({ data, onDelete, onChangeText }: EditableChecklistItemProps): JSX.Element => {
 	return (
 		<View 
 			style={data.isComplete 
@@ -57,8 +96,7 @@ export const ChecklistItem = ({ data, onDelete, onChangeText }: ChecklistItemPro
 					onChangeText={onChangeText}
 					style={ChecklistStyles.textInput}
 					multiline={true}
-				>
-				</TextInput>
+				/>
 			</View> 
 			<View
 				style={ChecklistStyles.actionButton}>

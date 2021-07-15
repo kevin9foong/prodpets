@@ -38,8 +38,10 @@ export const getMonthText = (monthNum: number): string => {
 };
 
 export const formatMinutes = (mins: number): string => {
-	return mins === 0 ? '00' : mins.toString();
+	return mins < 10 ? `0${mins.toString()}` : mins.toString();
 };
+
+export const formatYearLastTwoDigits = (date: Date): string => date.getFullYear().toString().slice(-2); 
 
 export const getTimeRange = (startDate: Date, endDate: Date): string => { 
 	const isSameDay = startDate.getDate() === endDate.getDate(); 
@@ -50,8 +52,8 @@ export const getTimeRange = (startDate: Date, endDate: Date): string => {
 	const endTime = endDate.getHours() + ':' + formatMinutes(endDate.getMinutes());
 
 	if (isSameDay) {
-		return `${startDate.getDate()} ${startMonthText}, ${startTime} - ${endTime}`;
+		return `${startDate.getDate()} ${startMonthText} ${formatYearLastTwoDigits(startDate)}, ${startTime} - ${endTime}`;
 	} else {
-		return `${startDate.getDate()} ${startMonthText}, ${startTime} - ${endDate.getDate()} ${endMonthText}, ${endTime}`;
+		return `${startDate.getDate()} ${startMonthText} ${formatYearLastTwoDigits(startDate)}, ${startTime} - ${endDate.getDate()} ${endMonthText} ${formatYearLastTwoDigits(endDate)}, ${endTime}`;
 	}
 };  
