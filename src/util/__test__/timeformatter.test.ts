@@ -13,6 +13,5 @@ it('generates the correct time range string for different date', () => {
 	const endDate = new Date(2021, 6, 12, 11, 40); 
 
 	const formattedString = getTimeRange(startDate, endDate); 
-	console.log(formattedString);
 	expect(formattedString).toBe('13 Jun 21, 9:12 - 12 Jul 21, 11:40');
 });
