@@ -34,11 +34,7 @@ const DashboardScreen: React.FC<StateProps> = ({navigation}: StateProps) => {
 
 	// Card functions
 	const onItemPress = (cardInfo: CardModelWithUid) => 
-		navigation.navigate('UpdateCardModal', {
-			...cardInfo, 
-			startdate: cardInfo.startdate.toString(), 
-			duedate: cardInfo.duedate.toString()
-		});
+		navigation.navigate('ViewCardModal', {uid: cardInfo.uid});
 
 	const renderItem = ({item}: {item: CardModelWithUid}) => <DashboardCard
 		onPress={onItemPress}

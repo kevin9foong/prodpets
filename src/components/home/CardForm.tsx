@@ -6,6 +6,7 @@ import {
 	Platform
 } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AndroidDateTimePicker from '../AndroidDateTimePicker';
@@ -13,13 +14,13 @@ import CreateCardModalStyle from '../../styles/components/home/CardForm.style';
 import TextArea from '../TextArea';
 import { CardModel, CardModelWithUid } from '../../database/models/cards';
 import Checklist, { ChecklistItem } from '../../components/Checklist';
+import { addCard, updateCard, deleteCard } from '../../redux/actions/cards';
+import { generateUuid } from '../../util/uuidGenerator';
 
-export type formType = 'edit' | 'create'
+export type formType = 'edit' | 'create' | 'view'
 
 type StateProps = {
 	defaultValues?: CardModelWithUid, 
-	onSaveSubmit: (data: CardModel) => void,
-	onDeleteSubmit?: () => void, 
 	navigation: any,  
 	formType: formType
 }
@@ -70,11 +71,36 @@ const CreateCardModalRightHeader = ({onSaveSubmit}: CreateCardModalRightHeaderPr
 	</View>; 
 };
 
-const CardForm: React.FC<StateProps> = ({onSaveSubmit, onDeleteSubmit, defaultValues, navigation, formType}: StateProps) => {
+const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: StateProps) => {
+	const dispatch = useDispatch(); 
+
+	const onDeleteSubmit = () => {
+		if (defaultValues?.uid) {
+			dispatch(deleteCard(defaultValues.uid)); 
+		}
+		navigation.goBack();
+	};
+	
+	const onUpdateSubmit = (data: CardModel) => {
+		if (defaultValues?.uid) {
+			const updatedCardData = {uid: defaultValues.uid, ...data};
+			dispatch(updateCard(updatedCardData));
+			navigation.navigate('ViewCardModal', {uid: defaultValues.uid});
+		} else {
+			navigation.goBack();
+		}
+	};
+
+	const onCreateSubmit = (data: CardModel) => {
+		dispatch(addCard(generateUuid(), data)); 
+		navigation.goBack();
+	};
+
 	// safe to typecast as userUid has to be not-null to access this screen.
 	const { control, handleSubmit, formState: { errors }} = useForm(); 
+
 	const onPrimaryButtonPress = (data: CardModel) => {
-		onSaveSubmit(data);
+		formType === 'edit' ? onUpdateSubmit(data) : onCreateSubmit(data);
 	}; 
 
 	React.useLayoutEffect(() => {
@@ -157,6 +183,7 @@ const CardForm: React.FC<StateProps> = ({onSaveSubmit, onDeleteSubmit, defaultVa
 							Checklist
 							</Text>
 							<Checklist 
+								isEditMode={true}
 								onChange={(checklistItems: ChecklistItem[]) => {
 									onChange(checklistItems);
 								}}
