@@ -1,11 +1,12 @@
-export const addTag = (tagName: string) => ({
+export const addTag = (tagName: string, cardUids: string[]) => ({
 	type: 'tags/addTag', 
 	payload: {
-		tagName
+		tagName, 
+		cardUids
 	}
 });
 
-export const updateTag = (prevTagName, newTagName) => ({
+export const updateTag = (prevTagName, newTagName, newCardUids: string[]) => ({
 	type: 'tags/updateTag', 
 	payload: {
 		prevTagName, 

@@ -3,7 +3,7 @@ import { View, Text, TextInput, Button } from 'react-native';
 // TODO: implement in future update
 // import DraggableFlatList from 'react-native-draggable-flatlist';
 
-import ChecklistStyles from '../styles/components/commons/Checklist';
+import ChecklistStyles from '../../styles/components/commons/Checklist';
 
 export interface ChecklistItem { 
     isComplete: boolean, 

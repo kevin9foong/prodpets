@@ -47,6 +47,7 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-41.0.0.tar.gz",
     "react-native-dotenv": "^3.1.1",
     "react-native-draggable-flatlist": "^2.6.2",
+    "react-native-dropdown-picker": "^5.1.21",
     "react-native-gesture-handler": "~1.10.2",
     "react-native-get-random-values": "~1.7.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.4",

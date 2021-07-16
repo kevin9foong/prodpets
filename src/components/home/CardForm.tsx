@@ -1,4 +1,4 @@
-import React from 'react'; 
+import React, { useState } from 'react'; 
 import {
 	View,
 	Text,
@@ -6,16 +6,21 @@ import {
 	Platform
 } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import DateTimePicker from '@react-native-community/datetimepicker';
-import AndroidDateTimePicker from '../AndroidDateTimePicker';
+import AndroidDateTimePicker from '../commons/AndroidDateTimePicker';
 import CreateCardModalStyle from '../../styles/components/home/CardForm.style';
-import TextArea from '../TextArea';
+import TextArea from '../commons/TextArea';
+import Checklist, { ChecklistItem } from '../commons/Checklist';
+
 import { CardModel, CardModelWithUid } from '../../database/models/cards';
-import Checklist, { ChecklistItem } from '../../components/Checklist';
 import { addCard, updateCard, deleteCard } from '../../redux/actions/cards';
+import { Tag } from '../../redux/reducers/tags';
+import { selectAllTags } from '../../redux/selectors/tags';
+import { addTag, deleteTag } from '../../redux/actions/tags';
 import { generateUuid } from '../../util/uuidGenerator';
+import { DropDownPicker, MultiDropDownPicker } from '../commons/DropdownPicker';
 
 export type formType = 'edit' | 'create' | 'view'
 
@@ -73,6 +78,8 @@ const CreateCardModalRightHeader = ({onSaveSubmit}: CreateCardModalRightHeaderPr
 
 const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: StateProps) => {
 	const dispatch = useDispatch(); 
+	const [addedTagNames, setAddedTagNames] = useState<string[]>([]); 
+	dispatch(deleteTag(''));
 
 	const onDeleteSubmit = () => {
 		if (defaultValues?.uid) {
@@ -246,6 +253,58 @@ const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: S
 									/>
 							}
 						</View>)}
+				/>
+				<Controller 
+					name="status"
+					defaultValue={defaultValues?.status ?? 'incomplete'}
+					control={control}
+					render={({ field: { onChange, value }}) => (
+						<View 
+							style={CreateCardModalStyle.fieldContainer}
+						>
+							<Text
+								style={CreateCardModalStyle.inputLabelDark}>
+							Status
+							</Text>
+							<DropDownPicker
+								value={value}
+								onValueChange={onChange} 
+								items={[
+									{label: 'In Progress', value: 'in progress'},
+									{label: 'Completed', value: 'completed'},
+									{label: 'Incomplete', value: 'incomplete'}
+								]}
+							/>
+						</View>
+					)
+					}
+				/>
+				<Controller 
+					name="tags"
+					defaultValue={defaultValues?.tags ?? []}
+					control={control}
+					render={({ field: { onChange, value }}) => (
+						<View 
+							style={CreateCardModalStyle.fieldContainer}
+						>
+							<Text
+								style={CreateCardModalStyle.inputLabelDark}>
+							Tags
+							</Text>
+							{/* TODO: add support for cardStatus typescript static check */}
+							<MultiDropDownPicker 
+								searchableInputPlaceholderText='Search/Add Tags'
+								onItemCreateNew={(val) => setAddedTagNames([...addedTagNames, val])}
+								onItemDelete={(deletedTag) => {
+									onChange(value.filter((tag: string) => tag !== deletedTag));}
+								}
+								items={[...useSelector(selectAllTags).map((tag: Tag) => ({label: tag.tagName, value: tag.tagName})), 
+									...addedTagNames.map(tagName => ({label: tagName, value: tagName}))]}
+								value={value} 
+								onValueChange={onChange} />
+						</View>
+					)
+					}
 				/>
 			</View>
 		</View> 
