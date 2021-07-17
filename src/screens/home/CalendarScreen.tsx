@@ -1,5 +1,4 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import React from 'react'; 
 
 import  { AgendaItemsMap } from 'react-native-calendars';
 import { Agenda } from 'react-native-calendars';
@@ -28,10 +27,23 @@ const CalendarScreen = ({ navigation }: StateProps): JSX.Element => {
 	const cardEndsOnSameDate = (cardInfo: CardModelWithUid) => isSameDate(new Date(cardInfo.startdate), new Date(cardInfo.duedate)); 
 
 	const loadAgendaItemsForMonth = ({ month, year }: any) => {
-		const currentMonthCards: CardModelWithUid[] = cards.filter((card: CardModelWithUid)=> isSameMonth(new Date(card.startdate).getMonth(), month)
-		&& isSameMonth(new Date(card.duedate).getMonth(), month));
+		// need to load for 2 months due to library returning wrong month (actual month + 1) when onDayPress
+		const currentMonthCards: CardModelWithUid[] = cards.filter((card: CardModelWithUid)=> {
+			return (isSameMonth(new Date(card.startdate).getMonth(), month)
+			|| isSameMonth(new Date(card.duedate).getMonth(), month)
+			|| isSameMonth(new Date(card.startdate).getMonth(), month - 1) 
+			|| isSameMonth(new Date(card.duedate).getMonth(), month - 1));
+		});
 
-		let updatedAgendaInfoCardItems: AgendaItemsMap<CardModelWithUid> = {...agendaCardInfoItems}; 
+		const updatedAgendaInfoCardItems: AgendaItemsMap<CardModelWithUid> = {}; 
+
+		// populate [] to mark as loaded for dates with no cards assigned. 
+		const start = new Date(year, month - 1, 1);
+		const end = new Date(year, month + 1, 0);
+		for (;start < end; start.setDate(start.getDate() + 1)) {
+			const date = getDateString(start).toString();
+			updatedAgendaInfoCardItems[date] = [...(updatedAgendaInfoCardItems[date] || [])];
+		} 
 
 		currentMonthCards.forEach(card => {
 			const startDate = new Date(card.startdate); 
@@ -39,24 +51,15 @@ const CalendarScreen = ({ navigation }: StateProps): JSX.Element => {
 			const startDateStringFormat = getDateString(startDate);
 
 			if (cardEndsOnSameDate(card)) {
-				updatedAgendaInfoCardItems[startDateStringFormat] = [...(updatedAgendaInfoCardItems[startDateStringFormat] || []), card];
+				updatedAgendaInfoCardItems[startDateStringFormat] = [...updatedAgendaInfoCardItems[startDateStringFormat], card];
 			} else {
 				// if card doesnt end on same date, then display on every day
-				for (const variableDate = new Date(card.startdate); startDate < dueDate; variableDate.setDate(variableDate.getDate() + 1)) {
-					updatedAgendaInfoCardItems[startDateStringFormat] = [...(updatedAgendaInfoCardItems[startDateStringFormat] || []), card];
+				for (let variableDate = new Date(card.startdate); variableDate < dueDate; variableDate.setDate(variableDate.getDate() + 1)) {
+					updatedAgendaInfoCardItems[getDateString(variableDate)] = [...updatedAgendaInfoCardItems[getDateString(variableDate)], card];
 				}
 			}
 		});
-
-		// populate [] to mark as loaded for dates with no cards assigned. 
-		const start = new Date(year, month, 1);
-		const end = new Date(year, month + 1, 0);
-		for (;start < end; start.setDate(start.getDate() + 1)) {
-			const date = getDateString(start).toString();
-			if (!updatedAgendaInfoCardItems[date]) {
-				updatedAgendaInfoCardItems = {...updatedAgendaInfoCardItems, [date]: []}; 
-			}
-		}
+		
 		setAgendaCardInfoItems(updatedAgendaInfoCardItems);
 	};
 
@@ -65,6 +68,7 @@ const CalendarScreen = ({ navigation }: StateProps): JSX.Element => {
 	const renderAgendaItem = (agendaItem: CardModelWithUid) => {
 		return (
 			<CalendarCard 
+				key={agendaItem.uid}
 				cardInfo={agendaItem} 
 				onCardClick={onCardClick} />
 		);
@@ -73,15 +77,11 @@ const CalendarScreen = ({ navigation }: StateProps): JSX.Element => {
 	const renderEmptyDate = () => {
 		return (
 			<></>
-			// <View style={{display: 'flex', justifyContent: 'center'}}>
-			// 	<View style={styles.emptyDate}>
-			// 	</View>
-			// </View>
 		);
 	};
 	
-	const isRowChanged = (rowOne: any, rowTwo: any) => {
-		return rowOne.name !== rowTwo.name;
+	const isRowChanged = (agendaItemOne: CardModelWithUid, agendaItemTwo: CardModelWithUid) => {
+		return agendaItemOne.uid !== agendaItemTwo.uid;
 	};
 	
 	return (
@@ -96,17 +96,6 @@ const CalendarScreen = ({ navigation }: StateProps): JSX.Element => {
 			showClosingKnob={true}
 		/>
 	);
-
 };
-
-// const styles = StyleSheet.create({
-// 	emptyDate: {
-// 		height: 0,
-// 		borderBottomColor: '#d3d3d3',
-// 		borderBottomWidth: 1,
-// 		paddingTop: 50,
-// 		marginRight: 30
-// 	}
-// });
 
 export default CalendarScreen;

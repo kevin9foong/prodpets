@@ -9,7 +9,7 @@ type CalendarCardProps = {
   onCardClick: (a: CardModelWithUid) => void,
 }
 
-const CalendarCard = ({cardInfo, onCardClick}: CalendarCardProps): React.ReactElement => {
+const CalendarCard = ({cardInfo, onCardClick}: CalendarCardProps): JSX.Element => {
 	return (
 		<TouchableOpacity
 			onPress={() => onCardClick(cardInfo)}
