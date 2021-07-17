@@ -1,162 +1,125 @@
-import React, { useEffect } from 'react'; 
-import { useSelector } from 'react-redux';
-import { selectCards } from '../../redux/selectors/cards';
-import { View, Text, FlatList } from 'react-native';
-import { Calendar } from 'react-native-calendars';
+import React from 'react';
+import {Alert, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {Agenda} from 'react-native-calendars';
 import CalendarCard from '../../components/home/CalendarCard';
 import { CardModelWithUid } from '../../database/models/cards';
-import theme from '../../styles/theme.style';
-import { getDayText } from '../../util/timeformatter';
+import { useSelector } from 'react-redux';
+import { selectCards } from '../../redux/selectors/cards';
+import RNGestureHandlerButton from 'react-native-gesture-handler/lib/typescript/components/GestureHandlerButton';
 
-const CalendarScreen: React.FC = ({navigation}: any) => {
+const CalendarScreen = ({navigation}: any) => {
+	const [items, setItems]= React.useState({})
 
-	// formats date for calendar because calendar requires certain format
-	const getDateString = (date: Date): string => {
-		const month = date.getMonth() + 1;
-		const dateNum = date.getDate();
-		return `${date.getFullYear()}-${month < 10 ? '0' + month : month}-${dateNum < 10 ? '0' + dateNum : dateNum}`;
-	};
-
-		
-	const [date, setDate] = React.useState(new Date());
 	const cards: CardModelWithUid[] = useSelector(selectCards);
 
-	//selected date represents the date selected by the user
-	const [selectedDate, setSelectedDate] = React.useState({
-		[getDateString(date)]: { selected: true, selectedColor: theme['color-primary-400']}
-	});
-	
-	const singleEvent = {startingDay: true, endingDay: true, color: theme['color-warning-200']};
-	const colors = [theme['color-danger-200'], theme['color-info-200'], theme['color-success-200']];
-
-	const getEventColor = (start: Date, end: Date, markedDate: Record<string, Object>): string => {
-		let count = 0;
-		for (let date = new Date(start.toString()); date <= end; date.setDate(date.getDate() + 1)) {
-			if (markedDate.hasOwnProperty(getDateString(date))) {
-				if (markedDate[getDateString(date)].hasOwnProperty('periods')) {
-					count = Math.max(count, markedDate[getDateString(date)].periods.length);
+	const loadMonthItems = (day: any) => {
+		const currMonth = day.month;
+		const thisMonthCards = cards.filter(card => sameMonth(card, currMonth))
+		
+		for (let i = 0; i < thisMonthCards.length; i++) {
+			const card = thisMonthCards[i];
+			if (sameDate(card.startdate, card.duedate)) {
+				const date = getDateString(card.startdate).toString();
+				if (!items[date]) {
+					items[date] = [];
+					items[date].push(card);
+				} else {
+					if (items[date].includes(card)) {
+						continue;
+					}
+					items[date].push(card);
+				}
+			} else {
+				const currdate = new Date(card.startdate);
+				for (; currdate < card.duedate; currdate.setDate(currdate.getDate() + 1)) {
+					const date = getDateString(currdate).toString();
+					if (!items[date]) {
+						items[date] = [];
+						items[date].push(card);
+					} else {
+						if (items[date].includes(card)) {
+							continue;
+						}
+						items[date].push(card);
+					}
 				}
 			}
 		}
-		return colors[count];
-	};
 
-	// returns a collection of the selected date as well as the marked dates
-	// which are dates with events. 
-	const getMarkedDates = () => {
-		const markedDate: Record<string, Object> = {};
-		cards.forEach(card => {
-			if (typeof card.startdate === 'string') {
-				card.startdate = new Date(card.startdate);
-				card.duedate = new Date(card.duedate);
+
+		const start = new Date(day.year, day.month, 1);
+		const end = new Date(day.year, day.month + 1, 0);
+		for (; start < end; start.setDate(start.getDate() + 1)) {
+			const date = getDateString(start).toString()
+			if (!items[date]) {
+				items[date] = []
 			}
-			if (card.startdate.toDateString() === card.duedate.toDateString()) {
-				if (markedDate.hasOwnProperty(getDateString(card.startdate))) {
-					if (markedDate[getDateString(card.startdate)].hasOwnProperty('period')) {
-						if (!markedDate[getDateString(card.startdate)].periods.includes(singleEvent)) {
-							markedDate[getDateString(card.startdate)].periods.push(singleEvent);
-						}
-					}
-				} else {
-					markedDate[getDateString(card.startdate)] = { periods: [singleEvent], ...markedDate[getDateString(card.startdate)] };
-				}
-			} else {
-				const date = new Date(card.startdate.toString());
-				const eventColor = getEventColor(card.startdate, card.duedate, markedDate);
-				if (markedDate.hasOwnProperty(getDateString(date))) {
-					if (markedDate[getDateString(date)].hasOwnProperty('periods')) {
-						const len = markedDate[getDateString(date)].periods.length;
-						if (len > 3) {
-							return;
-						}
-						markedDate[getDateString(date)].periods.push({startingDay: true, endingDay: false, color: eventColor});
-					} else {
-						markedDate[getDateString(date)].periods = [{startingDay:true, endingDay: false, color: eventColor}];
-					}
-				} else {
-					markedDate[getDateString(date)] = {};
-					markedDate[getDateString(date)].periods = [{startingDay:true, endingDay: false, color: eventColor}];
-				}
-				for (date.setDate(date.getDate() + 1); date < card.duedate; date.setDate(date.getDate() + 1)) {
-					if (markedDate.hasOwnProperty(getDateString(date))) {
-						if (markedDate[getDateString(date)].hasOwnProperty('periods')) {
-							markedDate[getDateString(date)].periods.push({startingDay: false, endingDay: false, color: eventColor});
-						} else {
-							markedDate[getDateString(date)].periods = [{startingDay:false, endingDay: false, color: eventColor}];
-						}
-					} else {
-						markedDate[getDateString(date)] = {};
-						markedDate[getDateString(date)].periods = [{startingDay:false, endingDay: false, color: eventColor}];
-					}
-				}
-				if (markedDate.hasOwnProperty(getDateString(date))) {
-					if (markedDate[getDateString(date)].hasOwnProperty('periods')) {
-						markedDate[getDateString(date)].periods.push({startingDay: false, endingDay: true, color: eventColor});
-					} else {
-						markedDate[getDateString(date)].periods = [{startingDay:false, endingDay: true, color: eventColor }];
-					}
-				} else {
-					markedDate[getDateString(date)] = {};
-					markedDate[getDateString(date)].periods = [{startingDay:false, endingDay: true, color: eventColor}];
-				}
-			}
-		});
-		return {...markedDate, ...selectedDate};
-	};
+		}
+		const newItems = items;
+		setItems(newItems)
+	}
 
-	// marked dates represent dates with events
-	const [markedDates, setMarkedDates] = React.useState(getMarkedDates());
-	
-	const handleDateChange = (day: any) => {
-		const newDate = new Date(day.dateString);
-		const dateString = day.dateString;
-		setDate(newDate);
-		setSelectedDate({
-			[dateString]: { selected: true, selectedColor: theme['color-primary-400'], ...markedDates[dateString]}, 
-		}, );
-	};
+	const getDateString = (date: Date): String => {
+		return `${date.getFullYear()}-${date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1}-${date.getDate() < 10 ? '0' + date.getDate() : date.getDate()}`;
+	}
 
-	useEffect(() => {
-		setMarkedDates(getMarkedDates());
-	}, [selectedDate]);
-	
-	const filterByToday = (card: CardModelWithUid): boolean => {
-		if (typeof card.startdate === 'string' || typeof card.duedate === 'string') {
+	const sameMonth = (card: CardModelWithUid, currMonth: Number) => {
+		if (typeof card.startdate == 'string' || typeof card.duedate === 'string') {
 			card.startdate = new Date(card.startdate);
 			card.duedate = new Date(card.duedate);
 		}
-		return (card.startdate.toDateString() === date.toDateString() ||
-			card.duedate.toDateString() === date.toDateString()) ||
-			(card.startdate < date && card.duedate > date);
-	};
-	
+		return (card.startdate.getMonth() <= currMonth && card.duedate.getMonth() >= currMonth);
+	}
+
+	const sameDate = (d1: Date, d2: Date) => {
+		return d1.getDate() === d2.getDate() &&
+			d1.getMonth() === d2.getMonth() &&
+			d1.getFullYear() === d2.getFullYear();
+	}
+
 	const clickHandler = (card: CardModelWithUid) => navigation.navigate('UpdateCardModal', card);
-
-	const renderItem = (item: any) => <CalendarCard info={item} clickHandler={clickHandler}/>;
-
-	return (
-		<View>
-			<Calendar 
-				style={{marginBottom: 30}} 
-				enableSwipeMonths={true} 
-				onDayPress={day => handleDateChange(day)} 
-				markingType='multi-period'
-				markedDates={markedDates}
-				// onDayLongPress={() => navigation.navigate('CreateCardModal')} 
-			/>
-			<View style={{marginLeft: 15, display: 'flex', flexDirection: 'row', width: '100%'}}>
-				<View style={{marginRight: 15}}>
-					<Text style={{fontSize: 20}}>{date.getDate()}</Text>
-					<Text style={{fontSize: 20}}>{getDayText(date.getDay())}</Text>
+	
+	const renderItem = (item: CardModelWithUid) => {
+		return (
+			<CalendarCard  cardInfo={item} clickHandler={clickHandler} />
+		);
+	}
+	
+	const renderEmptyDate = () => {
+		return (
+			<View style={{display: 'flex', justifyContent: 'center'}}>
+				<View style={styles.emptyDate}>
 				</View>
-				<FlatList
-					data={cards.filter(filterByToday)}
-					renderItem={renderItem}
-					keyExtractor={({title}, index) => `${title}${index}`} 
-				/>
 			</View>
-		</View>
+		);
+	}
+	
+	const rowHasChanged = (r1, r2) => {
+		return r1.name !== r2.name;
+	}
+	
+	return (
+		<Agenda
+			items={items}
+			loadItemsForMonth={loadMonthItems.bind(this)}
+			selected={new Date()}
+			renderItem={renderItem.bind(this)}
+			renderEmptyDate={renderEmptyDate.bind(this)}
+			rowHasChanged={rowHasChanged.bind(this)}
+			showClosingKnob={true}
+		/>
 	);
-};
 
-export default CalendarScreen; 
+}
+
+const styles = StyleSheet.create({
+  emptyDate: {
+		height: 0,
+		borderBottomColor: `#d3d3d3`,
+		borderBottomWidth: 1,
+    paddingTop: 50,
+		marginRight: 30
+  }
+});
+
+export default CalendarScreen;

@@ -14,9 +14,9 @@ test('Calendar Card single day event', () => {
     }
   };
   const clickHandler = (card: CardModelWithUid) => {};
-  const { getByText } = render(<CalendarCard info={info} clickHandler={clickHandler}/>)
+  const { getByText } = render(<CalendarCard cardInfo={info.item} clickHandler={clickHandler}/>)
   expect(getByText('dummy Event')).toBeTruthy();
-  expect(getByText('15:24 - 16:00')).toBeTruthy();
+  expect(getByText('4 Jul 21, 15:24 - 16:00')).toBeTruthy();
 })
 
 test('Calendar Card multi day event display', () => {
@@ -30,7 +30,7 @@ test('Calendar Card multi day event display', () => {
     }
   };
   const clickHandler = (card: CardModelWithUid) => {};
-  const { getByText } = render(<CalendarCard info={info} clickHandler={clickHandler}/>)
+  const { getByText } = render(<CalendarCard cardInfo={info.item} clickHandler={clickHandler}/>)
   expect(getByText('long dummy Event')).toBeTruthy;
-  expect(getByText('4/7 - 7/7')).toBeTruthy;
+  expect(getByText('4 Jul 21, 15:24 - 7 Jul 21, 16:00')).toBeTruthy;
 })
