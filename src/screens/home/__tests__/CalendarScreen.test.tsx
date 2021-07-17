@@ -19,11 +19,13 @@ test('Renders calendar card correctly according to data', () => {
 
   const store = createStore(rootReducer, { cards: cards });
 
-  const { getByText } = render(
+  const { getByText, debug } = render(
   <Provider store={store}>
     <CalendarScreen />
   </Provider>
 	);
+
+  debug()
 
   expect(getByText('Task Number 1')).toBeTruthy();
 })

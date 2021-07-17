@@ -8,6 +8,6 @@ export default StyleSheet.create({
 		padding: 10,
 		flex: 1,
 		marginRight: 30,
-		marginBottom: 5,
+		marginTop: 25,
 	}
 });
