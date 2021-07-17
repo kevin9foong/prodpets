@@ -6,18 +6,17 @@ import { getTimeRange } from '../../util/timeformatter';
 
 type CalendarCardProps = {
   cardInfo: CardModelWithUid, 
-  clickHandler: (a: CardModelWithUid) => void,
+  onCardClick: (a: CardModelWithUid) => void,
 }
 
-const CalendarCard = ({cardInfo, clickHandler}: CalendarCardProps): React.ReactElement => {
-
+const CalendarCard = ({cardInfo, onCardClick}: CalendarCardProps): React.ReactElement => {
 	return (
 		<TouchableOpacity
-			onPress={() => clickHandler(cardInfo)}
+			onPress={() => onCardClick(cardInfo)}
 		>
 			<View style={CalendarCardStyles.container}>
 				<Text style={{paddingBottom: 5, color: 'white'}}>{ cardInfo.title }</Text>
-				<Text style={{color: 'white'}}>{ getTimeRange(cardInfo.startdate, cardInfo.duedate) }</Text>
+				<Text style={{color: 'white'}}>{ getTimeRange(new Date(cardInfo.startdate), new Date(cardInfo.duedate)) }</Text>
 			</View>
 		</TouchableOpacity>
 	);

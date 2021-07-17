@@ -1,125 +1,112 @@
 import React from 'react';
-import {Alert, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import {Agenda} from 'react-native-calendars';
+import { StyleSheet, View } from 'react-native';
+
+import  { AgendaItemsMap } from 'react-native-calendars';
+import { Agenda } from 'react-native-calendars';
 import CalendarCard from '../../components/home/CalendarCard';
+
 import { CardModelWithUid } from '../../database/models/cards';
 import { useSelector } from 'react-redux';
-import { selectCards } from '../../redux/selectors/cards';
-import RNGestureHandlerButton from 'react-native-gesture-handler/lib/typescript/components/GestureHandlerButton';
+import { selectAllCards } from '../../redux/selectors/cards';
+import { getDateString, isSameDate, isSameMonth } from '../../util/timeformatter';
 
-const CalendarScreen = ({navigation}: any) => {
-	const [items, setItems]= React.useState({})
+import { CalendarParamList } from '../../navigation/types';
+import { StackNavigationProp } from '@react-navigation/stack';
 
-	const cards: CardModelWithUid[] = useSelector(selectCards);
+type CalendarScreenNavigationProp = StackNavigationProp<
+	CalendarParamList, 'CalendarScreen'>; 
 
-	const loadMonthItems = (day: any) => {
-		const currMonth = day.month;
-		const thisMonthCards = cards.filter(card => sameMonth(card, currMonth))
-		
-		for (let i = 0; i < thisMonthCards.length; i++) {
-			const card = thisMonthCards[i];
-			if (sameDate(card.startdate, card.duedate)) {
-				const date = getDateString(card.startdate).toString();
-				if (!items[date]) {
-					items[date] = [];
-					items[date].push(card);
-				} else {
-					if (items[date].includes(card)) {
-						continue;
-					}
-					items[date].push(card);
-				}
+type StateProps = {
+	navigation: CalendarScreenNavigationProp
+}
+
+const CalendarScreen = ({ navigation }: StateProps): JSX.Element => {
+	const [agendaCardInfoItems, setAgendaCardInfoItems]= React.useState<AgendaItemsMap<CardModelWithUid>>({});
+
+	const cards = useSelector(selectAllCards);
+
+	const cardEndsOnSameDate = (cardInfo: CardModelWithUid) => isSameDate(new Date(cardInfo.startdate), new Date(cardInfo.duedate)); 
+
+	const loadAgendaItemsForMonth = ({ month, year }: any) => {
+		const currentMonthCards: CardModelWithUid[] = cards.filter((card: CardModelWithUid)=> isSameMonth(new Date(card.startdate).getMonth(), month)
+		&& isSameMonth(new Date(card.duedate).getMonth(), month));
+
+		let updatedAgendaInfoCardItems: AgendaItemsMap<CardModelWithUid> = {...agendaCardInfoItems}; 
+
+		currentMonthCards.forEach(card => {
+			const startDate = new Date(card.startdate); 
+			const dueDate = new Date(card.duedate);
+			const startDateStringFormat = getDateString(startDate);
+
+			if (cardEndsOnSameDate(card)) {
+				updatedAgendaInfoCardItems[startDateStringFormat] = [...(updatedAgendaInfoCardItems[startDateStringFormat] || []), card];
 			} else {
-				const currdate = new Date(card.startdate);
-				for (; currdate < card.duedate; currdate.setDate(currdate.getDate() + 1)) {
-					const date = getDateString(currdate).toString();
-					if (!items[date]) {
-						items[date] = [];
-						items[date].push(card);
-					} else {
-						if (items[date].includes(card)) {
-							continue;
-						}
-						items[date].push(card);
-					}
+				// if card doesnt end on same date, then display on every day
+				for (const variableDate = new Date(card.startdate); startDate < dueDate; variableDate.setDate(variableDate.getDate() + 1)) {
+					updatedAgendaInfoCardItems[startDateStringFormat] = [...(updatedAgendaInfoCardItems[startDateStringFormat] || []), card];
 				}
 			}
-		}
+		});
 
-
-		const start = new Date(day.year, day.month, 1);
-		const end = new Date(day.year, day.month + 1, 0);
-		for (; start < end; start.setDate(start.getDate() + 1)) {
-			const date = getDateString(start).toString()
-			if (!items[date]) {
-				items[date] = []
+		// populate [] to mark as loaded for dates with no cards assigned. 
+		const start = new Date(year, month, 1);
+		const end = new Date(year, month + 1, 0);
+		for (;start < end; start.setDate(start.getDate() + 1)) {
+			const date = getDateString(start).toString();
+			if (!updatedAgendaInfoCardItems[date]) {
+				updatedAgendaInfoCardItems = {...updatedAgendaInfoCardItems, [date]: []}; 
 			}
 		}
-		const newItems = items;
-		setItems(newItems)
-	}
+		setAgendaCardInfoItems(updatedAgendaInfoCardItems);
+	};
 
-	const getDateString = (date: Date): String => {
-		return `${date.getFullYear()}-${date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1}-${date.getDate() < 10 ? '0' + date.getDate() : date.getDate()}`;
-	}
-
-	const sameMonth = (card: CardModelWithUid, currMonth: Number) => {
-		if (typeof card.startdate == 'string' || typeof card.duedate === 'string') {
-			card.startdate = new Date(card.startdate);
-			card.duedate = new Date(card.duedate);
-		}
-		return (card.startdate.getMonth() <= currMonth && card.duedate.getMonth() >= currMonth);
-	}
-
-	const sameDate = (d1: Date, d2: Date) => {
-		return d1.getDate() === d2.getDate() &&
-			d1.getMonth() === d2.getMonth() &&
-			d1.getFullYear() === d2.getFullYear();
-	}
-
-	const clickHandler = (card: CardModelWithUid) => navigation.navigate('UpdateCardModal', card);
+	const onCardClick = (cardInfo: CardModelWithUid) => navigation.navigate('UpdateCardModal', {uid: cardInfo.uid});
 	
-	const renderItem = (item: CardModelWithUid) => {
+	const renderAgendaItem = (agendaItem: CardModelWithUid) => {
 		return (
-			<CalendarCard  cardInfo={item} clickHandler={clickHandler} />
+			<CalendarCard 
+				cardInfo={agendaItem} 
+				onCardClick={onCardClick} />
 		);
-	}
+	};
 	
 	const renderEmptyDate = () => {
 		return (
-			<View style={{display: 'flex', justifyContent: 'center'}}>
-				<View style={styles.emptyDate}>
-				</View>
-			</View>
+			<></>
+			// <View style={{display: 'flex', justifyContent: 'center'}}>
+			// 	<View style={styles.emptyDate}>
+			// 	</View>
+			// </View>
 		);
-	}
+	};
 	
-	const rowHasChanged = (r1, r2) => {
-		return r1.name !== r2.name;
-	}
+	const isRowChanged = (rowOne: any, rowTwo: any) => {
+		return rowOne.name !== rowTwo.name;
+	};
 	
 	return (
 		<Agenda
-			items={items}
-			loadItemsForMonth={loadMonthItems.bind(this)}
+			items={agendaCardInfoItems}
+			loadItemsForMonth={loadAgendaItemsForMonth}
 			selected={new Date()}
-			renderItem={renderItem.bind(this)}
-			renderEmptyDate={renderEmptyDate.bind(this)}
-			rowHasChanged={rowHasChanged.bind(this)}
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			renderItem={(agendaItem: CardModelWithUid, _firstItemInDay: boolean) => renderAgendaItem(agendaItem)}
+			renderEmptyDate={renderEmptyDate}
+			rowHasChanged={isRowChanged}
 			showClosingKnob={true}
 		/>
 	);
 
-}
+};
 
-const styles = StyleSheet.create({
-  emptyDate: {
-		height: 0,
-		borderBottomColor: `#d3d3d3`,
-		borderBottomWidth: 1,
-    paddingTop: 50,
-		marginRight: 30
-  }
-});
+// const styles = StyleSheet.create({
+// 	emptyDate: {
+// 		height: 0,
+// 		borderBottomColor: '#d3d3d3',
+// 		borderBottomWidth: 1,
+// 		paddingTop: 50,
+// 		marginRight: 30
+// 	}
+// });
 
 export default CalendarScreen;

@@ -57,3 +57,18 @@ export const getTimeRange = (startDate: Date, endDate: Date): string => {
 		return `${startDate.getDate()} ${startMonthText} ${formatYearLastTwoDigits(startDate)}, ${startTime} - ${endDate.getDate()} ${endMonthText} ${formatYearLastTwoDigits(endDate)}, ${endTime}`;
 	}
 };  
+
+// converts a Date Object to a string used for wix/react-native-calendars library
+export const getDateString = (date: Date): string => {
+	return `${date.getFullYear()}-${date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1}-${date.getDate() < 10 ? '0' + date.getDate() : date.getDate()}`;
+};
+
+export const isSameDate = (dateOne: Date, dateTwo: Date) => {
+	return dateOne.getDate() === dateTwo.getDate() &&
+		dateOne.getMonth() === dateTwo.getMonth() &&
+		dateOne.getFullYear() === dateTwo.getFullYear();
+};
+
+export const isSameMonth = (monthOne: number, monthTwo: number) => {
+	return monthOne <= monthTwo && monthOne >= monthTwo;
+};

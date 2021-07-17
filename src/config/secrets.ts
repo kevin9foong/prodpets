@@ -18,5 +18,3 @@ export const googleAuthRequestClientIds = {
 	expoClientId: EXPO_CLIENT_ID,
 	webClientId: WEB_CLIENT_ID
 }; 
-
-console.log(EXPO_CLIENT_ID)
