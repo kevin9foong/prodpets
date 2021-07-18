@@ -2,7 +2,7 @@ import { CardModelWithUid } from '../../database/models/cards';
 
 const initialState: CardModelWithUid[] = []; 
 
-const cardsReducer = (state = initialState, action) => {
+const cardsReducer = (state = initialState, action): CardModelWithUid[] => {
 	switch(action.type) {
 	case 'cards/fetchCards': { 
 		// TODO: fix implementation later with syncing online mode with offline state
@@ -14,7 +14,7 @@ const cardsReducer = (state = initialState, action) => {
 	}
 	case 'cards/updateCard': {
 		return [...state.filter(card => card.uid !== action.payload.cardInfo.uid),
-			action.payload.cardInfo];
+			{...action.payload.cardInfo}];
 	}
 	case 'cards/deleteCard': {
 		return state.filter(card => card.uid !== action.payload.cardUid);

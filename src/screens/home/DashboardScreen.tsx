@@ -7,7 +7,7 @@ import DashboardCard from '../../components/home/DashboardCard';
 import DashboardScreenStyles from '../../styles/screens/home/Dashboard.style';
 import { CardModelWithUid } from '../../database/models/cards';
 import { fetchCards } from '../../redux/actions/cards';
-import { selectCards } from '../../redux/selectors/cards';
+import { selectAllCards } from '../../redux/selectors/cards';
 import { DashboardParamList } from '../../navigation/types';
 import { useCallback } from 'react';
 
@@ -19,7 +19,7 @@ type StateProps = {
 }
 
 const DashboardScreen: React.FC<StateProps> = ({navigation}: StateProps) => {
-	const cards = useSelector(selectCards); 
+	const cards = useSelector(selectAllCards); 
 	const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
 	const dispatch = useDispatch();

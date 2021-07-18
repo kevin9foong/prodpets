@@ -12,7 +12,7 @@ export const fetchCards = async (dispatch, getState) => {
 	});
 };
 
-export const addCard = (uid, cardInfo: CardModel) => ({
+export const addCard = (uid: string, cardInfo: CardModel) => ({
 	type: 'cards/addCard', 
 	payload: {
 		cardInfo,
