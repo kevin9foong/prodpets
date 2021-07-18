@@ -1,13 +1,13 @@
-import React from 'react'; 
+import React, { useCallback, useState } from 'react'; 
 
 import  { AgendaItemsMap } from 'react-native-calendars';
 import { Agenda } from 'react-native-calendars';
 import CalendarCard from '../../components/home/CalendarCard';
 
 import { CardModelWithUid } from '../../database/models/cards';
-import { useSelector } from 'react-redux';
+import { useAppSelector } from '../../redux/hooks';
 import { selectAllCards } from '../../redux/selectors/cards';
-import { getDateString, isSameDate, isSameMonth } from '../../util/timeformatter';
+import { getDateString, isSameDate } from '../../util/timeformatter';
 
 import { CalendarParamList } from '../../navigation/types';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -19,22 +19,23 @@ type StateProps = {
 	navigation: CalendarScreenNavigationProp
 }
 
-const CalendarScreen = ({ navigation }: StateProps): JSX.Element => {
-	const [agendaCardInfoItems, setAgendaCardInfoItems]= React.useState<AgendaItemsMap<CardModelWithUid>>({});
+type SelectedDate = {
+	month: number, 
+	year: number
+}
 
-	const cards = useSelector(selectAllCards);
+const CalendarScreen = ({ navigation }: StateProps): JSX.Element => {
+	const [selectedDateRange, setSelectedDateRange] = useState<SelectedDate>({
+		month: new Date().getMonth(), 
+		year: new Date().getFullYear()
+	}); 
+
+	const cards = useAppSelector(selectAllCards);
 
 	const cardEndsOnSameDate = (cardInfo: CardModelWithUid) => isSameDate(new Date(cardInfo.startdate), new Date(cardInfo.duedate)); 
 
-	const loadAgendaItemsForMonth = ({ month, year }: any) => {
-		// need to load for 2 months due to library returning wrong month (actual month + 1) when onDayPress
-		const currentMonthCards: CardModelWithUid[] = cards.filter((card: CardModelWithUid)=> {
-			return (isSameMonth(new Date(card.startdate).getMonth(), month)
-			|| isSameMonth(new Date(card.duedate).getMonth(), month)
-			|| isSameMonth(new Date(card.startdate).getMonth(), month - 1) 
-			|| isSameMonth(new Date(card.duedate).getMonth(), month - 1));
-		});
-
+	// pure function 
+	const loadAgendaItemsForTwoMonths = useCallback((cards: CardModelWithUid[], { month, year }: any) => {
 		const updatedAgendaInfoCardItems: AgendaItemsMap<CardModelWithUid> = {}; 
 
 		// populate [] to mark as loaded for dates with no cards assigned. 
@@ -45,23 +46,22 @@ const CalendarScreen = ({ navigation }: StateProps): JSX.Element => {
 			updatedAgendaInfoCardItems[date] = [...(updatedAgendaInfoCardItems[date] || [])];
 		} 
 
-		currentMonthCards.forEach(card => {
+		cards.forEach(card => {
 			const startDate = new Date(card.startdate); 
 			const dueDate = new Date(card.duedate);
 			const startDateStringFormat = getDateString(startDate);
 
 			if (cardEndsOnSameDate(card)) {
-				updatedAgendaInfoCardItems[startDateStringFormat] = [...updatedAgendaInfoCardItems[startDateStringFormat], card];
+				updatedAgendaInfoCardItems[startDateStringFormat] = [...(updatedAgendaInfoCardItems[startDateStringFormat] || []), card];
 			} else {
 				// if card doesnt end on same date, then display on every day
 				for (let variableDate = new Date(card.startdate); variableDate < dueDate; variableDate.setDate(variableDate.getDate() + 1)) {
-					updatedAgendaInfoCardItems[getDateString(variableDate)] = [...updatedAgendaInfoCardItems[getDateString(variableDate)], card];
+					updatedAgendaInfoCardItems[getDateString(variableDate)] = [...(updatedAgendaInfoCardItems[getDateString(variableDate)] || []), card];
 				}
 			}
 		});
-		
-		setAgendaCardInfoItems(updatedAgendaInfoCardItems);
-	};
+		return updatedAgendaInfoCardItems; 
+	}, [selectedDateRange]);
 
 	const onCardClick = (cardInfo: CardModelWithUid) => navigation.navigate('UpdateCardModal', {uid: cardInfo.uid});
 	
@@ -81,14 +81,13 @@ const CalendarScreen = ({ navigation }: StateProps): JSX.Element => {
 	};
 	
 	const isRowChanged = (agendaItemOne: CardModelWithUid, agendaItemTwo: CardModelWithUid) => {
-		return agendaItemOne.uid !== agendaItemTwo.uid;
+		return agendaItemOne !== agendaItemTwo;
 	};
 	
 	return (
 		<Agenda
-			items={agendaCardInfoItems}
-			loadItemsForMonth={loadAgendaItemsForMonth}
-			selected={new Date()}
+			items={loadAgendaItemsForTwoMonths(cards, selectedDateRange)}
+			loadItemsForMonth={(selectedDateRange) => setSelectedDateRange(selectedDateRange)}
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			renderItem={(agendaItem: CardModelWithUid, _firstItemInDay: boolean) => renderAgendaItem(agendaItem)}
 			renderEmptyDate={renderEmptyDate}
