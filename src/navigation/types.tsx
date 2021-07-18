@@ -40,5 +40,5 @@ export type DashboardParamList = {
   
 export type CalendarParamList = {
     CalendarScreen: undefined;
-    UpdateCardModal: CardUid; 
+    ViewCardModal: CardUid; 
   };

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'; 
+import React, { useMemo, useState } from 'react'; 
 
 import  { AgendaItemsMap } from 'react-native-calendars';
 import { Agenda } from 'react-native-calendars';
@@ -35,7 +35,8 @@ const CalendarScreen = ({ navigation }: StateProps): JSX.Element => {
 	const cardEndsOnSameDate = (cardInfo: CardModelWithUid) => isSameDate(new Date(cardInfo.startdate), new Date(cardInfo.duedate)); 
 
 	// pure function 
-	const loadAgendaItemsForTwoMonths = useCallback((cards: CardModelWithUid[], { month, year }: any) => {
+	const loadAgendaItemsForTwoMonths = useMemo(() => {
+		const { month, year } = selectedDateRange;
 		const updatedAgendaInfoCardItems: AgendaItemsMap<CardModelWithUid> = {}; 
 
 		// populate [] to mark as loaded for dates with no cards assigned. 
@@ -61,9 +62,10 @@ const CalendarScreen = ({ navigation }: StateProps): JSX.Element => {
 			}
 		});
 		return updatedAgendaInfoCardItems; 
-	}, [selectedDateRange]);
+	// NOTE: must set dependency array to primitive values for selectedDateRange as loadItemsForMonth triggers a new object reference each time. 
+	}, [cards, selectedDateRange.month, selectedDateRange.year]);
 
-	const onCardClick = (cardInfo: CardModelWithUid) => navigation.navigate('UpdateCardModal', {uid: cardInfo.uid});
+	const onCardClick = (cardInfo: CardModelWithUid) => navigation.navigate('ViewCardModal', {uid: cardInfo.uid});
 	
 	const renderAgendaItem = (agendaItem: CardModelWithUid) => {
 		return (
@@ -83,10 +85,10 @@ const CalendarScreen = ({ navigation }: StateProps): JSX.Element => {
 	const isRowChanged = (agendaItemOne: CardModelWithUid, agendaItemTwo: CardModelWithUid) => {
 		return agendaItemOne !== agendaItemTwo;
 	};
-	
+
 	return (
 		<Agenda
-			items={loadAgendaItemsForTwoMonths(cards, selectedDateRange)}
+			items={loadAgendaItemsForTwoMonths}
 			loadItemsForMonth={(selectedDateRange) => setSelectedDateRange(selectedDateRange)}
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			renderItem={(agendaItem: CardModelWithUid, _firstItemInDay: boolean) => renderAgendaItem(agendaItem)}
