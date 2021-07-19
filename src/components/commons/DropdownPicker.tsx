@@ -133,7 +133,7 @@ type MultiDropDownPickerProps = {
 	listContainerStyle?: StyleProp<ViewStyle>, 
 	listItemStyle?: StyleProp<ViewStyle>, 
 	value: string[], 
-	onValueChange: (selectedVals: string[]) => void, 
+	onAdditionalItemSelect: (selectedVals: string[]) => void, 
 	onItemCreateNew: (itemVal: string) => void, 
 	onItemDelete: (val: string) => void, 
 	items: DropDownItem[],
@@ -172,8 +172,7 @@ export const MultiDropDownPicker = (props: MultiDropDownPickerProps): JSX.Elemen
 						<SearchableTextInput 
 							placeholderText={props.searchableInputPlaceholderText}
 							onItemAdd={(val) => {
-								props.onItemCreateNew(val);
-								props.onValueChange([...props.value, val]);
+								props.onItemCreateNew(val); 
 								setSearchableText(undefined);
 								setIsOpen(!isOpen);
 							}}
@@ -194,7 +193,8 @@ export const MultiDropDownPicker = (props: MultiDropDownPickerProps): JSX.Elemen
 											key={item.value}
 											item={item}
 											onItemPress={() => { 
-												props.onValueChange([...props.value, item.value]);
+												// add item to value
+												props.onAdditionalItemSelect([...props.value, item.value]);
 												setSearchableText(undefined); 
 												setIsOpen(!isOpen);
 											}}

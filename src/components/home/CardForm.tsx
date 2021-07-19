@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; 
+import React, { useEffect, useState } from 'react'; 
 import {
 	View,
 	Text,
@@ -6,7 +6,8 @@ import {
 	Platform
 } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { useAppSelector } from '../../redux/hooks';
 
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AndroidDateTimePicker from '../commons/AndroidDateTimePicker';
@@ -16,11 +17,11 @@ import Checklist, { ChecklistItem } from '../commons/Checklist';
 
 import { CardModel, CardModelWithUid } from '../../database/models/cards';
 import { addCard, updateCard, deleteCard } from '../../redux/actions/cards';
-import { Tag } from '../../redux/reducers/tags';
+import { Tags } from '../../redux/reducers/tags';
 import { selectAllTags } from '../../redux/selectors/tags';
-import { addTag, deleteTag } from '../../redux/actions/tags';
 import { generateUuid } from '../../util/uuidGenerator';
 import { DropDownPicker, MultiDropDownPicker } from '../commons/DropdownPicker';
+import { overwriteTags } from '../../redux/actions/tags';
 
 export type formType = 'edit' | 'create' | 'view'
 
@@ -78,12 +79,32 @@ const CreateCardModalRightHeader = ({onSaveSubmit}: CreateCardModalRightHeaderPr
 
 const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: StateProps) => {
 	const dispatch = useDispatch(); 
-	const [addedTagNames, setAddedTagNames] = useState<string[]>([]); 
-	dispatch(deleteTag(''));
+	const [tags, setTags] = useState<Tags>(useAppSelector(selectAllTags));
+	const [cardUid, setCardUid] = useState<string>();
 
-	const onDeleteSubmit = () => {
+	useEffect(() => {
+		setCardUid(defaultValues?.uid ?? generateUuid());
+	}, []);
+
+	const removeCardUidFromTags = (cardUid: string) => {
+		const tagNames = Object.keys(tags); 
+		const updatedTags = {...tags};
+		tagNames.forEach(tagName => {
+			const filteredCardTags = updatedTags[tagName].filter(uid => uid !== cardUid); 
+			if (filteredCardTags.length > 0) {
+				updatedTags[tagName] = filteredCardTags; 
+			} else {
+				delete updatedTags[tagName]; 
+			}
+		});
+
+		return updatedTags; 
+	};
+
+	const onDeleteSubmit = (cardUid: string) => {
 		if (defaultValues?.uid) {
 			dispatch(deleteCard(defaultValues.uid)); 
+			dispatch(overwriteTags(removeCardUidFromTags(cardUid)));
 		}
 		navigation.navigate('Home');
 	};
@@ -92,14 +113,16 @@ const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: S
 		if (defaultValues?.uid) {
 			const updatedCardData = {uid: defaultValues.uid, ...data};
 			dispatch(updateCard(updatedCardData));
+			dispatch(overwriteTags(tags));
 			navigation.navigate('ViewCardModal', {uid: defaultValues.uid});
 		} else {
 			navigation.goBack();
 		}
 	};
 
-	const onCreateSubmit = (data: CardModel) => {
-		dispatch(addCard(generateUuid(), data)); 
+	const onCreateSubmit = (cardUid: string, data: CardModel) => {
+		dispatch(addCard(cardUid, data)); 
+		dispatch(overwriteTags(tags));
 		navigation.goBack();
 	};
 
@@ -107,7 +130,7 @@ const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: S
 	const { control, handleSubmit, formState: { errors }} = useForm(); 
 
 	const onPrimaryButtonPress = (data: CardModel) => {
-		formType === 'edit' ? onUpdateSubmit(data) : onCreateSubmit(data);
+		formType === 'edit' ? onUpdateSubmit(data) : onCreateSubmit(cardUid!, data);
 	}; 
 
 	React.useLayoutEffect(() => {
@@ -116,7 +139,7 @@ const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: S
 			headerRight: () => formType === 'edit' 
 				? <UpdateCardModalRightHeader 
 					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-					onDeleteSubmit={onDeleteSubmit!} 
+					onDeleteSubmit={() => onDeleteSubmit!(cardUid!)} 
 					onSaveSubmit={handleSubmit(onPrimaryButtonPress)} />
 				: <CreateCardModalRightHeader 
 					onSaveSubmit={handleSubmit(onPrimaryButtonPress)} />
@@ -294,14 +317,30 @@ const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: S
 							{/* TODO: add support for cardStatus typescript static check */}
 							<MultiDropDownPicker 
 								searchableInputPlaceholderText='Search/Add Tags'
-								onItemCreateNew={(val) => setAddedTagNames([...addedTagNames, val])}
-								onItemDelete={(deletedTag) => {
-									onChange(value.filter((tag: string) => tag !== deletedTag));}
-								}
-								items={[...useSelector(selectAllTags).map((tag: Tag) => ({label: tag.tagName, value: tag.tagName})), 
-									...addedTagNames.map(tagName => ({label: tagName, value: tagName}))]}
 								value={value} 
-								onValueChange={onChange} />
+								onAdditionalItemSelect={onChange}
+								onItemCreateNew={(tagName) => {
+									onChange([...value, tagName]); 
+									// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+									// safe to assert not-null due to useEffect setCardUid
+									setTags({...tags, [tagName]: [...(tags[tagName] || []), cardUid!]});
+								}}
+								onItemDelete={(deletedTag) => {
+									onChange(value.filter((tag: string) => tag !== deletedTag));
+									const newTags = {...tags}; 
+									console.log('init', newTags[deletedTag]);
+									console.log('uid', cardUid);
+									const deletedTagCardUids = newTags[deletedTag].filter(uid => uid !== cardUid); 
+									if (deletedTagCardUids.length === 0) {
+										delete newTags[deletedTag]; 
+									} else {
+										newTags[deletedTag] = deletedTagCardUids; 
+									}
+									console.log(newTags);
+									setTags(newTags);
+								}}
+								items={Object.keys(tags).map(tagName => ({label: tagName, value: tagName}))}
+							/>
 						</View>
 					)
 					}

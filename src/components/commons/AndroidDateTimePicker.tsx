@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import AndroidDateTimePickerStyle from '../../styles/components/commons/AndroidDateTimePicker';
+import AndroidDateTimePickerStyle from '../../styles/components/commons/AndroidDateTimePicker.style';
 
 type DateTimePickerModes = 'date' | 'time';
 
