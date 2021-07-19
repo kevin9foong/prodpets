@@ -328,15 +328,12 @@ const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: S
 								onItemDelete={(deletedTag) => {
 									onChange(value.filter((tag: string) => tag !== deletedTag));
 									const newTags = {...tags}; 
-									console.log('init', newTags[deletedTag]);
-									console.log('uid', cardUid);
 									const deletedTagCardUids = newTags[deletedTag].filter(uid => uid !== cardUid); 
 									if (deletedTagCardUids.length === 0) {
 										delete newTags[deletedTag]; 
 									} else {
 										newTags[deletedTag] = deletedTagCardUids; 
 									}
-									console.log(newTags);
 									setTags(newTags);
 								}}
 								items={Object.keys(tags).map(tagName => ({label: tagName, value: tagName}))}

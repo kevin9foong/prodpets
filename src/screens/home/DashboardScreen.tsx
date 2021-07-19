@@ -38,7 +38,7 @@ const DashboardScreen: React.FC<StateProps> = ({navigation}: StateProps) => {
 			setCards(allCards);
 		} else { 
 			// TODO: fix these red errors? 
-			const cards = 
+			const cards: CardModelWithUid[] = 
 				tagFilters.reduce((acc, tagName) => {
 					const tagCards = tags[tagName].map(uid => cardsObject[uid]);
 					return [...acc, ...tagCards];
@@ -54,8 +54,6 @@ const DashboardScreen: React.FC<StateProps> = ({navigation}: StateProps) => {
 		// only fetch the first time!
 		// dispatch(fetchCards); 
 	}, []);
-
-	// dispatch(overwriteTags({}));
 
 	// Card functions
 	const onItemPress = (cardInfo: CardModelWithUid) => 
