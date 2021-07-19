@@ -1,6 +1,6 @@
 import React from 'react'; 
 import { TextInput } from 'react-native';
-import TextAreaStyles from '.././styles/components/commons/TextArea.style';
+import TextAreaStyles from '../../styles/components/commons/TextArea.style';
 
 type StateProps = {
     onChangeText: (text: string) => void, 
