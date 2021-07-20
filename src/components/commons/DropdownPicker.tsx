@@ -101,10 +101,11 @@ const SearchableTextInput = ({value, placeholderText, onValueChange, onItemAdd}:
 
 type MultiItemViewerProps = { 
 	items: string[], 
-	onItemDelete: (item: string) => void; 
+	onItemDelete: (item: string) => void, 
+	disabled?: boolean
 }
 
-const MultiItemViewer = ({items, onItemDelete}: MultiItemViewerProps) => {
+export const MultiItemViewer = ({items, onItemDelete, disabled = false}: MultiItemViewerProps) => {
 	return <View
 		style={DropdownSelectorStyles.multiItemViewerContainer}
 	>
@@ -116,12 +117,15 @@ const MultiItemViewer = ({items, onItemDelete}: MultiItemViewerProps) => {
 					style={DropdownSelectorStyles.multiItemViewerItemText}>
 					{item}
 				</Text>
-				<TouchableOpacity
-					onPress={() => onItemDelete(item)}
-					style={DropdownSelectorStyles.multiItemViewerItemIcon}
-				>
-					<Entypo name='circle-with-cross' size={24} color='black' />
-				</TouchableOpacity>
+				{ !disabled 
+					? (<TouchableOpacity
+						onPress={() =>{ if (!disabled) { onItemDelete(item); }}}
+						style={DropdownSelectorStyles.multiItemViewerItemIcon}
+					>
+						<Entypo name='circle-with-cross' size={24} color='black' />
+					</TouchableOpacity>)
+					: null
+				}
 			</View>
 		))}
 	</View>;
@@ -138,7 +142,8 @@ type MultiDropDownPickerProps = {
 	onItemDelete: (val: string) => void, 
 	items: DropDownItem[],
 	placeholderText?: string
-	searchableInputPlaceholderText?: string
+	searchableInputPlaceholderText?: string, 
+	disabled?: boolean
 };
 
 export const MultiDropDownPicker = (props: MultiDropDownPickerProps): JSX.Element => {
@@ -157,11 +162,13 @@ export const MultiDropDownPicker = (props: MultiDropDownPickerProps): JSX.Elemen
 			<TouchableOpacity 
 				style={[DropdownSelectorStyles.headerContainer, props.headerStyle]}
 				onPress={() => {
-					setSearchableText(undefined); 
-					setIsOpen(!isOpen);}}>
+					if (!props.disabled) {
+						setSearchableText(undefined); 
+						setIsOpen(!isOpen);}}}>
 				{props.value.length <= 0 
 					? <Text>{props.placeholderText ?? 'No tags selected'}</Text>
 					: <MultiItemViewer 
+						disabled={props.disabled ?? false}
 						items={props.value}
 						onItemDelete={props.onItemDelete}					
 					/>}
