@@ -7,6 +7,7 @@ import AuthScreen from '../screens/AuthScreen';
 import AddCardModal from '../screens/home/CreateCardModal';
 import UpdateCardModal from '../screens/home/UpdateCardModal';
 import ViewCardModal from '../screens/home/ViewCardModal';
+import GameScreenModal from '../screens/home/GameScreenModal';
 import HomeTabNavigator from './HomeTab';
 import { AuthStackParamList, HomeStackParamList } from './types';
 import NavigatorStyle from '../styles/navigation/Navigator.style';
@@ -76,6 +77,13 @@ export const HomeStackNavigator = () => {
 					options={() => ({
 						headerStyle: NavigatorStyle.header,
 						headerTitle: 'Edit Card'
+					})} />  
+				<HomeStack.Screen 
+					name="GameScreenModal" 
+					component={GameScreenModal}
+					options={() => ({
+						headerStyle: NavigatorStyle.header,
+						headerTitle: 'Choose Card'
 					})} />  
 			</HomeStack.Group>
 		</HomeStack.Navigator>
