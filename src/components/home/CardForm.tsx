@@ -11,7 +11,7 @@ import { useAppSelector } from '../../redux/hooks';
 
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AndroidDateTimePicker from '../commons/AndroidDateTimePicker';
-import CreateCardModalStyle from '../../styles/components/home/CardForm.style';
+import CardFormStyle from '../../styles/components/home/CardForm.style';
 import TextArea from '../commons/TextArea';
 import Checklist, { ChecklistItem } from '../commons/Checklist';
 
@@ -22,6 +22,7 @@ import { selectAllTags } from '../../redux/selectors/tags';
 import { generateUuid } from '../../util/uuidGenerator';
 import { DropDownPicker, MultiDropDownPicker } from '../commons/DropdownPicker';
 import { overwriteTags } from '../../redux/actions/tags';
+import { TextInput } from 'react-native-gesture-handler';
 
 export type formType = 'edit' | 'create' | 'view'
 
@@ -148,10 +149,10 @@ const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: S
 
 	return (
 		<View
-			style={CreateCardModalStyle.container}
+			style={CardFormStyle.container}
 		>
 			<View 
-				style={CreateCardModalStyle.topContainer}
+				style={CardFormStyle.topContainer}
 			>
 				<Controller 
 					defaultValue={defaultValues?.title}
@@ -159,15 +160,15 @@ const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: S
 					control={control}
 					render={({ field: { onChange, onBlur, value }}) => (
 						<View 
-							style={CreateCardModalStyle.titleContainer}
+							style={CardFormStyle.titleContainer}
 						>
 							<Text
-								style={CreateCardModalStyle.inputLabel}
+								style={CardFormStyle.inputLabel}
 							>
 									Title
 							</Text>
 							<TextArea 
-								style={CreateCardModalStyle.titleInput}
+								style={CardFormStyle.titleInput}
 								onBlur={onBlur}
 								onChangeText={value => onChange(value)}
 								value={value}
@@ -182,14 +183,14 @@ const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: S
 					control={control}
 					render={({ field: { onChange, onBlur, value }}) => (
 						<View 
-							style={CreateCardModalStyle.descriptionContainer}
+							style={CardFormStyle.descriptionContainer}
 						>
 							<Text
-								style={CreateCardModalStyle.inputLabel}>
+								style={CardFormStyle.inputLabel}>
 									Description
 							</Text>
 							<TextArea 
-								style={CreateCardModalStyle.descriptionInput}
+								style={CardFormStyle.descriptionInput}
 								onBlur={onBlur}
 								onChangeText={value => onChange(value)}
 								value={value}
@@ -200,16 +201,16 @@ const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: S
 				/>
 			</View>
 			<View
-				style={CreateCardModalStyle.bottomContainer}
+				style={CardFormStyle.bottomContainer}
 			>	
 				<Controller
 					defaultValue={defaultValues?.checklistItems}
 					name="checklistItems"
 					control={control}
 					render={({ field: { onChange, value }}) =>  
-						<View style={CreateCardModalStyle.fieldContainer}> 
+						<View style={CardFormStyle.fieldContainer}> 
 							<Text
-								style={CreateCardModalStyle.inputLabelDark}>
+								style={CardFormStyle.inputLabelDark}>
 							Checklist
 							</Text>
 							<Checklist 
@@ -227,16 +228,16 @@ const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: S
 					control={control}
 					render={({ field: { onChange, value }}) => (
 						<View 
-							style={CreateCardModalStyle.fieldContainer}
+							style={CardFormStyle.fieldContainer}
 						>
 							<Text
-								style={CreateCardModalStyle.inputLabelDark}>
+								style={CardFormStyle.inputLabelDark}>
 							Start Date
 							</Text>
 							{
 								Platform.OS === 'ios'
 									? <DateTimePicker 
-										style={CreateCardModalStyle.dateTimeInput}
+										style={CardFormStyle.dateTimeInput}
 										value={value}
 										mode={'datetime'}
 										display='default'
@@ -255,16 +256,16 @@ const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: S
 					control={control}
 					render={({ field: { onChange, value }}) => (
 						<View 
-							style={CreateCardModalStyle.fieldContainer}
+							style={CardFormStyle.fieldContainer}
 						>
 							<Text
-								style={CreateCardModalStyle.inputLabelDark}>
+								style={CardFormStyle.inputLabelDark}>
 							Due Date
 							</Text>
 							{
 								Platform.OS === 'ios'
 									? <DateTimePicker 
-										style={CreateCardModalStyle.dateTimeInput}
+										style={CardFormStyle.dateTimeInput}
 										value={value}
 										mode={'datetime'}
 										display='default'
@@ -278,15 +279,37 @@ const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: S
 						</View>)}
 				/>
 				<Controller 
+					name="effortHours"
+					defaultValue={defaultValues?.effortHours ?? undefined}
+					control={control}
+					render={({field: {onChange, value}}) => (
+						<View 
+							style={CardFormStyle.fieldContainer}
+						>
+							<Text
+								style={CardFormStyle.inputLabelDark}>
+							Effort hours
+							</Text>
+							<TextInput
+								keyboardType='number-pad'
+								placeholder={'Expected effort hours'}
+								style={CardFormStyle.effortHoursInput} 
+								value={value}
+								onChangeText={(val) => onChange(val.replace(/[^0-9]/g, ''))}
+							/>
+						</View>
+					)}
+				/>
+				<Controller 
 					name="status"
 					defaultValue={defaultValues?.status ?? 'incomplete'}
 					control={control}
 					render={({ field: { onChange, value }}) => (
 						<View 
-							style={CreateCardModalStyle.fieldContainer}
+							style={CardFormStyle.fieldContainer}
 						>
 							<Text
-								style={CreateCardModalStyle.inputLabelDark}>
+								style={CardFormStyle.inputLabelDark}>
 							Status
 							</Text>
 							<DropDownPicker
@@ -308,10 +331,10 @@ const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: S
 					control={control}
 					render={({ field: { onChange, value }}) => (
 						<View 
-							style={CreateCardModalStyle.fieldContainer}
+							style={CardFormStyle.fieldContainer}
 						>
 							<Text
-								style={CreateCardModalStyle.inputLabelDark}>
+								style={CardFormStyle.inputLabelDark}>
 							Tags
 							</Text>
 							{/* TODO: add support for cardStatus typescript static check */}

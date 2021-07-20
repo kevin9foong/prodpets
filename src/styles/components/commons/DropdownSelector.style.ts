@@ -31,7 +31,8 @@ export default StyleSheet.create({
 		flexWrap: 'wrap', 
 		backgroundColor: theme['color-primary-100'], 
 		borderRadius: 8, 
-		padding: 2, 
+		paddingVertical: 2, 
+		paddingHorizontal: 5,
 		margin: 2
 	}, 
 	multiItemViewerItemText: {

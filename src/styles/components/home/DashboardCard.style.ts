@@ -13,7 +13,8 @@ export default StyleSheet.create({
 		backgroundColor: theme['color-primary-200']
 	}, 
 	coloredIndicator: {
-		width: 20
+		width: 20, 
+		backgroundColor: theme['color-primary-300']
 	}, 
 	textContainer: {
 		marginHorizontal: 20, 

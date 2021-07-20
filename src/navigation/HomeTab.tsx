@@ -17,10 +17,14 @@ import { DashboardParamList, CalendarParamList } from './types';
 import HomeTabStyle from '../styles/navigation/Navigator.style';
 import themeStyle from '../styles/theme.style';
 import { FontAwesome5HeaderButtons } from '../components/commons/IconHeaderButtons';
+import { useAppDispatch } from '../redux/hooks';
+import { logout } from '../redux/actions/user';
 
 const BottomTab = createBottomTabNavigator(); 
 
 const HomeTabRightHeader = () => {
+	const dispatch = useAppDispatch(); 
+
 	return <View style={{
 		paddingHorizontal: 20
 	}}>
@@ -35,7 +39,7 @@ const HomeTabRightHeader = () => {
 				<Item 
 					title='Profile' 
 					iconName='user-circle' 
-					onPress={() => {}} />
+					onPress={() => {dispatch(logout());}} />
 			</TouchableOpacity>
 		</FontAwesome5HeaderButtons>
 	</View>;

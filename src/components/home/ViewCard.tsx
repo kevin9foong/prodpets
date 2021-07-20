@@ -1,9 +1,7 @@
 import React from 'react'; 
-import { Platform } from 'react-native';
 import { View, Button, Text } from 'react-native'; 
 import { MarkdownView } from 'react-native-markdown-view';
 import { useForm, Controller } from 'react-hook-form';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import Checklist, { ChecklistItem } from '../commons/Checklist';
 import AndroidDateTimePicker from '../commons/AndroidDateTimePicker';
 import { useDispatch } from 'react-redux';
@@ -11,8 +9,9 @@ import { useDispatch } from 'react-redux';
 import { CardModelWithUid } from '../../database/models/cards';
 import { updateCard } from '../../redux/actions/cards';
 
-import CreateCardModalStyle from '../../styles/components/home/CardForm.style';
+import CardFormStyle from '../../styles/components/home/CardForm.style';
 import { useEffect } from 'react';
+import { MultiItemViewer } from '../commons/DropdownPicker';
 
 type ViewCardModalRightHeaderProps = {
 	onEditSubmit: () => void,
@@ -60,17 +59,17 @@ const ViewCard = ({ navigation, cardInfo }: StateProps): JSX.Element => {
 	});
     
 	return (<View
-		style={CreateCardModalStyle.container}
+		style={CardFormStyle.container}
 	>
 		<View 
-			style={CreateCardModalStyle.topContainer}
+			style={CardFormStyle.topContainer}
 		>
 
 			<View 
-				style={CreateCardModalStyle.titleContainer}
+				style={CardFormStyle.titleContainer}
 			>
 				<Text
-					style={CreateCardModalStyle.inputLabel}
+					style={CardFormStyle.inputLabel}
 				>
 								Title
 				</Text>
@@ -79,10 +78,10 @@ const ViewCard = ({ navigation, cardInfo }: StateProps): JSX.Element => {
 				</Text>
 			</View>
 			<View 
-				style={CreateCardModalStyle.descriptionContainer}
+				style={CardFormStyle.descriptionContainer}
 			>
 				<Text
-					style={CreateCardModalStyle.inputLabel}>
+					style={CardFormStyle.inputLabel}>
 								Description
 				</Text>
 				{/* TODO: Fix or replace Markdown view. */}
@@ -92,12 +91,12 @@ const ViewCard = ({ navigation, cardInfo }: StateProps): JSX.Element => {
 			</View>
 		</View>
 		<View
-			style={CreateCardModalStyle.bottomContainer}
+			style={CardFormStyle.bottomContainer}
 		>	
-			<View style={CreateCardModalStyle.fieldContainer}> 
+			<View style={CardFormStyle.fieldContainer}> 
 				{(cardInfo.checklistItems && cardInfo.checklistItems.length > 0) 
 					? <><Text
-						style={CreateCardModalStyle.inputLabelDark}>
+						style={CardFormStyle.inputLabelDark}>
 						Checklist
 					</Text>
 					<Controller
@@ -116,49 +115,78 @@ const ViewCard = ({ navigation, cardInfo }: StateProps): JSX.Element => {
 				}
 			</View>
 			<View 
-				style={CreateCardModalStyle.fieldContainer}
+				style={CardFormStyle.fieldContainer}
 			>
 				<Text
-					style={CreateCardModalStyle.inputLabelDark}>
+					style={CardFormStyle.inputLabelDark}>
 						Start Date
 				</Text>
-				{
-					Platform.OS === 'ios'
-						? <DateTimePicker 
-							style={CreateCardModalStyle.dateTimeInput}
-							value={new Date(cardInfo.startdate)}
-							mode={'datetime'}
-							display='default'
-							onChange={(event, date) => {}}
-						/>
-						: <AndroidDateTimePicker 
-							value={new Date(cardInfo.startdate)} 
-							onChange={() => {}}
-						/>
-				}
+				<AndroidDateTimePicker 
+					disabled={true}
+					value={new Date(cardInfo.startdate)} 
+					// eslint-disable-next-line @typescript-eslint/no-empty-function
+					onChange={() => {}}
+				/>
 			</View>
 			<View 
-				style={CreateCardModalStyle.fieldContainer}
+				style={CardFormStyle.fieldContainer}
 			>
 				<Text
-					style={CreateCardModalStyle.inputLabelDark}>
+					style={CardFormStyle.inputLabelDark}>
 						Due Date
 				</Text>
-				{
-					Platform.OS === 'ios'
-						? <DateTimePicker 
-							style={CreateCardModalStyle.dateTimeInput}
-							value={new Date(cardInfo.duedate)}
-							mode={'datetime'}
-							display='default'
-							onChange={(event, date) => {}}
-						/>
-						: <AndroidDateTimePicker 
-							value={new Date(cardInfo.duedate)} 
-							onChange={() => {}}
-						/>
-				}
+				<AndroidDateTimePicker 
+					disabled={true}
+					value={new Date(cardInfo.duedate)} 
+					// eslint-disable-next-line @typescript-eslint/no-empty-function
+					onChange={() => {}}
+				/>
 			</View>
+			{cardInfo.effortHours 
+				? <View 
+					style={CardFormStyle.fieldContainer}
+				>
+					<Text
+						style={CardFormStyle.inputLabelDark}>
+						Effort hours
+					</Text>
+					<View style={CardFormStyle.effortHoursInput}>
+						<Text> 
+							{cardInfo.effortHours}
+						</Text>
+					</View>
+				</View>
+				: null}
+			{cardInfo.status 
+				? <View 
+					style={CardFormStyle.fieldContainer}
+				>
+					<Text
+						style={CardFormStyle.inputLabelDark}>
+						Status
+					</Text>
+					<View style={CardFormStyle.effortHoursInput}>
+						<Text> 
+							{cardInfo.status}
+						</Text>
+					</View>
+				</View>
+				: null}
+			{(cardInfo.tags && cardInfo.tags.length > 0) 
+				? <View 
+					style={CardFormStyle.fieldContainer}
+				>
+					<Text
+						style={CardFormStyle.inputLabelDark}>
+						Tags
+					</Text>
+					<MultiItemViewer 
+						items={cardInfo.tags}
+						onItemDelete={() => {}}
+						disabled={true}
+					/>
+				</View>
+				: null}
 		</View>
 	</View> );
 };
