@@ -1,23 +1,32 @@
 import { CardModelWithUid } from '../../database/models/cards';
+import { addCardAction, deleteCardAction, fetchCardsAction, updateCardAction } from '../actions/cards';
 
-const initialState: CardModelWithUid[] = []; 
+export type Cards = {
+	// cardUid: cardData 
+	[uid: string]: CardModelWithUid
+}
 
-const cardsReducer = (state = initialState, action): CardModelWithUid[] => {
+const initialState: Cards = {}; 
+
+const cardsReducer = (state = initialState, action: addCardAction | updateCardAction | deleteCardAction | fetchCardsAction): Cards => {
 	switch(action.type) {
 	case 'cards/fetchCards': { 
 		// TODO: fix implementation later with syncing online mode with offline state
 		// return [...state];
-		return [];
+		return {};
 	}
 	case 'cards/addCard': {
-		return [...state, {uid: action.payload.uid, ...action.payload.cardInfo}];
+		return {...state, [action.payload.cardInfo.uid]: action.payload.cardInfo};
 	}
 	case 'cards/updateCard': {
-		return [...state.filter(card => card.uid !== action.payload.cardInfo.uid),
-			{...action.payload.cardInfo}];
+		const newCards = {...state};
+		newCards[action.payload.cardInfo.uid] = action.payload.cardInfo;
+		return newCards;
 	}
 	case 'cards/deleteCard': {
-		return state.filter(card => card.uid !== action.payload.cardUid);
+		const newCards = {...state};
+		delete newCards[action.payload.uid]; 
+		return newCards;
 	}
 	default: {
 		return state;

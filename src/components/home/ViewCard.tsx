@@ -4,8 +4,8 @@ import { View, Button, Text } from 'react-native';
 import { MarkdownView } from 'react-native-markdown-view';
 import { useForm, Controller } from 'react-hook-form';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import Checklist, { ChecklistItem } from '../Checklist';
-import AndroidDateTimePicker from '../AndroidDateTimePicker';
+import Checklist, { ChecklistItem } from '../commons/Checklist';
+import AndroidDateTimePicker from '../commons/AndroidDateTimePicker';
 import { useDispatch } from 'react-redux';
 
 import { CardModelWithUid } from '../../database/models/cards';

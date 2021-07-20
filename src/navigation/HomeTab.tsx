@@ -16,7 +16,7 @@ import { DashboardParamList, CalendarParamList } from './types';
 
 import HomeTabStyle from '../styles/navigation/Navigator.style';
 import themeStyle from '../styles/theme.style';
-import { FontAwesome5HeaderButtons } from '../components/IconHeaderButtons';
+import { FontAwesome5HeaderButtons } from '../components/commons/IconHeaderButtons';
 
 const BottomTab = createBottomTabNavigator(); 
 

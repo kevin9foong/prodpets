@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import IconButtonStyles from '../styles/components/commons/IconButton.style';
+import IconButtonStyles from '../../styles/components/commons/IconButton.style';
 
 type StateProps = {
   iconName: keyof typeof FontAwesome.glyphMap;

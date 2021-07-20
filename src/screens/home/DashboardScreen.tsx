@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react'; 
 import { View, FlatList, RefreshControl } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 import DashboardCard from '../../components/home/DashboardCard';
+import HorizontalItemScroll from '../../components/commons/HorizontalItemScroll';
 import DashboardScreenStyles from '../../styles/screens/home/Dashboard.style';
 import { CardModelWithUid } from '../../database/models/cards';
 import { fetchCards } from '../../redux/actions/cards';
-import { selectAllCards } from '../../redux/selectors/cards';
 import { DashboardParamList } from '../../navigation/types';
 import { useCallback } from 'react';
+import { selectAllTagNames, selectAllTags } from '../../redux/selectors/tags';
+import { changeCardTagFilters } from '../../redux/actions/cardFilter';
+import { selectTagFilters } from '../../redux/selectors/cardFilter';
+import { selectAllCards, selectCardsObject } from '../../redux/selectors/cards';
 
 type DashboardScreenNavigationProp = StackNavigationProp<
 	DashboardParamList, 'DashboardScreen'>; 
@@ -19,10 +23,29 @@ type StateProps = {
 }
 
 const DashboardScreen: React.FC<StateProps> = ({navigation}: StateProps) => {
-	const cards = useSelector(selectAllCards); 
+	const dispatch = useAppDispatch(); 
+	const tags = useAppSelector(selectAllTags);
+	const tagNames = useAppSelector(selectAllTagNames);
+	const tagFilters = useAppSelector(selectTagFilters);
 	const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+	const allCards = useAppSelector(selectAllCards);
+	const cardsObject = useAppSelector(selectCardsObject);
 
-	const dispatch = useDispatch();
+	const [cards, setCards] = useState<CardModelWithUid[]>(allCards);
+
+	useEffect(() => {
+		if (tagFilters.length <= 0) {
+			setCards(allCards);
+		} else { 
+			// TODO: fix these red errors? 
+			const cards: CardModelWithUid[] = 
+				tagFilters.reduce((acc, tagName) => {
+					const tagCards = tags[tagName].map(uid => cardsObject[uid]);
+					return [...acc, ...tagCards];
+				}, []);
+			setCards(cards);
+		}
+	}, [tagFilters, allCards]); 
 
 	// TODO: solve this issue with fetching cards and updating card list immediately. 
 	// TODO: fix offline and online integration - currently disabled.
@@ -52,6 +75,16 @@ const DashboardScreen: React.FC<StateProps> = ({navigation}: StateProps) => {
 		<View
 			style={DashboardScreenStyles.container}>
 			<FlatList
+				ListHeaderComponent={
+					<HorizontalItemScroll 
+						onItemPress={item => {
+							if (tagFilters.includes(item.value)) {
+								dispatch(changeCardTagFilters(tagFilters.filter(tagName => tagName !== item.value)));
+							} else {
+								dispatch(changeCardTagFilters([item.value, ...tagFilters]));}
+						}}
+						selectedItems={tagFilters.map(tagFilter => ({label: tagFilter, value: tagFilter}))}
+						items={tagNames.map(tagName => ({label: tagName, value: tagName}))} />}
 				style={DashboardScreenStyles.list}
 				data={cards}
 				renderItem={renderItem}
