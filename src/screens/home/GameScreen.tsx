@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
   TextInput,
   View,
@@ -7,6 +7,7 @@ import {
   Keyboard,
   Text,
   Button,
+  AppState
 } from "react-native";
 import CountDown from "react-native-countdown-component";
 import theme from "../../styles/theme.style";
@@ -21,6 +22,9 @@ const GameScreen: React.FC = ({ navigation }: any) => {
   const [hours, setHours] = React.useState("");
   const [isCountingDown, setIsCountingDown] = React.useState(false);
   const [associatedCard, setAssociatedCard] = React.useState(null);
+  const appState = useRef(AppState.currentState);
+  const [currentAppState, setAppState] = React.useState(appState.currentState)
+  let timeElapsed = 0;
 
   const onTextChanged = (text: String, fn: Function) => {
     // code to remove non-numeric characters from text
@@ -50,10 +54,52 @@ const GameScreen: React.FC = ({ navigation }: any) => {
   const handleFinish = () => {
     if (associatedCard !== null) {
       dispatch(deleteCard(associatedCard.uid))
+    }
       setAssociatedCard(null);
       toggleIsCountingDown(false)
-    } 
   }
+
+    const handleCancel = () => {
+        toggleIsCountingDown(false);
+        timeElapsed = 0;
+    }
+
+    function handleAppStateChange(nextAppState) {
+      if (nextAppState !== 'active') {
+          handleCancel()
+      }
+  }
+
+    useEffect(() => {
+        AppState.addEventListener('change', handleAppStateChange)
+
+        return () => {
+            AppState.removeEventListener('change', handleAppStateChange)
+        }
+    }, []);
+
+    useEffect(() => {
+
+        let interval = null
+
+        if (isCountingDown) {
+            interval = setInterval(() => {
+                timeElapsed = timeElapsed + 1000;
+                console.log(timeElapsed)
+            }, 1000);
+        } else {
+            clearInterval(interval);
+        }
+        return (() => clearInterval(interval))
+    }, [isCountingDown])
+
+    const xpGained = (time) => {
+        const timeInSeconds = Math.floor(time / 1000);
+        return Math.floor((timeInSeconds / 60) / 5);
+    }
+
+    /*   AppState.addEventListener("change", handleAppStateChange); */
+
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -113,6 +159,7 @@ const GameScreen: React.FC = ({ navigation }: any) => {
             <TouchableOpacity style={GameScreenStyle.button} onPress={() => toggleIsCountingDown(true)}>
               <Text style={GameScreenStyle.buttonText}>Start Session</Text>
             </TouchableOpacity>
+
             </View>
           </View>
         ) : (
@@ -124,7 +171,8 @@ const GameScreen: React.FC = ({ navigation }: any) => {
               onFinish={handleFinish}
               digitStyle={{ backgroundColor: theme["color-primary-200"] }}
             />
-            <TouchableOpacity style={GameScreenStyle.button} onPress={() => toggleIsCountingDown(false)}>
+            <Text style={{alignSelf: 'center'}}>You have accumulated { xpGained(timeElapsed) } xp!</Text>
+            <TouchableOpacity style={GameScreenStyle.button} onPress={() => handleCancel()}>
               <Text style={GameScreenStyle.buttonText}>Cancel</Text>
             </TouchableOpacity>
           </View>

@@ -84,10 +84,10 @@ export const HomeStackNavigator = () => {
 					options={() => ({
 						headerStyle: NavigatorStyle.header,
 						headerTitle: 'Choose Card'
-					})} />  
+					})} />
 			</HomeStack.Group>
 		</HomeStack.Navigator>
 	);
 };
 
-export default Navigator; 
+export default Navigator;
