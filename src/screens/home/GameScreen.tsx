@@ -7,13 +7,17 @@ import {
   Keyboard,
   Text,
   Button,
-  AppState
+  AppState,
+  Vibration
 } from "react-native";
 import CountDown from "react-native-countdown-component";
 import theme from "../../styles/theme.style";
 import GameScreenStyle from "../../styles/screens/home/GameScreen.styles";
 import { CardModelWithUid } from "../../database/models/cards";
 import { useDispatch } from "react-redux";
+import { useAppSelector } from '../../redux/hooks';
+import { selectAllPets } from '../../redux/selectors/pets';
+import { addXp } from '../../redux/actions/pets';
 import { addCard, updateCard, deleteCard } from '../../redux/actions/cards'; //uses carduid
 
 const GameScreen: React.FC = ({ navigation }: any) => {
@@ -24,12 +28,15 @@ const GameScreen: React.FC = ({ navigation }: any) => {
   const [associatedCard, setAssociatedCard] = React.useState(null);
   const appState = useRef(AppState.currentState);
   const [currentAppState, setAppState] = React.useState(appState.currentState)
-  let timeElapsed = 0;
+  const [finishedSuccessfully, setFinishedSuccessfully] = React.useState(true);
+  const [timeElapsed, setTimeElapsed] = React.useState(0);
 
   const onTextChanged = (text: String, fn: Function) => {
     // code to remove non-numeric characters from text
     fn(text.replace(/[^0-9]/g, ""));
   };
+
+    const pets = useAppSelector(selectAllPets);
 
   const calcTime = () => {
     const hour = hours === "" ? "0" : hours;
@@ -52,18 +59,32 @@ const GameScreen: React.FC = ({ navigation }: any) => {
   }
 
   const handleFinish = () => {
+    Vibration.vibrate(400, false);
     if (associatedCard !== null) {
       dispatch(deleteCard(associatedCard.uid))
     }
-      setAssociatedCard(null);
-      toggleIsCountingDown(false)
+
+    // code to calculate xp earned
+    const xp = xpGained(timeElapsed) + 1;
+
+    // dispatch to store to update user's xp
+    console.log(xp)
+    dispatch(addXp(xp, 0));
+
+    // resets all variables
+    setAssociatedCard(null);
+    toggleIsCountingDown(false)
+    setTimeElapsed(0);
   }
 
-    const handleCancel = () => {
-        toggleIsCountingDown(false);
-        timeElapsed = 0;
-    }
+  // handler function for when user cancels session
+  const handleCancel = () => {
+    setAssociatedCard(null);
+    toggleIsCountingDown(false);
+    setTimeElapsed(0);
+  }
 
+    //handler function for when user leaves the app
     function handleAppStateChange(nextAppState) {
       if (nextAppState !== 'active') {
           handleCancel()
@@ -84,8 +105,7 @@ const GameScreen: React.FC = ({ navigation }: any) => {
 
         if (isCountingDown) {
             interval = setInterval(() => {
-                timeElapsed = timeElapsed + 1000;
-                console.log(timeElapsed)
+                setTimeElapsed(timeElapsed => timeElapsed + 1000);
             }, 1000);
         } else {
             clearInterval(interval);
@@ -95,18 +115,17 @@ const GameScreen: React.FC = ({ navigation }: any) => {
 
     const xpGained = (time) => {
         const timeInSeconds = Math.floor(time / 1000);
-        return Math.floor((timeInSeconds / 60) / 5);
+        // return Math.floor((timeInSeconds / 60) / 5); // can use this to calculate 5mins => 1xp
+        return timeInSeconds;
     }
 
-    /*   AppState.addEventListener("change", handleAppStateChange); */
 
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={GameScreenStyle.container}>
         <View style={GameScreenStyle.xpGroup}>
-          <Text style={GameScreenStyle.xp}>XP: 1200</Text>
-          <Text style={GameScreenStyle.coins}>Coins: 5</Text>
+          <Text style={GameScreenStyle.xp}>{ pets[0].name }: { pets[0].xp } / { pets[0].maxXp }</Text>
         </View>
         {!isCountingDown ? (
           <View style={GameScreenStyle.formContainer}>
