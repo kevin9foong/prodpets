@@ -3,42 +3,43 @@
  * https://reactnavigation.org/docs/typescript/
  */
 
-import { CardModelWithUid } from '../database/models/cards';
+import { CardModelWithUid } from "../database/models/cards";
 
 export type CardUid = {
-  uid: string
-}
+  uid: string;
+};
 
-export type CardModelWithUidSerializable = 
-  Omit<CardModelWithUid, 'startdate' | 'duedate'> 
-  & {
-  startdate: string, 
-  duedate: string
-} 
+export type CardModelWithUidSerializable = Omit<
+  CardModelWithUid,
+  "startdate" | "duedate"
+> & {
+  startdate: string;
+  duedate: string;
+};
 
 export type AuthStackParamList = {
-    Auth: undefined; 
-}
+  Auth: undefined;
+};
 
 export type HomeStackParamList = {
-    Home: undefined; 
-    CreateCardModal: undefined; 
-    ViewCardModal: CardUid; 
-    UpdateCardModal: CardUid;
-  };
-  
+  Home: undefined;
+  CreateCardModal: undefined;
+  ViewCardModal: CardUid;
+  UpdateCardModal: CardUid;
+};
+
 export type HomeTabParamList = {
-    TabOne: undefined;
-    TabTwo: undefined;
-  };
-  
+  TabOne: undefined;
+  TabTwo: undefined;
+};
+
 export type DashboardParamList = {
-    DashboardScreen: undefined;
-    UpdateCardModal: CardUid;
-    ViewCardModal: CardUid;
-  };
-  
+  DashboardScreen: undefined;
+  UpdateCardModal: CardUid;
+  ViewCardModal: CardUid;
+};
+
 export type CalendarParamList = {
-    CalendarScreen: undefined;
-    ViewCardModal: CardUid; 
-  };
+  CalendarScreen: undefined;
+  ViewCardModal: CardUid;
+};
