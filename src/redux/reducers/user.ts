@@ -1,3 +1,5 @@
+import { loginAction, logoutAction } from '../actions/user';
+
 export interface UserState { 
 	userUid: string | null
 }
@@ -7,7 +9,7 @@ const initialState: UserState = {
 };
 
 // define a slice reducer for our global state
-const userReducer = (state = initialState, action): UserState => {
+const userReducer = (state = initialState, action: loginAction | logoutAction): UserState => {
 	switch(action.type) {
 	case 'user/login': {
 		return {

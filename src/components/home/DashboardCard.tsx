@@ -24,7 +24,7 @@ const DashboardCard = ({
 			onPress={() => onPress(cardInfo)}
 		> 
 			{/* TODO: implement coloring when tags are added */}
-			<View style={{...DashboardCardStyle.coloredIndicator, backgroundColor: false ? null : '#000'}}>
+			<View style={[DashboardCardStyle.coloredIndicator]}>
 
 			</View>
 			<View style={DashboardCardStyle.textContainer}>

@@ -1,4 +1,4 @@
-import React from 'react'; 
+import React, { useEffect, useState } from 'react'; 
 import {
 	View,
 	Text,
@@ -7,15 +7,22 @@ import {
 } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
+import { useAppSelector } from '../../redux/hooks';
 
 import DateTimePicker from '@react-native-community/datetimepicker';
-import AndroidDateTimePicker from '../AndroidDateTimePicker';
-import CreateCardModalStyle from '../../styles/components/home/CardForm.style';
-import TextArea from '../TextArea';
+import AndroidDateTimePicker from '../commons/AndroidDateTimePicker';
+import CardFormStyle from '../../styles/components/home/CardForm.style';
+import TextArea from '../commons/TextArea';
+import Checklist, { ChecklistItem } from '../commons/Checklist';
+
 import { CardModel, CardModelWithUid } from '../../database/models/cards';
-import Checklist, { ChecklistItem } from '../../components/Checklist';
 import { addCard, updateCard, deleteCard } from '../../redux/actions/cards';
+import { Tags } from '../../redux/reducers/tags';
+import { selectAllTags } from '../../redux/selectors/tags';
 import { generateUuid } from '../../util/uuidGenerator';
+import { DropDownPicker, MultiDropDownPicker } from '../commons/DropdownPicker';
+import { overwriteTags } from '../../redux/actions/tags';
+import { TextInput } from 'react-native-gesture-handler';
 
 export type formType = 'edit' | 'create' | 'view'
 
@@ -73,10 +80,32 @@ const CreateCardModalRightHeader = ({onSaveSubmit}: CreateCardModalRightHeaderPr
 
 const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: StateProps) => {
 	const dispatch = useDispatch(); 
+	const [tags, setTags] = useState<Tags>(useAppSelector(selectAllTags));
+	const [cardUid, setCardUid] = useState<string>();
 
-	const onDeleteSubmit = () => {
+	useEffect(() => {
+		setCardUid(defaultValues?.uid ?? generateUuid());
+	}, []);
+
+	const removeCardUidFromTags = (cardUid: string) => {
+		const tagNames = Object.keys(tags); 
+		const updatedTags = {...tags};
+		tagNames.forEach(tagName => {
+			const filteredCardTags = updatedTags[tagName].filter(uid => uid !== cardUid); 
+			if (filteredCardTags.length > 0) {
+				updatedTags[tagName] = filteredCardTags; 
+			} else {
+				delete updatedTags[tagName]; 
+			}
+		});
+
+		return updatedTags; 
+	};
+
+	const onDeleteSubmit = (cardUid: string) => {
 		if (defaultValues?.uid) {
 			dispatch(deleteCard(defaultValues.uid)); 
+			dispatch(overwriteTags(removeCardUidFromTags(cardUid)));
 		}
 		navigation.navigate('Home');
 	};
@@ -85,14 +114,16 @@ const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: S
 		if (defaultValues?.uid) {
 			const updatedCardData = {uid: defaultValues.uid, ...data};
 			dispatch(updateCard(updatedCardData));
+			dispatch(overwriteTags(tags));
 			navigation.navigate('ViewCardModal', {uid: defaultValues.uid});
 		} else {
 			navigation.goBack();
 		}
 	};
 
-	const onCreateSubmit = (data: CardModel) => {
-		dispatch(addCard(generateUuid(), data)); 
+	const onCreateSubmit = (cardUid: string, data: CardModel) => {
+		dispatch(addCard(cardUid, data)); 
+		dispatch(overwriteTags(tags));
 		navigation.goBack();
 	};
 
@@ -100,7 +131,7 @@ const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: S
 	const { control, handleSubmit, formState: { errors }} = useForm(); 
 
 	const onPrimaryButtonPress = (data: CardModel) => {
-		formType === 'edit' ? onUpdateSubmit(data) : onCreateSubmit(data);
+		formType === 'edit' ? onUpdateSubmit(data) : onCreateSubmit(cardUid!, data);
 	}; 
 
 	React.useLayoutEffect(() => {
@@ -109,7 +140,7 @@ const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: S
 			headerRight: () => formType === 'edit' 
 				? <UpdateCardModalRightHeader 
 					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-					onDeleteSubmit={onDeleteSubmit!} 
+					onDeleteSubmit={() => onDeleteSubmit!(cardUid!)} 
 					onSaveSubmit={handleSubmit(onPrimaryButtonPress)} />
 				: <CreateCardModalRightHeader 
 					onSaveSubmit={handleSubmit(onPrimaryButtonPress)} />
@@ -118,10 +149,10 @@ const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: S
 
 	return (
 		<View
-			style={CreateCardModalStyle.container}
+			style={CardFormStyle.container}
 		>
 			<View 
-				style={CreateCardModalStyle.topContainer}
+				style={CardFormStyle.topContainer}
 			>
 				<Controller 
 					defaultValue={defaultValues?.title}
@@ -129,15 +160,15 @@ const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: S
 					control={control}
 					render={({ field: { onChange, onBlur, value }}) => (
 						<View 
-							style={CreateCardModalStyle.titleContainer}
+							style={CardFormStyle.titleContainer}
 						>
 							<Text
-								style={CreateCardModalStyle.inputLabel}
+								style={CardFormStyle.inputLabel}
 							>
 									Title
 							</Text>
 							<TextArea 
-								style={CreateCardModalStyle.titleInput}
+								style={CardFormStyle.titleInput}
 								onBlur={onBlur}
 								onChangeText={value => onChange(value)}
 								value={value}
@@ -152,14 +183,14 @@ const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: S
 					control={control}
 					render={({ field: { onChange, onBlur, value }}) => (
 						<View 
-							style={CreateCardModalStyle.descriptionContainer}
+							style={CardFormStyle.descriptionContainer}
 						>
 							<Text
-								style={CreateCardModalStyle.inputLabel}>
+								style={CardFormStyle.inputLabel}>
 									Description
 							</Text>
 							<TextArea 
-								style={CreateCardModalStyle.descriptionInput}
+								style={CardFormStyle.descriptionInput}
 								onBlur={onBlur}
 								onChangeText={value => onChange(value)}
 								value={value}
@@ -170,16 +201,16 @@ const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: S
 				/>
 			</View>
 			<View
-				style={CreateCardModalStyle.bottomContainer}
+				style={CardFormStyle.bottomContainer}
 			>	
 				<Controller
 					defaultValue={defaultValues?.checklistItems}
 					name="checklistItems"
 					control={control}
 					render={({ field: { onChange, value }}) =>  
-						<View style={CreateCardModalStyle.fieldContainer}> 
+						<View style={CardFormStyle.fieldContainer}> 
 							<Text
-								style={CreateCardModalStyle.inputLabelDark}>
+								style={CardFormStyle.inputLabelDark}>
 							Checklist
 							</Text>
 							<Checklist 
@@ -197,16 +228,16 @@ const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: S
 					control={control}
 					render={({ field: { onChange, value }}) => (
 						<View 
-							style={CreateCardModalStyle.fieldContainer}
+							style={CardFormStyle.fieldContainer}
 						>
 							<Text
-								style={CreateCardModalStyle.inputLabelDark}>
+								style={CardFormStyle.inputLabelDark}>
 							Start Date
 							</Text>
 							{
 								Platform.OS === 'ios'
 									? <DateTimePicker 
-										style={CreateCardModalStyle.dateTimeInput}
+										style={CardFormStyle.dateTimeInput}
 										value={value}
 										mode={'datetime'}
 										display='default'
@@ -225,16 +256,16 @@ const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: S
 					control={control}
 					render={({ field: { onChange, value }}) => (
 						<View 
-							style={CreateCardModalStyle.fieldContainer}
+							style={CardFormStyle.fieldContainer}
 						>
 							<Text
-								style={CreateCardModalStyle.inputLabelDark}>
+								style={CardFormStyle.inputLabelDark}>
 							Due Date
 							</Text>
 							{
 								Platform.OS === 'ios'
 									? <DateTimePicker 
-										style={CreateCardModalStyle.dateTimeInput}
+										style={CardFormStyle.dateTimeInput}
 										value={value}
 										mode={'datetime'}
 										display='default'
@@ -246,6 +277,93 @@ const CardForm: React.FC<StateProps> = ({defaultValues, navigation, formType}: S
 									/>
 							}
 						</View>)}
+				/>
+				<Controller 
+					name="effortHours"
+					defaultValue={defaultValues?.effortHours ?? undefined}
+					control={control}
+					render={({field: {onChange, value}}) => (
+						<View 
+							style={CardFormStyle.fieldContainer}
+						>
+							<Text
+								style={CardFormStyle.inputLabelDark}>
+							Effort hours
+							</Text>
+							<TextInput
+								keyboardType='number-pad'
+								placeholder={'Expected effort hours'}
+								style={CardFormStyle.effortHoursInput} 
+								value={value}
+								onChangeText={(val) => onChange(val.replace(/[^0-9]/g, ''))}
+							/>
+						</View>
+					)}
+				/>
+				<Controller 
+					name="status"
+					defaultValue={defaultValues?.status ?? 'incomplete'}
+					control={control}
+					render={({ field: { onChange, value }}) => (
+						<View 
+							style={CardFormStyle.fieldContainer}
+						>
+							<Text
+								style={CardFormStyle.inputLabelDark}>
+							Status
+							</Text>
+							<DropDownPicker
+								value={value}
+								onValueChange={onChange} 
+								items={[
+									{label: 'In Progress', value: 'in progress'},
+									{label: 'Completed', value: 'completed'},
+									{label: 'Incomplete', value: 'incomplete'}
+								]}
+							/>
+						</View>
+					)
+					}
+				/>
+				<Controller 
+					name="tags"
+					defaultValue={defaultValues?.tags ?? []}
+					control={control}
+					render={({ field: { onChange, value }}) => (
+						<View 
+							style={CardFormStyle.fieldContainer}
+						>
+							<Text
+								style={CardFormStyle.inputLabelDark}>
+							Tags
+							</Text>
+							{/* TODO: add support for cardStatus typescript static check */}
+							<MultiDropDownPicker 
+								searchableInputPlaceholderText='Search/Add Tags'
+								value={value} 
+								onAdditionalItemSelect={onChange}
+								onItemCreateNew={(tagName) => {
+									onChange([...value, tagName]); 
+									// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+									// safe to assert not-null due to useEffect setCardUid
+									setTags({...tags, [tagName]: [...(tags[tagName] || []), cardUid!]});
+								}}
+								onItemDelete={(deletedTag) => {
+									onChange(value.filter((tag: string) => tag !== deletedTag));
+									const newTags = {...tags}; 
+									const deletedTagCardUids = newTags[deletedTag].filter(uid => uid !== cardUid); 
+									if (deletedTagCardUids.length === 0) {
+										delete newTags[deletedTag]; 
+									} else {
+										newTags[deletedTag] = deletedTagCardUids; 
+									}
+									setTags(newTags);
+								}}
+								items={Object.keys(tags).map(tagName => ({label: tagName, value: tagName}))}
+							/>
+						</View>
+					)
+					}
 				/>
 			</View>
 		</View> 

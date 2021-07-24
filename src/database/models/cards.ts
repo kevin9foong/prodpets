@@ -1,7 +1,7 @@
 import db from '../index';
 // import firebase from 'firebase/app';
 import 'firebase/firestore';
-import { ChecklistItem } from '../../components/Checklist';
+import { ChecklistItem } from '../../components/commons/Checklist';
 
 export type cardStatus = 'completed' | 'in progress' | 'incomplete';
 export interface CardModelWithUid<DateType = Date> extends CardModel<DateType> {

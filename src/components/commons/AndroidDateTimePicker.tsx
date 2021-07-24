@@ -1,21 +1,22 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import AndroidDateTimePickerStyle from '../styles/components/commons/AndroidDateTimePicker';
+import AndroidDateTimePickerStyle from '../../styles/components/commons/AndroidDateTimePicker.style';
 
 type DateTimePickerModes = 'date' | 'time';
 
 type StateProps = {
     value: Date, 
-    onChange: (value: Date) => void
+    onChange?: (value: Date) => void,
+	disabled?: boolean
 }
 
-const AndroidDateTimePicker = ({value, onChange}: StateProps): JSX.Element => {
+const AndroidDateTimePicker = ({value, onChange, disabled}: StateProps): JSX.Element => {
 	const [mode, setMode] = useState<DateTimePickerModes>('date');
 	const [show, setShow] = useState(false);
     
 	const showMode = (currentMode: DateTimePickerModes) => {
-		setShow(true);
+		setShow(!disabled ?? true);
 		setMode(currentMode);
 	};
     
@@ -49,7 +50,11 @@ const AndroidDateTimePicker = ({value, onChange}: StateProps): JSX.Element => {
 				<TouchableOpacity 
 					style={AndroidDateTimePickerStyle.dateTimePicker}
 					onPress={showTimepicker}>
-					<Text>{`${value.getHours()%12}:${value.getMinutes()} ${value.getHours() > 12 ? 'pm' : 'am'}`}</Text> 
+					<Text>
+						{`${value.getHours()%12}:${value.getMinutes() < 10 
+							? `0${value.getMinutes()}` 
+							: value.getMinutes()} ${value.getHours() > 12 ? 'pm' : 'am'}`}
+					</Text> 
 				</TouchableOpacity>
 			</View>
 			{show && (

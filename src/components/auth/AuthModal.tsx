@@ -4,7 +4,7 @@ import Modal from 'react-native-modal';
 import { AuthType } from '../../screens/AuthScreen';
 import AuthContext from '../../context/AuthContext';
 import AuthModalStyles from '../../styles/components/auth/AuthModal.style';
-import IconButton from '../IconButton';
+import IconButton from '../commons/IconButton';
 
 type StateProps = {
     isVisible: boolean, 

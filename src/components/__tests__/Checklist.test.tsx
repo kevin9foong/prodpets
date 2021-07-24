@@ -1,5 +1,5 @@
 import React from 'react'; 
-import Checklist, { EditableChecklistItem, StateProps as ChecklistProps } from '../Checklist';
+import Checklist, { EditableChecklistItem, StateProps as ChecklistProps } from '../commons/Checklist';
 import { render, fireEvent } from '@testing-library/react-native';
 
 const checklistProps: ChecklistProps = {

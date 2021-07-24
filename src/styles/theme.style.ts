@@ -80,6 +80,8 @@ export default {
 	'color-danger-transparent-500': 'rgba(255, 101, 40, 0.4)',
 	'color-danger-transparent-600': 'rgba(255, 101, 40, 0.48)', 
 	'color-light-contrast': '#fff',
+	// TODO: to fix styling and colors
+	'ios-system-gray-light': '#rgb(216,216,220)',
 	'ios-system-blue-light': 'rgb(0,122,255)', 
 	'ios-system-blue-dark': 'rgb(0,132,255)',
 	// font-size themes
