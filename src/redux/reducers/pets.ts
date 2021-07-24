@@ -27,7 +27,7 @@ const petsReducer = (state = initialState, action): PetsState => {
       if (pet.xp + action.payload.xp > pet.maxXp) {
         pet = {
           level: pet.level + 1,
-          xp: pet.maxXp - action.payload.xp,
+          xp: action.payload.xp - (pet.maxXp - pet.xp),
           maxXp: pet.maxXp + 100, // change this later
           name: pet.name,
         };
