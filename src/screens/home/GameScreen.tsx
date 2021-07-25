@@ -117,7 +117,7 @@ const GameScreen: React.FC = ({ navigation }: any) => {
   const xpGained = (time) => {
     const timeInSeconds = Math.floor(time / 1000);
     // return Math.floor((timeInSeconds / 60) / 5); // can use this to calculate 5mins => 1xp
-    return timeInSeconds * 10;
+    return timeInSeconds;
   };
 
   const reset = () => {
