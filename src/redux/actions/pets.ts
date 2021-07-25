@@ -1,5 +1,5 @@
 export type addXpAction = {
-  type: "pet/addXp";
+  type: 'pet/addXp';
   payload: {
     index: number;
     xp: number;
@@ -7,7 +7,7 @@ export type addXpAction = {
 };
 
 export type changeNameAction = {
-  type: "pet/changeName";
+  type: 'pet/changeName';
   payload: {
     index: number;
     name: string;
@@ -15,17 +15,17 @@ export type changeNameAction = {
 };
 
 export const addXp = (xp: number, index: number): addXpAction => ({
-  type: "pet/addXp",
-  payload: {
-    index,
-    xp,
-  },
+	type: 'pet/addXp',
+	payload: {
+		index,
+		xp
+	}
 });
 
 export const changeName = (name: string, index: number): changeNameAction => ({
-  type: "pet/changeName",
-  payload: {
-    index,
-    name,
-  },
+	type: 'pet/changeName',
+	payload: {
+		index,
+		name
+	}
 });

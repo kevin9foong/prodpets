@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
-  StyleProp,
-  ViewStyle,
-  TouchableOpacity,
-  TouchableHighlight,
-} from "react-native";
-import { View, Text, Button } from "react-native";
-import { ScrollView, TextInput } from "react-native-gesture-handler";
-import { Entypo } from "@expo/vector-icons";
-import DropdownSelectorStyles from "../../styles/components/commons/DropdownSelector.style";
+	StyleProp,
+	ViewStyle,
+	TouchableOpacity,
+	TouchableHighlight,
+} from 'react-native';
+import { View, Text, Button } from 'react-native';
+import { ScrollView, TextInput } from 'react-native-gesture-handler';
+import { Entypo } from '@expo/vector-icons';
+import DropdownSelectorStyles from '../../styles/components/commons/DropdownSelector.style';
 
 type DropDownListItemProps = {
   item: DropDownItem;
@@ -17,19 +17,19 @@ type DropDownListItemProps = {
 };
 
 const DropDownListItem = ({
-  item,
-  listItemStyle,
-  onItemPress,
+	item,
+	listItemStyle,
+	onItemPress,
 }: DropDownListItemProps): JSX.Element => {
-  const { value, label } = item;
+	const { value, label } = item;
 
-  return (
-    <View style={[listItemStyle, DropdownSelectorStyles.listItem]}>
-      <TouchableOpacity onPress={() => onItemPress(value)}>
-        <Text>{label}</Text>
-      </TouchableOpacity>
-    </View>
-  );
+	return (
+		<View style={[listItemStyle, DropdownSelectorStyles.listItem]}>
+			<TouchableOpacity onPress={() => onItemPress(value)}>
+				<Text>{label}</Text>
+			</TouchableOpacity>
+		</View>
+	);
 };
 
 type DropDownPickerProps = {
@@ -49,36 +49,36 @@ type DropDownItem = {
 };
 
 export const DropDownPicker = (props: DropDownPickerProps): JSX.Element => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+	const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  return (
-    <View style={[DropdownSelectorStyles.container, props.containerStyle]}>
-      <TouchableOpacity
-        style={[DropdownSelectorStyles.headerContainer, props.headerStyle]}
-        onPress={() => setIsOpen(!isOpen)}
-      >
-        <Text>
-          {props.items.filter((item) => item.value === props.value)[0]?.label ??
+	return (
+		<View style={[DropdownSelectorStyles.container, props.containerStyle]}>
+			<TouchableOpacity
+				style={[DropdownSelectorStyles.headerContainer, props.headerStyle]}
+				onPress={() => setIsOpen(!isOpen)}
+			>
+				<Text>
+					{props.items.filter((item) => item.value === props.value)[0]?.label ??
             props.placeholderText ??
-            "Please select item"}
-        </Text>
-      </TouchableOpacity>
-      {isOpen ? (
-        <View style={[props.listContainerStyle]}>
-          {props.items.map((item, index) => (
-            <DropDownListItem
-              key={item.value}
-              item={item}
-              onItemPress={(val) => {
-                props.onValueChange(val);
-                setIsOpen(!isOpen);
-              }}
-            />
-          ))}
-        </View>
-      ) : null}
-    </View>
-  );
+            'Please select item'}
+				</Text>
+			</TouchableOpacity>
+			{isOpen ? (
+				<View style={[props.listContainerStyle]}>
+					{props.items.map((item, index) => (
+						<DropDownListItem
+							key={item.value}
+							item={item}
+							onItemPress={(val) => {
+								props.onValueChange(val);
+								setIsOpen(!isOpen);
+							}}
+						/>
+					))}
+				</View>
+			) : null}
+		</View>
+	);
 };
 
 type SearchableTextInputProps = {
@@ -89,28 +89,28 @@ type SearchableTextInputProps = {
 };
 
 const SearchableTextInput = ({
-  value,
-  placeholderText,
-  onValueChange,
-  onItemAdd,
+	value,
+	placeholderText,
+	onValueChange,
+	onItemAdd,
 }: SearchableTextInputProps) => {
-  return (
-    <View style={DropdownSelectorStyles.searchableTextInputContainer}>
-      <TextInput
-        value={value}
-        placeholder={placeholderText}
-        onChangeText={onValueChange}
-      />
-      <Button
-        title={"Add"}
-        onPress={() => {
-          if (value) {
-            onItemAdd(value);
-          }
-        }}
-      />
-    </View>
-  );
+	return (
+		<View style={DropdownSelectorStyles.searchableTextInputContainer}>
+			<TextInput
+				value={value}
+				placeholder={placeholderText}
+				onChangeText={onValueChange}
+			/>
+			<Button
+				title={'Add'}
+				onPress={() => {
+					if (value) {
+						onItemAdd(value);
+					}
+				}}
+			/>
+		</View>
+	);
 };
 
 type MultiItemViewerProps = {
@@ -119,26 +119,26 @@ type MultiItemViewerProps = {
 };
 
 const MultiItemViewer = ({ items, onItemDelete }: MultiItemViewerProps) => {
-  return (
-    <View style={DropdownSelectorStyles.multiItemViewerContainer}>
-      {items.map((item) => (
-        <View
-          style={DropdownSelectorStyles.multiItemViewerItemContainer}
-          key={item}
-        >
-          <Text style={DropdownSelectorStyles.multiItemViewerItemText}>
-            {item}
-          </Text>
-          <TouchableOpacity
-            onPress={() => onItemDelete(item)}
-            style={DropdownSelectorStyles.multiItemViewerItemIcon}
-          >
-            <Entypo name="circle-with-cross" size={24} color="black" />
-          </TouchableOpacity>
-        </View>
-      ))}
-    </View>
-  );
+	return (
+		<View style={DropdownSelectorStyles.multiItemViewerContainer}>
+			{items.map((item) => (
+				<View
+					style={DropdownSelectorStyles.multiItemViewerItemContainer}
+					key={item}
+				>
+					<Text style={DropdownSelectorStyles.multiItemViewerItemText}>
+						{item}
+					</Text>
+					<TouchableOpacity
+						onPress={() => onItemDelete(item)}
+						style={DropdownSelectorStyles.multiItemViewerItemIcon}
+					>
+						<Entypo name="circle-with-cross" size={24} color="black" />
+					</TouchableOpacity>
+				</View>
+			))}
+		</View>
+	);
 };
 
 type MultiDropDownPickerProps = {
@@ -156,85 +156,85 @@ type MultiDropDownPickerProps = {
 };
 
 export const MultiDropDownPicker = (
-  props: MultiDropDownPickerProps
+	props: MultiDropDownPickerProps
 ): JSX.Element => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [searchableText, setSearchableText] = useState<string>();
+	const [isOpen, setIsOpen] = useState<boolean>(false);
+	const [searchableText, setSearchableText] = useState<string>();
 
-  const searchedItems = searchableText
-    ? props.items.filter((item) => {
-        return item.label.indexOf(searchableText) > -1;
-      })
-    : props.items;
+	const searchedItems = searchableText
+		? props.items.filter((item) => {
+			return item.label.indexOf(searchableText) > -1;
+		})
+		: props.items;
 
-  return (
-    <View style={[DropdownSelectorStyles.container, props.containerStyle]}>
-      <TouchableOpacity
-        style={[DropdownSelectorStyles.headerContainer, props.headerStyle]}
-        onPress={() => {
-          setSearchableText(undefined);
-          setIsOpen(!isOpen);
-        }}
-      >
-        {props.value.length <= 0 ? (
-          <Text>{props.placeholderText ?? "No tags selected"}</Text>
-        ) : (
-          <MultiItemViewer
-            items={props.value}
-            onItemDelete={props.onItemDelete}
-          />
-        )}
-      </TouchableOpacity>
-      {isOpen ? (
-        <View
-          style={[
-            DropdownSelectorStyles.dropDownPickerContainer,
-            props.listContainerStyle,
-          ]}
-        >
-          <SearchableTextInput
-            placeholderText={props.searchableInputPlaceholderText}
-            onItemAdd={(val) => {
-              props.onItemCreateNew(val);
-              setSearchableText(undefined);
-              setIsOpen(!isOpen);
-            }}
-            value={searchableText}
-            onValueChange={setSearchableText}
-          />
-          {props.items.length <= 0 ? (
-            <>
-              <Text>No items found.</Text>
-            </>
-          ) : (
-            <>
-              {/* TODO: fix the re-sizing when searching for tags */}
-              <ScrollView
-                style={DropdownSelectorStyles.scrollViewPicker}
-                bounces={false}
-              >
-                {searchedItems
-                  .map((item, index) => (
-                    <DropDownListItem
-                      key={item.value}
-                      item={item}
-                      onItemPress={() => {
-                        // add item to value
-                        props.onAdditionalItemSelect([
-                          ...props.value,
-                          item.value,
-                        ]);
-                        setSearchableText(undefined);
-                        setIsOpen(!isOpen);
-                      }}
-                    />
-                  ))
-                  .slice(0, 10)}
-              </ScrollView>
-            </>
-          )}
-        </View>
-      ) : null}
-    </View>
-  );
+	return (
+		<View style={[DropdownSelectorStyles.container, props.containerStyle]}>
+			<TouchableOpacity
+				style={[DropdownSelectorStyles.headerContainer, props.headerStyle]}
+				onPress={() => {
+					setSearchableText(undefined);
+					setIsOpen(!isOpen);
+				}}
+			>
+				{props.value.length <= 0 ? (
+					<Text>{props.placeholderText ?? 'No tags selected'}</Text>
+				) : (
+					<MultiItemViewer
+						items={props.value}
+						onItemDelete={props.onItemDelete}
+					/>
+				)}
+			</TouchableOpacity>
+			{isOpen ? (
+				<View
+					style={[
+						DropdownSelectorStyles.dropDownPickerContainer,
+						props.listContainerStyle,
+					]}
+				>
+					<SearchableTextInput
+						placeholderText={props.searchableInputPlaceholderText}
+						onItemAdd={(val) => {
+							props.onItemCreateNew(val);
+							setSearchableText(undefined);
+							setIsOpen(!isOpen);
+						}}
+						value={searchableText}
+						onValueChange={setSearchableText}
+					/>
+					{props.items.length <= 0 ? (
+						<>
+							<Text>No items found.</Text>
+						</>
+					) : (
+						<>
+							{/* TODO: fix the re-sizing when searching for tags */}
+							<ScrollView
+								style={DropdownSelectorStyles.scrollViewPicker}
+								bounces={false}
+							>
+								{searchedItems
+									.map((item, index) => (
+										<DropDownListItem
+											key={item.value}
+											item={item}
+											onItemPress={() => {
+												// add item to value
+												props.onAdditionalItemSelect([
+													...props.value,
+													item.value,
+												]);
+												setSearchableText(undefined);
+												setIsOpen(!isOpen);
+											}}
+										/>
+									))
+									.slice(0, 10)}
+							</ScrollView>
+						</>
+					)}
+				</View>
+			) : null}
+		</View>
+	);
 };
