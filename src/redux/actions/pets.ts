@@ -1,5 +1,3 @@
-import { PetObject } from "../reducers/pets";
-
 export type addXpAction = {
   type: "pet/addXp";
   payload: {
@@ -8,10 +6,26 @@ export type addXpAction = {
   };
 };
 
+export type changeNameAction = {
+  type: "pet/changeName";
+  payload: {
+    index: number;
+    name: string;
+  };
+};
+
 export const addXp = (xp: number, index: number): addXpAction => ({
-  type: "pets/addXp",
+  type: "pet/addXp",
   payload: {
     index,
     xp,
+  },
+});
+
+export const changeName = (name: string, index: number): changeNameAction => ({
+  type: "pet/changeName",
+  payload: {
+    index,
+    name,
   },
 });

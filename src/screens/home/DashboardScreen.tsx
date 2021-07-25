@@ -3,6 +3,7 @@ import { View, FlatList, RefreshControl } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 
+import PetComponent from "../../components/home/PetComponent";
 import DashboardCard from "../../components/home/DashboardCard";
 import HorizontalItemScroll from "../../components/commons/HorizontalItemScroll";
 import DashboardScreenStyles from "../../styles/screens/home/Dashboard.style";
@@ -74,6 +75,7 @@ const DashboardScreen: React.FC<StateProps> = ({ navigation }: StateProps) => {
 
   return (
     <View style={DashboardScreenStyles.container}>
+      <PetComponent />
       <FlatList
         ListHeaderComponent={
           <HorizontalItemScroll

@@ -22,7 +22,7 @@ const initialState: PetsState = {
 
 const petsReducer = (state = initialState, action): PetsState => {
   switch (action.type) {
-    case "pets/addXp": {
+    case "pet/addXp": {
       let pet = state.pets[action.payload.index];
       if (pet.xp + action.payload.xp > pet.maxXp) {
         pet = {
@@ -43,6 +43,16 @@ const petsReducer = (state = initialState, action): PetsState => {
         // that xp would get overwritten
         return { pets: [pet, ...state.pets] };
       }
+    }
+    case "pet/changeName": {
+      let pet = state.pets[action.payload.index];
+      pet = {
+        name: action.payload.name,
+        xp: pet.xp,
+        maxXp: pet.maxXp,
+        level: pet.level,
+      };
+      return { pets: [pet, ...state.pets] };
     }
     default: {
       return state;
