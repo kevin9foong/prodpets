@@ -3,7 +3,7 @@
  * https://reactnavigation.org/docs/typescript/
  */
 
-import { CardModelWithUid } from "../database/models/cards";
+import { CardModelWithUid } from '../database/models/cards';
 
 export type CardUid = {
   uid: string;
@@ -11,7 +11,7 @@ export type CardUid = {
 
 export type CardModelWithUidSerializable = Omit<
   CardModelWithUid,
-  "startdate" | "duedate"
+  'startdate' | 'duedate'
 > & {
   startdate: string;
   duedate: string;
@@ -26,6 +26,7 @@ export type HomeStackParamList = {
   CreateCardModal: undefined;
   ViewCardModal: CardUid;
   UpdateCardModal: CardUid;
+  GameCardSelectModal: undefined; 
 };
 
 export type HomeTabParamList = {
@@ -43,3 +44,8 @@ export type CalendarParamList = {
   CalendarScreen: undefined;
   ViewCardModal: CardUid;
 };
+
+export type GamesParamList = { 
+  GamesScreen: CardUid | undefined;
+  GameCardSelectModal: undefined;
+}

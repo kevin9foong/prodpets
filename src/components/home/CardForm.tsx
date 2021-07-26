@@ -1,24 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, Button, Platform } from "react-native";
-import { useForm, Controller } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import { useAppSelector } from "../../redux/hooks";
+import React, { useEffect, useState } from 'react';
+import { View, Text, Button, Platform } from 'react-native';
+import { useForm, Controller } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+import { useAppSelector } from '../../redux/hooks';
 
-import DateTimePicker from "@react-native-community/datetimepicker";
-import AndroidDateTimePicker from "../commons/AndroidDateTimePicker";
-import CreateCardModalStyle from "../../styles/components/home/CardForm.style";
-import TextArea from "../commons/TextArea";
-import Checklist, { ChecklistItem } from "../commons/Checklist";
+import DateTimePicker from '@react-native-community/datetimepicker';
+import AndroidDateTimePicker from '../commons/AndroidDateTimePicker';
+import CreateCardModalStyle from '../../styles/components/home/CardForm.style';
+import TextArea from '../commons/TextArea';
+import Checklist, { ChecklistItem } from '../commons/Checklist';
 
-import { CardModel, CardModelWithUid } from "../../database/models/cards";
-import { addCard, updateCard, deleteCard } from "../../redux/actions/cards";
-import { Tags } from "../../redux/reducers/tags";
-import { selectAllTags } from "../../redux/selectors/tags";
-import { generateUuid } from "../../util/uuidGenerator";
-import { DropDownPicker, MultiDropDownPicker } from "../commons/DropdownPicker";
-import { overwriteTags } from "../../redux/actions/tags";
+import { CardModel, CardModelWithUid } from '../../database/models/cards';
+import { addCard, updateCard, deleteCard } from '../../redux/actions/cards';
+import { Tags } from '../../redux/reducers/tags';
+import { selectAllTags } from '../../redux/selectors/tags';
+import { generateUuid } from '../../util/uuidGenerator';
+import { DropDownPicker, MultiDropDownPicker } from '../commons/DropdownPicker';
+import { overwriteTags } from '../../redux/actions/tags';
 
-export type formType = "edit" | "create" | "view";
+export type formType = 'edit' | 'create' | 'view';
 
 type StateProps = {
   defaultValues?: CardModelWithUid;
@@ -36,317 +36,317 @@ type CreateCardModalRightHeaderProps = {
 };
 
 const UpdateCardModalRightHeader = ({
-  onDeleteSubmit,
-  onSaveSubmit,
+	onDeleteSubmit,
+	onSaveSubmit,
 }: UpdateCardModalRightHeaderProps) => {
-  return (
-    <View
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        paddingHorizontal: 20,
-      }}
-    >
-      <View
-        style={{
-          marginRight: 3,
-        }}
-      >
-        <Button
-          accessibilityLabel="Delete Card"
-          title="Delete"
-          onPress={onDeleteSubmit}
-        />
-      </View>
-      <View
-        style={{
-          marginLeft: 3,
-        }}
-      >
-        <Button
-          accessibilityLabel="Save Card"
-          title="Save"
-          onPress={onSaveSubmit}
-        />
-      </View>
-    </View>
-  );
+	return (
+		<View
+			style={{
+				display: 'flex',
+				flexDirection: 'row',
+				paddingHorizontal: 20,
+			}}
+		>
+			<View
+				style={{
+					marginRight: 3,
+				}}
+			>
+				<Button
+					accessibilityLabel="Delete Card"
+					title="Delete"
+					onPress={onDeleteSubmit}
+				/>
+			</View>
+			<View
+				style={{
+					marginLeft: 3,
+				}}
+			>
+				<Button
+					accessibilityLabel="Save Card"
+					title="Save"
+					onPress={onSaveSubmit}
+				/>
+			</View>
+		</View>
+	);
 };
 
 const CreateCardModalRightHeader = ({
-  onSaveSubmit,
+	onSaveSubmit,
 }: CreateCardModalRightHeaderProps) => {
-  return (
-    <View
-      style={{
-        paddingHorizontal: 20,
-      }}
-    >
-      <Button
-        accessibilityLabel="Create Card"
-        title="Create"
-        onPress={onSaveSubmit}
-      />
-    </View>
-  );
+	return (
+		<View
+			style={{
+				paddingHorizontal: 20,
+			}}
+		>
+			<Button
+				accessibilityLabel="Create Card"
+				title="Create"
+				onPress={onSaveSubmit}
+			/>
+		</View>
+	);
 };
 
 const CardForm: React.FC<StateProps> = ({
-  defaultValues,
-  navigation,
-  formType,
+	defaultValues,
+	navigation,
+	formType,
 }: StateProps) => {
-  const dispatch = useDispatch();
-  const [tags, setTags] = useState<Tags>(useAppSelector(selectAllTags));
-  const [cardUid, setCardUid] = useState<string>();
+	const dispatch = useDispatch();
+	const [tags, setTags] = useState<Tags>(useAppSelector(selectAllTags));
+	const [cardUid, setCardUid] = useState<string>();
 
-  useEffect(() => {
-    setCardUid(defaultValues?.uid ?? generateUuid());
-  }, []);
+	useEffect(() => {
+		setCardUid(defaultValues?.uid ?? generateUuid());
+	}, []);
 
-  const removeCardUidFromTags = (cardUid: string) => {
-    const tagNames = Object.keys(tags);
-    const updatedTags = { ...tags };
-    tagNames.forEach((tagName) => {
-      const filteredCardTags = updatedTags[tagName].filter(
-        (uid) => uid !== cardUid
-      );
-      if (filteredCardTags.length > 0) {
-        updatedTags[tagName] = filteredCardTags;
-      } else {
-        delete updatedTags[tagName];
-      }
-    });
+	const removeCardUidFromTags = (cardUid: string) => {
+		const tagNames = Object.keys(tags);
+		const updatedTags = { ...tags };
+		tagNames.forEach((tagName) => {
+			const filteredCardTags = updatedTags[tagName].filter(
+				(uid) => uid !== cardUid
+			);
+			if (filteredCardTags.length > 0) {
+				updatedTags[tagName] = filteredCardTags;
+			} else {
+				delete updatedTags[tagName];
+			}
+		});
 
-    return updatedTags;
-  };
+		return updatedTags;
+	};
 
-  const onDeleteSubmit = (cardUid: string) => {
-    if (defaultValues?.uid) {
-      dispatch(deleteCard(defaultValues.uid));
-      dispatch(overwriteTags(removeCardUidFromTags(cardUid)));
-    }
-    navigation.navigate("Home");
-  };
+	const onDeleteSubmit = (cardUid: string) => {
+		if (defaultValues?.uid) {
+			dispatch(deleteCard(defaultValues.uid));
+			dispatch(overwriteTags(removeCardUidFromTags(cardUid)));
+		}
+		navigation.navigate('Home');
+	};
 
-  const onUpdateSubmit = (data: CardModel) => {
-    if (defaultValues?.uid) {
-      const updatedCardData = { uid: defaultValues.uid, ...data };
-      dispatch(updateCard(updatedCardData));
-      dispatch(overwriteTags(tags));
-      navigation.navigate("ViewCardModal", { uid: defaultValues.uid });
-    } else {
-      navigation.goBack();
-    }
-  };
+	const onUpdateSubmit = (data: CardModel) => {
+		if (defaultValues?.uid) {
+			const updatedCardData = { uid: defaultValues.uid, ...data };
+			dispatch(updateCard(updatedCardData));
+			dispatch(overwriteTags(tags));
+			navigation.navigate('ViewCardModal', { uid: defaultValues.uid });
+		} else {
+			navigation.goBack();
+		}
+	};
 
-  const onCreateSubmit = (cardUid: string, data: CardModel) => {
-    dispatch(addCard(cardUid, data));
-    dispatch(overwriteTags(tags));
-    navigation.goBack();
-  };
+	const onCreateSubmit = (cardUid: string, data: CardModel) => {
+		dispatch(addCard(cardUid, data));
+		dispatch(overwriteTags(tags));
+		navigation.goBack();
+	};
 
-  // safe to typecast as userUid has to be not-null to access this screen.
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+	// safe to typecast as userUid has to be not-null to access this screen.
+	const {
+		control,
+		handleSubmit,
+		formState: { errors },
+	} = useForm();
 
-  const onPrimaryButtonPress = (data: CardModel) => {
-    formType === "edit" ? onUpdateSubmit(data) : onCreateSubmit(cardUid!, data);
-  };
+	const onPrimaryButtonPress = (data: CardModel) => {
+		formType === 'edit' ? onUpdateSubmit(data) : onCreateSubmit(cardUid!, data);
+	};
 
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      // eslint-disable-next-line react/display-name
-      headerRight: () =>
-        formType === "edit" ? (
-          <UpdateCardModalRightHeader
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            onDeleteSubmit={() => onDeleteSubmit!(cardUid!)}
-            onSaveSubmit={handleSubmit(onPrimaryButtonPress)}
-          />
-        ) : (
-          <CreateCardModalRightHeader
-            onSaveSubmit={handleSubmit(onPrimaryButtonPress)}
-          />
-        ),
-    });
-  });
+	React.useLayoutEffect(() => {
+		navigation.setOptions({
+			// eslint-disable-next-line react/display-name
+			headerRight: () =>
+				formType === 'edit' ? (
+					<UpdateCardModalRightHeader
+						// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+						onDeleteSubmit={() => onDeleteSubmit!(cardUid!)}
+						onSaveSubmit={handleSubmit(onPrimaryButtonPress)}
+					/>
+				) : (
+					<CreateCardModalRightHeader
+						onSaveSubmit={handleSubmit(onPrimaryButtonPress)}
+					/>
+				),
+		});
+	});
 
-  return (
-    <View style={CreateCardModalStyle.container}>
-      <View style={CreateCardModalStyle.topContainer}>
-        <Controller
-          defaultValue={defaultValues?.title}
-          name="title"
-          control={control}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <View style={CreateCardModalStyle.titleContainer}>
-              <Text style={CreateCardModalStyle.inputLabel}>Title</Text>
-              <TextArea
-                style={CreateCardModalStyle.titleInput}
-                onBlur={onBlur}
-                onChangeText={(value) => onChange(value)}
-                value={value}
-                placeholder="Title"
-              />
-            </View>
-          )}
-        />
-        <Controller
-          defaultValue={defaultValues?.description}
-          name="description"
-          control={control}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <View style={CreateCardModalStyle.descriptionContainer}>
-              <Text style={CreateCardModalStyle.inputLabel}>Description</Text>
-              <TextArea
-                style={CreateCardModalStyle.descriptionInput}
-                onBlur={onBlur}
-                onChangeText={(value) => onChange(value)}
-                value={value}
-                placeholder="Description"
-              />
-            </View>
-          )}
-        />
-      </View>
-      <View style={CreateCardModalStyle.bottomContainer}>
-        <Controller
-          defaultValue={defaultValues?.checklistItems}
-          name="checklistItems"
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <View style={CreateCardModalStyle.fieldContainer}>
-              <Text style={CreateCardModalStyle.inputLabelDark}>Checklist</Text>
-              <Checklist
-                isEditMode={true}
-                onChange={(checklistItems: ChecklistItem[]) => {
-                  onChange(checklistItems);
-                }}
-                data={value}
-              />
-            </View>
-          )}
-        />
-        <Controller
-          name="startdate"
-          defaultValue={
-            defaultValues?.startdate
-              ? new Date(defaultValues.startdate)
-              : new Date()
-          }
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <View style={CreateCardModalStyle.fieldContainer}>
-              <Text style={CreateCardModalStyle.inputLabelDark}>
+	return (
+		<View style={CreateCardModalStyle.container}>
+			<View style={CreateCardModalStyle.topContainer}>
+				<Controller
+					defaultValue={defaultValues?.title}
+					name="title"
+					control={control}
+					render={({ field: { onChange, onBlur, value } }) => (
+						<View style={CreateCardModalStyle.titleContainer}>
+							<Text style={CreateCardModalStyle.inputLabel}>Title</Text>
+							<TextArea
+								style={CreateCardModalStyle.titleInput}
+								onBlur={onBlur}
+								onChangeText={(value) => onChange(value)}
+								value={value}
+								placeholder="Title"
+							/>
+						</View>
+					)}
+				/>
+				<Controller
+					defaultValue={defaultValues?.description}
+					name="description"
+					control={control}
+					render={({ field: { onChange, onBlur, value } }) => (
+						<View style={CreateCardModalStyle.descriptionContainer}>
+							<Text style={CreateCardModalStyle.inputLabel}>Description</Text>
+							<TextArea
+								style={CreateCardModalStyle.descriptionInput}
+								onBlur={onBlur}
+								onChangeText={(value) => onChange(value)}
+								value={value}
+								placeholder="Description"
+							/>
+						</View>
+					)}
+				/>
+			</View>
+			<View style={CreateCardModalStyle.bottomContainer}>
+				<Controller
+					defaultValue={defaultValues?.checklistItems}
+					name="checklistItems"
+					control={control}
+					render={({ field: { onChange, value } }) => (
+						<View style={CreateCardModalStyle.fieldContainer}>
+							<Text style={CreateCardModalStyle.inputLabelDark}>Checklist</Text>
+							<Checklist
+								isEditMode={true}
+								onChange={(checklistItems: ChecklistItem[]) => {
+									onChange(checklistItems);
+								}}
+								data={value}
+							/>
+						</View>
+					)}
+				/>
+				<Controller
+					name="startdate"
+					defaultValue={
+						defaultValues?.startdate
+							? new Date(defaultValues.startdate)
+							: new Date()
+					}
+					control={control}
+					render={({ field: { onChange, value } }) => (
+						<View style={CreateCardModalStyle.fieldContainer}>
+							<Text style={CreateCardModalStyle.inputLabelDark}>
                 Start Date
-              </Text>
-              {Platform.OS === "ios" ? (
-                <DateTimePicker
-                  style={CreateCardModalStyle.dateTimeInput}
-                  value={value}
-                  mode={"datetime"}
-                  display="default"
-                  onChange={(event, date) => onChange(date)}
-                />
-              ) : (
-                <AndroidDateTimePicker value={value} onChange={onChange} />
-              )}
-            </View>
-          )}
-        />
-        <Controller
-          name="duedate"
-          defaultValue={
-            defaultValues?.duedate
-              ? new Date(defaultValues.duedate)
-              : new Date()
-          }
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <View style={CreateCardModalStyle.fieldContainer}>
-              <Text style={CreateCardModalStyle.inputLabelDark}>Due Date</Text>
-              {Platform.OS === "ios" ? (
-                <DateTimePicker
-                  style={CreateCardModalStyle.dateTimeInput}
-                  value={value}
-                  mode={"datetime"}
-                  display="default"
-                  onChange={(event, date) => onChange(date)}
-                />
-              ) : (
-                <AndroidDateTimePicker value={value} onChange={onChange} />
-              )}
-            </View>
-          )}
-        />
-        <Controller
-          name="status"
-          defaultValue={defaultValues?.status ?? "incomplete"}
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <View style={CreateCardModalStyle.fieldContainer}>
-              <Text style={CreateCardModalStyle.inputLabelDark}>Status</Text>
-              <DropDownPicker
-                value={value}
-                onValueChange={onChange}
-                items={[
-                  { label: "In Progress", value: "in progress" },
-                  { label: "Completed", value: "completed" },
-                  { label: "Incomplete", value: "incomplete" },
-                ]}
-              />
-            </View>
-          )}
-        />
-        <Controller
-          name="tags"
-          defaultValue={defaultValues?.tags ?? []}
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <View style={CreateCardModalStyle.fieldContainer}>
-              <Text style={CreateCardModalStyle.inputLabelDark}>Tags</Text>
-              {/* TODO: add support for cardStatus typescript static check */}
-              <MultiDropDownPicker
-                searchableInputPlaceholderText="Search/Add Tags"
-                value={value}
-                onAdditionalItemSelect={onChange}
-                onItemCreateNew={(tagName) => {
-                  onChange([...value, tagName]);
-                  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                  // safe to assert not-null due to useEffect setCardUid
-                  setTags({
-                    ...tags,
-                    [tagName]: [...(tags[tagName] || []), cardUid!],
-                  });
-                }}
-                onItemDelete={(deletedTag) => {
-                  onChange(value.filter((tag: string) => tag !== deletedTag));
-                  const newTags = { ...tags };
-                  const deletedTagCardUids = newTags[deletedTag].filter(
-                    (uid) => uid !== cardUid
-                  );
-                  if (deletedTagCardUids.length === 0) {
-                    delete newTags[deletedTag];
-                  } else {
-                    newTags[deletedTag] = deletedTagCardUids;
-                  }
-                  setTags(newTags);
-                }}
-                items={Object.keys(tags).map((tagName) => ({
-                  label: tagName,
-                  value: tagName,
-                }))}
-              />
-            </View>
-          )}
-        />
-      </View>
-    </View>
-  );
+							</Text>
+							{Platform.OS === 'ios' ? (
+								<DateTimePicker
+									style={CreateCardModalStyle.dateTimeInput}
+									value={value}
+									mode={'datetime'}
+									display="default"
+									onChange={(event, date) => onChange(date)}
+								/>
+							) : (
+								<AndroidDateTimePicker value={value} onChange={onChange} />
+							)}
+						</View>
+					)}
+				/>
+				<Controller
+					name="duedate"
+					defaultValue={
+						defaultValues?.duedate
+							? new Date(defaultValues.duedate)
+							: new Date()
+					}
+					control={control}
+					render={({ field: { onChange, value } }) => (
+						<View style={CreateCardModalStyle.fieldContainer}>
+							<Text style={CreateCardModalStyle.inputLabelDark}>Due Date</Text>
+							{Platform.OS === 'ios' ? (
+								<DateTimePicker
+									style={CreateCardModalStyle.dateTimeInput}
+									value={value}
+									mode={'datetime'}
+									display="default"
+									onChange={(event, date) => onChange(date)}
+								/>
+							) : (
+								<AndroidDateTimePicker value={value} onChange={onChange} />
+							)}
+						</View>
+					)}
+				/>
+				<Controller
+					name="status"
+					defaultValue={defaultValues?.status ?? 'incomplete'}
+					control={control}
+					render={({ field: { onChange, value } }) => (
+						<View style={CreateCardModalStyle.fieldContainer}>
+							<Text style={CreateCardModalStyle.inputLabelDark}>Status</Text>
+							<DropDownPicker
+								value={value}
+								onValueChange={onChange}
+								items={[
+									{ label: 'In Progress', value: 'in progress' },
+									{ label: 'Completed', value: 'completed' },
+									{ label: 'Incomplete', value: 'incomplete' },
+								]}
+							/>
+						</View>
+					)}
+				/>
+				<Controller
+					name="tags"
+					defaultValue={defaultValues?.tags ?? []}
+					control={control}
+					render={({ field: { onChange, value } }) => (
+						<View style={CreateCardModalStyle.fieldContainer}>
+							<Text style={CreateCardModalStyle.inputLabelDark}>Tags</Text>
+							{/* TODO: add support for cardStatus typescript static check */}
+							<MultiDropDownPicker
+								searchableInputPlaceholderText="Search/Add Tags"
+								value={value}
+								onAdditionalItemSelect={onChange}
+								onItemCreateNew={(tagName) => {
+									onChange([...value, tagName]);
+									// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+									// safe to assert not-null due to useEffect setCardUid
+									setTags({
+										...tags,
+										[tagName]: [...(tags[tagName] || []), cardUid!],
+									});
+								}}
+								onItemDelete={(deletedTag) => {
+									onChange(value.filter((tag: string) => tag !== deletedTag));
+									const newTags = { ...tags };
+									const deletedTagCardUids = newTags[deletedTag].filter(
+										(uid) => uid !== cardUid
+									);
+									if (deletedTagCardUids.length === 0) {
+										delete newTags[deletedTag];
+									} else {
+										newTags[deletedTag] = deletedTagCardUids;
+									}
+									setTags(newTags);
+								}}
+								items={Object.keys(tags).map((tagName) => ({
+									label: tagName,
+									value: tagName,
+								}))}
+							/>
+						</View>
+					)}
+				/>
+			</View>
+		</View>
+	);
 };
 
 export default CardForm;
