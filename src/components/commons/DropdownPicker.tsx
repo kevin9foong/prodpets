@@ -187,7 +187,7 @@ export const MultiDropDownPicker = (
 						items={props.value}
 						onItemDelete={props.onItemDelete}
 					/>
-				)}
+				}
 			</TouchableOpacity>
 			{isOpen ? (
 				<View
