@@ -34,39 +34,41 @@ const GameScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
 	const [isCountingDown, setIsCountingDown] = useState(false);
 	const [timeElapsed, setTimeElapsed] = useState(0);
 	const [deleteModalVisible, setDeleteModalVisible] = useState(false);
-	const [minutes, setMinutes] = useState<number>(0);
-	const [hours, setHours] = useState<number>(0); 
+	const [minutes, setMinutes] = useState<string>();
+	const [hours, setHours] = useState<string>(); 
 
 	const pets = useAppSelector(selectAllPets);
 
 	const calcSeconds = () => {
-		const time = hours * 3600 + minutes * 60;
-		return time;
+		const seconds = (!hours || hours === '' ? 0 : parseInt(hours) * 3600) 
+		+ (!minutes || minutes === '' ? 0 : parseInt(minutes) * 60);
+		return seconds;
 	};
 
 	const toggleIsCountingDown = () => {
 		if (isCountingDown) {
-			setHours(0);
-			setMinutes(0);
+			setHours(undefined);
+			setMinutes(undefined);
 		}
 		setIsCountingDown(!isCountingDown);
 	};
 
 	// TODO: abstract XP handling logic 
-	const handleFinish = () => {
-		Vibration.vibrate(400, false);
+	const handleFinish = async () => {
+		// TODO: find a way to perform this without blocking 
+		await Vibration.vibrate(400, false);
 		if (associatedCard) {
 			setDeleteModalVisible(true);
 			// dispatch(deleteCard(associatedCard.uid)) 
 		}
+		// resets all variables
+		toggleIsCountingDown();
+		setTimeElapsed(0);
+
 		// code to calculate xp earned
 		const xp = xpGained(timeElapsed) + 1;
 		// dispatch to store to update user's xp
 		dispatch(addXp(xp, 0));
-
-		// resets all variables
-		toggleIsCountingDown();
-		setTimeElapsed(0);
 	};
 
 	// handler function for when user cancels session
@@ -145,22 +147,22 @@ const GameScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
 							<TextInput
 								style={GameScreenStyle.indivTimeInput}
 								keyboardType="numeric"
-								onChangeText={text => setMinutes(parseInt(text.replace(/[^0-9]/g, '')))}
+								onChangeText={selectedHours => setHours(selectedHours.replace(/[^0-9]/g, ''))}
 								placeholder="00"
-								value={hours.toString()}
+								value={hours}
 							/>
-							<Text style={{ fontSize: 20 }}>Hrs</Text>
+							<Text style={{ fontSize: 20 }}>Hours</Text>
 						</View>
 						<Text style={{ fontSize: 60 }}> : </Text>
 						<View style={GameScreenStyle.timeDisplay}>
 							<TextInput
 								style={GameScreenStyle.indivTimeInput}
 								keyboardType="numeric"
-								onChangeText={(text) => setMinutes(parseInt(text.replace(/[^0-9]/g, '')))}
+								onChangeText={(selectedMins) => setMinutes(selectedMins.replace(/[^0-9]/g, ''))}
 								placeholder="00"
-								value={minutes.toString()}
+								value={minutes}
 							/>
-							<Text style={{ fontSize: 20 }}>Mins</Text>
+							<Text style={{ fontSize: 20 }}>Minutes</Text>
 						</View>
 					</View>
 
@@ -200,6 +202,7 @@ const GameScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
 					<CountDown
 						size={30}
 						timeToShow={['H', 'M', 'S']}
+						showSeparator={true}
 						until={calcSeconds()}
 						onFinish={handleFinish}
 						digitStyle={{ backgroundColor: theme['color-primary-200'] }}
