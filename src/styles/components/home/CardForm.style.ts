@@ -52,5 +52,12 @@ export default StyleSheet.create({
 	}, 
 	dateTimeInput: {
 		width: '100%'
+	}, 
+	effortHoursInput: {
+		padding: 8, 
+		width: '100%',
+		minHeight: 40, 
+		borderRadius: 8, 
+		backgroundColor: theme['color-primary-200']
 	}
 });

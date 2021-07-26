@@ -7,7 +7,7 @@ type DateTimePickerModes = 'date' | 'time';
 
 type StateProps = {
     value: Date, 
-    onChange: (value: Date) => void,
+    onChange?: (value: Date) => void,
 	disabled?: boolean
 }
 

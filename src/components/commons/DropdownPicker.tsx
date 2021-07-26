@@ -113,46 +113,51 @@ const SearchableTextInput = ({
 	);
 };
 
-type MultiItemViewerProps = {
-  items: string[];
-  onItemDelete: (item: string) => void;
-};
+type MultiItemViewerProps = { 
+	items: string[], 
+	onItemDelete: (item: string) => void, 
+	disabled?: boolean
+}
 
-const MultiItemViewer = ({ items, onItemDelete }: MultiItemViewerProps) => {
-	return (
-		<View style={DropdownSelectorStyles.multiItemViewerContainer}>
-			{items.map((item) => (
-				<View
-					style={DropdownSelectorStyles.multiItemViewerItemContainer}
-					key={item}
-				>
-					<Text style={DropdownSelectorStyles.multiItemViewerItemText}>
-						{item}
-					</Text>
-					<TouchableOpacity
-						onPress={() => onItemDelete(item)}
+export const MultiItemViewer = ({items, onItemDelete, disabled = false}: MultiItemViewerProps) => {
+	return <View
+		style={DropdownSelectorStyles.multiItemViewerContainer}
+	>
+		{items.map(item => (
+			<View 
+				style={DropdownSelectorStyles.multiItemViewerItemContainer}
+				key={item}>
+				<Text
+					style={DropdownSelectorStyles.multiItemViewerItemText}>
+					{item}
+				</Text>
+				{ !disabled 
+					? (<TouchableOpacity
+						onPress={() =>{ if (!disabled) { onItemDelete(item); }}}
 						style={DropdownSelectorStyles.multiItemViewerItemIcon}
 					>
-						<Entypo name="circle-with-cross" size={24} color="black" />
-					</TouchableOpacity>
-				</View>
-			))}
-		</View>
-	);
+						<Entypo name='circle-with-cross' size={24} color='black' />
+					</TouchableOpacity>)
+					: null
+				}
+			</View>
+		))}
+	</View>;
 };
 
 type MultiDropDownPickerProps = {
-  containerStyle?: StyleProp<ViewStyle>;
-  headerStyle?: StyleProp<ViewStyle>;
-  listContainerStyle?: StyleProp<ViewStyle>;
-  listItemStyle?: StyleProp<ViewStyle>;
-  value: string[];
-  onAdditionalItemSelect: (selectedVals: string[]) => void;
-  onItemCreateNew: (itemVal: string) => void;
-  onItemDelete: (val: string) => void;
-  items: DropDownItem[];
-  placeholderText?: string;
-  searchableInputPlaceholderText?: string;
+	containerStyle?: StyleProp<ViewStyle>, 
+	headerStyle?: StyleProp<ViewStyle>, 
+	listContainerStyle?: StyleProp<ViewStyle>, 
+	listItemStyle?: StyleProp<ViewStyle>, 
+	value: string[], 
+	onAdditionalItemSelect: (selectedVals: string[]) => void, 
+	onItemCreateNew: (itemVal: string) => void, 
+	onItemDelete: (val: string) => void, 
+	items: DropDownItem[],
+	placeholderText?: string
+	searchableInputPlaceholderText?: string, 
+	disabled?: boolean
 };
 
 export const MultiDropDownPicker = (
@@ -172,14 +177,13 @@ export const MultiDropDownPicker = (
 			<TouchableOpacity
 				style={[DropdownSelectorStyles.headerContainer, props.headerStyle]}
 				onPress={() => {
-					setSearchableText(undefined);
-					setIsOpen(!isOpen);
-				}}
-			>
-				{props.value.length <= 0 ? (
-					<Text>{props.placeholderText ?? 'No tags selected'}</Text>
-				) : (
-					<MultiItemViewer
+					if (!props.disabled) {
+						setSearchableText(undefined); 
+						setIsOpen(!isOpen);}}}>
+				{props.value.length <= 0 
+					? <Text>{props.placeholderText ?? 'No tags selected'}</Text>
+					: <MultiItemViewer 
+						disabled={props.disabled ?? false}
 						items={props.value}
 						onItemDelete={props.onItemDelete}
 					/>

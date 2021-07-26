@@ -15,6 +15,8 @@ import { selectAllTagNames } from '../../redux/selectors/tags';
 import { changeCardTagFilters } from '../../redux/actions/cardFilter';
 import { selectTagFilters } from '../../redux/selectors/cardFilter';
 import { selectAllCards } from '../../redux/selectors/cards';
+import { overwriteTags } from '../../redux/actions/tags';
+import store from '../../redux/store';
 
 type DashboardScreenNavigationProp = StackNavigationProp<
   DashboardParamList,
@@ -63,9 +65,8 @@ const DashboardScreen: React.FC<StateProps> = ({ navigation }: StateProps) => {
 
 	// FlatList (Scrollable) functions
 	const onRefresh = useCallback(() => {
-		setIsRefreshing(true);
-		// executed synchronously?
-		dispatch(fetchCards);
+		setIsRefreshing(true); 
+		// load from the online store? 
 		setIsRefreshing(false);
 	}, []);
 
