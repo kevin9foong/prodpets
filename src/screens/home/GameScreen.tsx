@@ -167,12 +167,7 @@ const GameScreen = ({ route, navigation }: ScreenProps): JSX.Element => {
 					</View>
 
 					<Text
-						style={{
-							alignSelf: 'center',
-							color: 'grey',
-							fontSize: 20,
-							textAlign: 'center',
-						}}
+						style={GameScreenStyle.selectedTitleText}
 					>
 						{associatedCard
 							? `${associatedCard.title} is selected`
