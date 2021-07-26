@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from 'react'; 
+import React, { useMemo, useState } from 'react';
 
-import  { AgendaItemsMap } from 'react-native-calendars';
+import { AgendaItemsMap } from 'react-native-calendars';
 import { Agenda } from 'react-native-calendars';
 import CalendarCard from '../../components/home/CalendarCard';
 
@@ -13,85 +13,107 @@ import { CalendarParamList } from '../../navigation/types';
 import { StackNavigationProp } from '@react-navigation/stack';
 
 type CalendarScreenNavigationProp = StackNavigationProp<
-	CalendarParamList, 'CalendarScreen'>; 
+  CalendarParamList,
+  'CalendarScreen'
+>;
 
 type StateProps = {
-	navigation: CalendarScreenNavigationProp
-}
+  navigation: CalendarScreenNavigationProp;
+};
 
 type SelectedDate = {
-	month: number, 
-	year: number
-}
+  month: number;
+  year: number;
+};
 
 const CalendarScreen = ({ navigation }: StateProps): JSX.Element => {
 	const [selectedDateRange, setSelectedDateRange] = useState<SelectedDate>({
-		month: new Date().getMonth(), 
-		year: new Date().getFullYear()
-	}); 
+		month: new Date().getMonth(),
+		year: new Date().getFullYear(),
+	});
 
 	const cards = useAppSelector(selectAllCards);
 
-	const cardEndsOnSameDate = (cardInfo: CardModelWithUid) => isSameDate(new Date(cardInfo.startdate), new Date(cardInfo.duedate)); 
+	const cardEndsOnSameDate = (cardInfo: CardModelWithUid) =>
+		isSameDate(new Date(cardInfo.startdate), new Date(cardInfo.duedate));
 
-	// pure function 
+	// pure function
 	const loadAgendaItemsForTwoMonths = useMemo(() => {
 		const { month, year } = selectedDateRange;
-		const updatedAgendaInfoCardItems: AgendaItemsMap<CardModelWithUid> = {}; 
+		const updatedAgendaInfoCardItems: AgendaItemsMap<CardModelWithUid> = {};
 
-		// populate [] to mark as loaded for dates with no cards assigned. 
+		// populate [] to mark as loaded for dates with no cards assigned.
 		const start = new Date(year, month - 1, 1);
 		const end = new Date(year, month + 1, 0);
-		for (;start < end; start.setDate(start.getDate() + 1)) {
+		for (; start < end; start.setDate(start.getDate() + 1)) {
 			const date = getDateString(start).toString();
-			updatedAgendaInfoCardItems[date] = [...(updatedAgendaInfoCardItems[date] || [])];
-		} 
+			updatedAgendaInfoCardItems[date] = [
+				...(updatedAgendaInfoCardItems[date] || []),
+			];
+		}
 
-		cards.forEach(card => {
-			const startDate = new Date(card.startdate); 
+		cards.forEach((card) => {
+			const startDate = new Date(card.startdate);
 			const dueDate = new Date(card.duedate);
 			const startDateStringFormat = getDateString(startDate);
 
 			if (cardEndsOnSameDate(card)) {
-				updatedAgendaInfoCardItems[startDateStringFormat] = [...(updatedAgendaInfoCardItems[startDateStringFormat] || []), card];
+				updatedAgendaInfoCardItems[startDateStringFormat] = [
+					...(updatedAgendaInfoCardItems[startDateStringFormat] || []),
+					card,
+				];
 			} else {
 				// if card doesnt end on same date, then display on every day
-				for (let variableDate = new Date(card.startdate); variableDate < dueDate; variableDate.setDate(variableDate.getDate() + 1)) {
-					updatedAgendaInfoCardItems[getDateString(variableDate)] = [...(updatedAgendaInfoCardItems[getDateString(variableDate)] || []), card];
+				for (
+					let variableDate = new Date(card.startdate);
+					variableDate < dueDate;
+					variableDate.setDate(variableDate.getDate() + 1)
+				) {
+					updatedAgendaInfoCardItems[getDateString(variableDate)] = [
+						...(updatedAgendaInfoCardItems[getDateString(variableDate)] || []),
+						card,
+					];
 				}
 			}
 		});
-		return updatedAgendaInfoCardItems; 
-	// NOTE: must set dependency array to primitive values for selectedDateRange as loadItemsForMonth triggers a new object reference each time. 
+		return updatedAgendaInfoCardItems;
+		// NOTE: must set dependency array to primitive values for selectedDateRange as loadItemsForMonth triggers a new object reference each time.
 	}, [cards, selectedDateRange.month, selectedDateRange.year]);
 
-	const onCardClick = (cardInfo: CardModelWithUid) => navigation.navigate('ViewCardModal', {uid: cardInfo.uid});
-	
+	const onCardClick = (cardInfo: CardModelWithUid) =>
+		navigation.navigate('ViewCardModal', { uid: cardInfo.uid });
+
 	const renderAgendaItem = (agendaItem: CardModelWithUid) => {
 		return (
-			<CalendarCard 
+			<CalendarCard
 				key={agendaItem.uid}
-				cardInfo={agendaItem} 
-				onCardClick={onCardClick} />
+				cardInfo={agendaItem}
+				onCardClick={onCardClick}
+			/>
 		);
 	};
-	
+
 	const renderEmptyDate = () => {
-		return (
-			<></>
-		);
+		return <></>;
 	};
-	
-	const isRowChanged = (agendaItemOne: CardModelWithUid, agendaItemTwo: CardModelWithUid) => {
+
+	const isRowChanged = (
+		agendaItemOne: CardModelWithUid,
+		agendaItemTwo: CardModelWithUid
+	) => {
 		return agendaItemOne !== agendaItemTwo;
 	};
 
 	return (
 		<Agenda
 			items={loadAgendaItemsForTwoMonths}
-			loadItemsForMonth={(selectedDateRange) => setSelectedDateRange(selectedDateRange)}
+			loadItemsForMonth={(selectedDateRange) =>
+				setSelectedDateRange(selectedDateRange)
+			}
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			renderItem={(agendaItem: CardModelWithUid, _firstItemInDay: boolean) => renderAgendaItem(agendaItem)}
+			renderItem={(agendaItem: CardModelWithUid, _firstItemInDay: boolean) =>
+				renderAgendaItem(agendaItem)
+			}
 			renderEmptyDate={renderEmptyDate}
 			rowHasChanged={isRowChanged}
 			showClosingKnob={true}

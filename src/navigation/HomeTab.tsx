@@ -97,8 +97,19 @@ const HomeTab: React.FC = () => {
 					})}
 				/> 
 				{/* implemented later in next iteration cycle */}
-				<BottomTab.Screen name="Game" component={GameScreen} />
-				<BottomTab.Screen name="Social" component={SocialScreen} />
+				<BottomTab.Screen name="Game" 
+					component={GameScreen} 
+					options={{
+						tabBarIcon: ({color}) => 
+							<View 
+								accessible={true}
+								accessibilityLabel='Minigame'>
+								<TabBarIcon 
+									name="gamepad" 
+									color={color} />
+							</View>
+					}}/>
+				{/* <BottomTab.Screen name="Social" component={SocialScreen} /> */}
 			</BottomTab.Navigator>
 		</>
 	);
