@@ -1,4 +1,6 @@
-# Prodpets 
+[![Expo Publish](https://github.com/kevin9foong/prodpets/actions/workflows/expo-publish.yml/badge.svg)](https://github.com/kevin9foong/prodpets/actions/workflows/expo-publish.yml)
+
+# Prodpets 🐈🐕
 ### An iOS/Android Task manager application with pets & minigames.
 
 Useful project links:<br/> 
